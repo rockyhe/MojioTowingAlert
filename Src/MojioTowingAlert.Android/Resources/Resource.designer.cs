@@ -1,4 +1,4 @@
-namespace MojioTowingAlert.Android
+namespace MojioTowingAlertApp
 {
 	public partial class Resource
 	{

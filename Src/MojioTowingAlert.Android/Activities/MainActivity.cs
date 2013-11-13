@@ -6,19 +6,19 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 
-namespace MojioTowingAlert.Android
+namespace MojioTowingAlertApp
 {
-	[Activity (Label = "MojioTowingAlert.Android", MainLauncher = true)]
+	[Activity (Label = "@string/applicationName", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
-		int count = 1;
+	
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
 
 			// Set our view from the "main" layout resource
-			SetContentView (Resource.Layout.Main);
+			SetContentView (Resource.Layout.SpashScreen);
 
 			// Get our button from the layout resource,
 			// and attach an event to it
