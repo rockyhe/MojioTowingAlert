@@ -1,0 +1,6 @@
+[submodule "Src/Lib/Mojio.Client"]
+	path = Src/Lib/Mojio.Client
+	url = git@github.com:mojio/Mojio.Client.git
+[submodule "Src/Lib/PushSharp"]
+	path = Src/Lib/PushSharp
+	url = git@github.com:Redth/PushSharp.git
