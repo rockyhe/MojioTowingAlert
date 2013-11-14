@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <AssemblyName>MojioTowingAlert.Android</AssemblyName>
-    <TargetFrameworkVersion>v4.0.3</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.3</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -46,10 +46,10 @@
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
     <Reference Include="GooglePlayServicesLib">
-      <HintPath>Components\googleplayservices12-12.0.0\lib\android\GooglePlayServicesLib.dll</HintPath>
+      <HintPath>..\Components\googleplayservices12-12.0.0\lib\android\GooglePlayServicesLib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>Components\json.net-4.5.11\lib\android\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\Components\json.net-4.5.11\lib\android\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp.MonoDroid">
       <HintPath>..\Components\restsharp-104.1.0\lib\android\RestSharp.MonoDroid.dll</HintPath>
