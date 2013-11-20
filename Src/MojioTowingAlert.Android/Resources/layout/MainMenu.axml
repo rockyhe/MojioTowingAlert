@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:p1="http://schemas.android.com/apk/res/android"
+    p1:orientation="vertical"
+    p1:minWidth="25px"
+    p1:minHeight="25px"
+    p1:layout_width="match_parent"
+    p1:layout_height="match_parent"
+    p1:id="@+id/linearLayout1">
+    <ImageView
+        p1:src="@drawable/MojioAppLogo"
+        p1:layout_width="match_parent"
+        p1:layout_height="250dp"
+        p1:id="@+id/imageView1" />
+    <TextView
+        p1:textAppearance="?android:attr/textAppearanceMedium"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/welcomeText"
+        p1:textAlignment="center"
+        p1:gravity="center" />
+    <Button
+        p1:text="@string/notifications"
+        p1:layout_width="match_parent"
+        p1:layout_height="40dp"
+        p1:id="@+id/notificationsButton" />
+    <Button
+        p1:text="@string/map"
+        p1:layout_width="match_parent"
+        p1:layout_height="40dp"
+        p1:id="@+id/mapsButton" />
+    <Button
+        p1:text="@string/settings"
+        p1:layout_width="match_parent"
+        p1:layout_height="40dp"
+        p1:id="@+id/settingsButton" />
+    <Button
+        p1:text="@string/logout"
+        p1:layout_width="match_parent"
+        p1:layout_height="40dp"
+        p1:id="@+id/logOutButton" />
+</LinearLayout>
