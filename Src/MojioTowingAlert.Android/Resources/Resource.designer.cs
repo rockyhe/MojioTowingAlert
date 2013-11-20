@@ -26,6 +26,8 @@ namespace MojioTowingAlert.Android
 		
 		public static void UpdateIdValues()
 		{
+			global::Mojio.Client.MonoDroid.Resource.String.ApplicationName = global::MojioTowingAlert.Android.Resource.String.ApplicationName;
+			global::Mojio.Client.MonoDroid.Resource.String.Hello = global::MojioTowingAlert.Android.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -231,6 +233,9 @@ namespace MojioTowingAlert.Android
 			// aapt resource value: 0x7f02001d
 			public const int MojioAppLogo = 2130837533;
 			
+			// aapt resource value: 0x7f02001e
+			public const int monoandroidsplash = 2130837534;
+			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -329,7 +334,13 @@ namespace MojioTowingAlert.Android
 		{
 			
 			// aapt resource value: 0x7f06001b
-			public const int applicationName = 2131099675;
+			public const int ApplicationName = 2131099675;
+			
+			// aapt resource value: 0x7f06001a
+			public const int Hello = 2131099674;
+			
+			// aapt resource value: 0x7f06001d
+			public const int applicationName = 2131099677;
 			
 			// aapt resource value: 0x7f060015
 			public const int auth_client_needs_enabling_title = 2131099669;
@@ -409,17 +420,17 @@ namespace MojioTowingAlert.Android
 			// aapt resource value: 0x7f060013
 			public const int common_signin_button_text_long = 2131099667;
 			
-			// aapt resource value: 0x7f06001a
-			public const int hello = 2131099674;
+			// aapt resource value: 0x7f06001c
+			public const int hello = 2131099676;
+			
+			// aapt resource value: 0x7f060020
+			public const int login = 2131099680;
+			
+			// aapt resource value: 0x7f06001f
+			public const int password = 2131099679;
 			
 			// aapt resource value: 0x7f06001e
-			public const int login = 2131099678;
-			
-			// aapt resource value: 0x7f06001d
-			public const int password = 2131099677;
-			
-			// aapt resource value: 0x7f06001c
-			public const int username = 2131099676;
+			public const int username = 2131099678;
 			
 			static String()
 			{
@@ -427,6 +438,22 @@ namespace MojioTowingAlert.Android
 			}
 			
 			private String()
+			{
+			}
+		}
+		
+		public partial class Style
+		{
+			
+			// aapt resource value: 0x7f080000
+			public const int Mono_Android_Theme_Splash = 2131230720;
+			
+			static Style()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Style()
 			{
 			}
 		}
