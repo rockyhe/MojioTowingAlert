@@ -11,24 +11,31 @@
         p1:layout_width="match_parent"
         p1:layout_height="250dp"
         p1:id="@+id/imageView1" />
+    <TextView
+        p1:textAppearance="?android:attr/textAppearanceMedium"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/welcomeText"
+        p1:textAlignment="center"
+        p1:gravity="center" />
     <Button
         p1:text="@string/notifications"
         p1:layout_width="match_parent"
-        p1:layout_height="wrap_content"
+        p1:layout_height="40dp"
         p1:id="@+id/notificationsButton" />
     <Button
-        p1:text="@string/maps"
+        p1:text="@string/map"
         p1:layout_width="match_parent"
-        p1:layout_height="wrap_content"
-        p1:id="@+id/button2" />
+        p1:layout_height="40dp"
+        p1:id="@+id/mapsButton" />
     <Button
         p1:text="@string/settings"
         p1:layout_width="match_parent"
-        p1:layout_height="wrap_content"
-        p1:id="@+id/button3" />
+        p1:layout_height="40dp"
+        p1:id="@+id/settingsButton" />
     <Button
         p1:text="@string/logout"
         p1:layout_width="match_parent"
-        p1:layout_height="wrap_content"
-        p1:id="@+id/button4" />
+        p1:layout_height="40dp"
+        p1:id="@+id/logOutButton" />
 </LinearLayout>

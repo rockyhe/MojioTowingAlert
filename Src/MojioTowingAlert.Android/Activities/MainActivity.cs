@@ -20,15 +20,17 @@ namespace MojioTowingAlert.Android
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.SplashScreen);
 
-			// Get our button from the layout resource,
-			// and attach an event to it
-			Button button = FindViewById<Button> (Resource.Id.myButton);
+			SystemClock.Sleep (3000);
+			GotoLogin ();
 
-			int count = 0;
-			button.Click += delegate {
-				button.Text = string.Format ("{0} clicks!", count++);
-			};
 		}
+
+		private void GotoLogin()
+		{
+			var login = new Intent(this, typeof(LoginActivity));
+			StartActivity(login);
+		}
+
 	}
 }
 
