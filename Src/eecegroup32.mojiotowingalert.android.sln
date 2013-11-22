@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eecegroup32.mojiotowingalert.android", "eecegroup32.mojiotowingalert.android\eecegroup32.mojiotowingalert.android.csproj", "{4EE34ED8-003B-4811-95E1-221212C1540F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mojio.Client.MonoDroid", "Lib\Mojio.Client\Src\Mojio.Client.MonoDroid\Mojio.Client.MonoDroid.csproj", "{CEC4E7AF-9916-44D0-8D39-5FAD509DBF77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PushSharp.Client.MonoForAndroid.Gcm", "Lib\PushSharp\PushSharp.Client\PushSharp.Client.MonoForAndroid.Gcm\PushSharp.Client.MonoForAndroid.Gcm.csproj", "{1466D096-69FA-4B75-BBB6-533FFAF5D4EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1466D096-69FA-4B75-BBB6-533FFAF5D4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1466D096-69FA-4B75-BBB6-533FFAF5D4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1466D096-69FA-4B75-BBB6-533FFAF5D4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1466D096-69FA-4B75-BBB6-533FFAF5D4EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EE34ED8-003B-4811-95E1-221212C1540F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EE34ED8-003B-4811-95E1-221212C1540F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EE34ED8-003B-4811-95E1-221212C1540F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EE34ED8-003B-4811-95E1-221212C1540F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC4E7AF-9916-44D0-8D39-5FAD509DBF77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC4E7AF-9916-44D0-8D39-5FAD509DBF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC4E7AF-9916-44D0-8D39-5FAD509DBF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC4E7AF-9916-44D0-8D39-5FAD509DBF77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = eecegroup32.mojiotowingalert.android\eecegroup32.mojiotowingalert.android.csproj
+	EndGlobalSection
+EndGlobal
