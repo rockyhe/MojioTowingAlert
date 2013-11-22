@@ -258,11 +258,14 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f05000c
 			public const int button1 = 2131034124;
 			
-			// aapt resource value: 0x7f050018
-			public const int checkBox1 = 2131034136;
+			// aapt resource value: 0x7f050019
+			public const int checkBox1 = 2131034137;
 			
-			// aapt resource value: 0x7f05001a
-			public const int checkBox2 = 2131034138;
+			// aapt resource value: 0x7f05001b
+			public const int checkBox2 = 2131034139;
+			
+			// aapt resource value: 0x7f050012
+			public const int currentDongleText = 2131034130;
 			
 			// aapt resource value: 0x7f050004
 			public const int hybrid = 2131034116;
@@ -312,23 +315,23 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050003
 			public const int terrain = 2131034115;
 			
-			// aapt resource value: 0x7f050012
-			public const int textView1 = 2131034130;
+			// aapt resource value: 0x7f050016
+			public const int textView1 = 2131034134;
 			
-			// aapt resource value: 0x7f050017
-			public const int textView2 = 2131034135;
+			// aapt resource value: 0x7f050018
+			public const int textView2 = 2131034136;
 			
-			// aapt resource value: 0x7f050019
-			public const int textView3 = 2131034137;
-			
-			// aapt resource value: 0x7f05001b
-			public const int textView4 = 2131034139;
+			// aapt resource value: 0x7f05001a
+			public const int textView3 = 2131034138;
 			
 			// aapt resource value: 0x7f05001c
-			public const int textView5 = 2131034140;
+			public const int textView4 = 2131034140;
 			
-			// aapt resource value: 0x7f050016
-			public const int toggleButton1 = 2131034134;
+			// aapt resource value: 0x7f05001d
+			public const int textView5 = 2131034141;
+			
+			// aapt resource value: 0x7f050017
+			public const int toggleButton1 = 2131034135;
 			
 			// aapt resource value: 0x7f050007
 			public const int usernameEntry = 2131034119;
