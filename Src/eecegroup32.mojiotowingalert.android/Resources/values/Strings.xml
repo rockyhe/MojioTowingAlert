@@ -15,4 +15,5 @@
 	<string name="maps">Maps</string>
 	<string name="map">Map</string>
 	<string name="subscription">Subscriptions</string>
+	<string name="currentdongle">Current Dongle Location</string>
 </resources>

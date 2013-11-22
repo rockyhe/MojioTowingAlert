@@ -273,8 +273,8 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050005
 			public const int linearLayout1 = 2131034117;
 			
-			// aapt resource value: 0x7f050013
-			public const int listView1 = 2131034131;
+			// aapt resource value: 0x7f050014
+			public const int listView1 = 2131034132;
 			
 			// aapt resource value: 0x7f050009
 			public const int logInButton = 2131034121;
@@ -282,8 +282,8 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050011
 			public const int logOutButton = 2131034129;
 			
-			// aapt resource value: 0x7f050012
-			public const int map = 2131034130;
+			// aapt resource value: 0x7f050013
+			public const int map = 2131034131;
 			
 			// aapt resource value: 0x7f05000f
 			public const int mapsButton = 2131034127;
@@ -300,8 +300,8 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050008
 			public const int passwordEntry = 2131034120;
 			
-			// aapt resource value: 0x7f050014
-			public const int relativeLayout1 = 2131034132;
+			// aapt resource value: 0x7f050015
+			public const int relativeLayout1 = 2131034133;
 			
 			// aapt resource value: 0x7f050002
 			public const int satellite = 2131034114;
@@ -312,8 +312,8 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050003
 			public const int terrain = 2131034115;
 			
-			// aapt resource value: 0x7f050015
-			public const int textView1 = 2131034133;
+			// aapt resource value: 0x7f050012
+			public const int textView1 = 2131034130;
 			
 			// aapt resource value: 0x7f050017
 			public const int textView2 = 2131034135;
@@ -488,6 +488,9 @@ namespace eecegroup32.mojiotowingalert.android
 			
 			// aapt resource value: 0x7f060013
 			public const int common_signin_button_text_long = 2131099667;
+			
+			// aapt resource value: 0x7f06002a
+			public const int currentdongle = 2131099690;
 			
 			// aapt resource value: 0x7f060027
 			public const int dongleid = 2131099687;

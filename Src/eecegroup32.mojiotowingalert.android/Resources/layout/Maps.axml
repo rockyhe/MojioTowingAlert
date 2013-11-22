@@ -6,9 +6,18 @@
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
     p1:id="@+id/linearLayout1">
+    <TextView
+        p1:text="Medium Text"
+        p1:textAppearance="?android:attr/textAppearanceMedium"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/textView1"
+        p1:gravity="center" />
     <fragment
         p1:id="@+id/map"
         p1:layout_width="match_parent"
         p1:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment" />
+        class="com.google.android.gms.maps.MapFragment"
+        p1:layout_marginTop="5.0dp"
+        p1:layout_marginBottom="0.0dp" />
 </LinearLayout>

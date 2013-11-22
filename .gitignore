@@ -13,7 +13,7 @@ TestResults
 *.user
 *.sln.docstates
 *.userprefs
-*.csproj
+
 
 # Build results
 [Dd]ebug/
