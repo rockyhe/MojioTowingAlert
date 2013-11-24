@@ -17,7 +17,7 @@ using System.Threading;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "NotificationsActivity")]			
-	public class NotificationsActivity : Activity
+	public class NotificationsActivity : BaseActivity
 	{
 		private static TestReceiver _receiver;
 		private static IntentFilter _intentFilter;

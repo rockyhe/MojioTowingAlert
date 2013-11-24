@@ -63,6 +63,10 @@
     <Compile Include="EventService.cs" />
     <Compile Include="MojioLog.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Config.Local.cs" />
+    <Compile Include="MainApp.cs" />
+    <Compile Include="Activities\BaseActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

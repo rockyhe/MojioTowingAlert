@@ -16,7 +16,7 @@ namespace eecegroup32.mojiotowingalert.android
 {
 
 	[Activity (Label = "MapsActivity")]			
-	public class MapsActivity : Activity
+	public class MapsActivity : BaseActivity
 	{
 		Mojio.Client.MojioClient client;
 		Mojio.Device mojio;
