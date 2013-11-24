@@ -5,6 +5,8 @@
 	<string name="username">Username</string>
 	<string name="password">Password</string>
 	<string name="login">Log In</string>
+	<string name="MissingUsernameOrPassword">Please enter a username and password</string>
+	<string name="WrongCredential">Wrong username/password combination</string>
 	<string name="notifications">Notifications</string>
 	<string name="maps">Maps</string>
 	<string name="settings">Settings</string>
@@ -16,4 +18,5 @@
 	<string name="map">Map</string>
 	<string name="subscription">Subscriptions</string>
 	<string name="currentdongle">Current Dongle Location</string>
+	<string name="BadConnectionAlertMessage">Please check your network connection</string>
 </resources>

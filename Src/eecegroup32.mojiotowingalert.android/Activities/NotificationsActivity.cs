@@ -12,7 +12,7 @@ using Android.Widget;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "NotificationsActivity")]			
-	public class NotificationsActivity : Activity
+	public class NotificationsActivity : BaseActivity
 	{
 		protected override void OnCreate (Bundle bundle)
 		{

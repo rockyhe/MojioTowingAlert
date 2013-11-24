@@ -10,7 +10,7 @@ using Android.OS;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "@string/applicationName", MainLauncher = true)]
-	public class MainActivity : Activity
+	public class MainActivity : BaseActivity
 	{
 	
 		protected override void OnCreate (Bundle bundle)
