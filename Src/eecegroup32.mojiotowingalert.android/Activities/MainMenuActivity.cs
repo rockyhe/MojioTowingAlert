@@ -26,7 +26,14 @@ namespace eecegroup32.mojiotowingalert.android
 			SetContentView (Resource.Layout.MainMenu);
 
 			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
-			welcome.Text = "Welcome " + Intent.GetStringExtra ("UsernameData");
+
+			string username = string.Empty;
+			if (Client != null && Client.CurrentUser != null)
+			{
+				username = Client.CurrentUser.UserName;
+			}
+
+			welcome.Text = "Welcome " + username;
 			// Get button from the layout resource and attach an event to it
 			notifcationButton = FindViewById<Button>(Resource.Id.notificationsButton);
 			notifcationButton.Click += new EventHandler(OnNotificationsClicked);
