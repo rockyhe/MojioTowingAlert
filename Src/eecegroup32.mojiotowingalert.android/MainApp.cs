@@ -34,6 +34,10 @@ namespace eecegroup32.mojiotowingalert.android
 
 			// Setup Mojio Client
 			Client = new MojioClient(this, new Guid(ConfigSettings.MojioAppId), new Guid(ConfigSettings.MojioAppKey), ConfigSettings.MojioApiEndpoint);
+			if (Client.Token == null)
+			{
+				Client.Begin (new Guid (ConfigSettings.MojioAppId), new Guid (ConfigSettings.MojioAppKey));
+			}
 		}
 	}
 }
