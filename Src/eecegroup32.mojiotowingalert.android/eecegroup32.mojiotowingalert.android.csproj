@@ -58,6 +58,11 @@
     <Compile Include="Activities\MapsActivity.cs" />
     <Compile Include="Activities\NotificationsActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
+    <Compile Include="MyNotification.cs" />
+    <Compile Include="MyNotificationManager.cs" />
+    <Compile Include="EventService.cs" />
+    <Compile Include="MojioLog.cs" />
+    <Compile Include="ILogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
