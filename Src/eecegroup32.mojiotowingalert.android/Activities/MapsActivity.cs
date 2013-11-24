@@ -11,6 +11,7 @@ using Android.Widget;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Mojio.Events;
+using Mojio;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -53,8 +54,8 @@ namespace eecegroup32.mojiotowingalert.android
 				CameraPosition.Builder builder = CameraPosition.InvokeBuilder ();
 				builder.Target (location);
 				builder.Zoom (18);
-				builder.Bearing (155);
-				builder.Tilt (50);
+				builder.Bearing (0);
+				builder.Tilt (0);
 				CameraPosition cameraPosition = builder.Build ();
 				CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition (cameraPosition);
 
@@ -71,17 +72,11 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void SetupMojio()
 		{
-				Guid appID = new Guid("1e9dac04-5acb-477a-9a0f-f3ce8600498b");
-				Guid secretKey = new Guid("c22d37ca-4997-4d35-a159-d6ac993af8f0");
-
-				client = new Mojio.Client.MojioClient(
-					appID, 
-					secretKey,
-					Mojio.Client.MojioClient.Sandbox // or MojioClient.Live
-				);
-
-				client.SetUser( "timmy.nan@gmail.com", "ilafC123");
-				mojio = client.Get<Mojio.Device> ("SimTest_kSI7kitwwuq4Igd1eN59");
+			var devices = Client.UserMojios(Client.CurrentUser.Id);
+			foreach(Device moj in devices.Data)
+			{
+				mojio = moj;
+			}
 		}
 	}
 }
