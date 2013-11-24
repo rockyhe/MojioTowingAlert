@@ -22,7 +22,7 @@ namespace eecegroup32.mojiotowingalert.android
 			SetContentView(Resource.Layout.SplashScreen);
 			SystemClock.Sleep(3000);
 
-			if (Client.IsLoggedIn)
+			if (Client.IsLoggedIn())
 			{
 				GotoMainMenu();
 			}
