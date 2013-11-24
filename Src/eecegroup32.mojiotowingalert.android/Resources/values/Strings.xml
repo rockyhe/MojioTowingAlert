@@ -5,6 +5,8 @@
 	<string name="username">Username</string>
 	<string name="password">Password</string>
 	<string name="login">Log In</string>
+	<string name="missingUsernameOrPassword">Please enter a username and password</string>
+	<string name="wrongCredentials">Wrong username/password combination</string>
 	<string name="notifications">Notifications</string>
 	<string name="maps">Maps</string>
 	<string name="settings">Settings</string>
@@ -19,4 +21,5 @@
 	<string name="currentdongle">Current Dongle Location</string>
 	<string name="notificationID">Notification ID</string>
 	<string name="dateTime">Date</string>
+	<string name="noConnectivity">Please check your network connection</string>
 </resources>

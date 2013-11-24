@@ -12,7 +12,7 @@ using Android.Widget;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "MainMenuActivity")]			
-	public class MainMenuActivity : Activity
+	public class MainMenuActivity : BaseActivity
 	{
 		Button notifcationButton;
 		Button mapsButton;
