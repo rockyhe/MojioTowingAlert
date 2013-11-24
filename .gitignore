@@ -14,8 +14,9 @@ TestResults
 *.sln.docstates
 *.userprefs
 
-# Local Config file for Mojio AppId and SecretKey
+# Local files for MojioTowingAlert project
 Config.Local.cs
+AndroidManifest.xml
 
 # Build results
 [Dd]ebug/
