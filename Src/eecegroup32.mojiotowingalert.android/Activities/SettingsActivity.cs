@@ -15,7 +15,7 @@ using System.Net;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "SettingsActivity")]			
-	public class SettingsActivity : Activity
+	public class SettingsActivity : BaseActivity
 	{
 
 		protected override void OnCreate (Bundle bundle)
