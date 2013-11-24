@@ -41,27 +41,35 @@ namespace eecegroup32.mojiotowingalert.android
 			logOutButton.Click += new EventHandler(OnLogOutClicked);
 		}
 
-		public void OnNotificationsClicked(object sender, EventArgs e)
+		private void OnNotificationsClicked(object sender, EventArgs e)
 		{
-			var login = new Intent(this, typeof(NotificationsActivity));
-			StartActivity(login);
+			var notif = new Intent(this, typeof(NotificationsActivity));
+			StartActivity(notif);
 		}
 
-		public void OnMapsClicked(object sender, EventArgs e)
+		private void OnMapsClicked(object sender, EventArgs e)
 		{
-			var login = new Intent(this, typeof(MapsActivity));
-			StartActivity(login);
+			var maps = new Intent(this, typeof(MapsActivity));
+			StartActivity(maps);
 		}
 
-		public void OnSettingsClicked(object sender, EventArgs e)
+		private void OnSettingsClicked(object sender, EventArgs e)
 		{
-			var login = new Intent(this, typeof(SettingsActivity));
-			StartActivity(login);
+			var settings = new Intent(this, typeof(SettingsActivity));
+			StartActivity(settings);
 		}
 
-		public void OnLogOutClicked(object sender, EventArgs e)
+		private void OnLogOutClicked(object sender, EventArgs e)
+		{
+			//Clear the user session and go to login
+			Client.ClearUser();
+			GotoLogin();
+		}
+
+		private void GotoLogin()
 		{
 			var login = new Intent(this, typeof(LoginActivity));
+			login.AddFlags(ActivityFlags.ClearTop);
 			StartActivity(login);
 		}
 

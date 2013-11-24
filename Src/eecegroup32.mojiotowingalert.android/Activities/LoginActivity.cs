@@ -36,7 +36,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		}
 
-		public void OnLoginClicked(object sender, EventArgs e)
+		private void OnLoginClicked(object sender, EventArgs e)
 		{
 			EditText username = FindViewById<EditText>(Resource.Id.usernameEntry);
 			EditText password = FindViewById<EditText>(Resource.Id.passwordEntry);
