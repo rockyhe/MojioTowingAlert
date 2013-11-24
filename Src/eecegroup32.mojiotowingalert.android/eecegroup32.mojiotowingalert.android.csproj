@@ -62,6 +62,8 @@
     <Compile Include="Config.Local.cs" />
     <Compile Include="MainApp.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
+    <Compile Include="NotificationSetting.cs" />
+    <Compile Include="Services\EventService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -83,6 +85,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Activities\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservices">

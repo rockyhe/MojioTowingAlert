@@ -19,7 +19,7 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<application android:label="eecegroup32.mojiotowingalert.android">
-		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCOyu6wQ2DmZTxwkDO2flvHxJrvhxPAvwE" />
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDrY_6ibCBOQq_Hi_oHTjTPnv5O7bEbjyk" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 	</application>
 </manifest>

@@ -11,6 +11,7 @@ using Android.Widget;
 using Mojio;
 using PushSharp.Client;
 using System.Net;
+using Mojio.Events;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -27,17 +28,17 @@ namespace eecegroup32.mojiotowingalert.android
 			LoadDongles ();
 		}
 
-		private void OnNotificationToggleClicked() 
+		private void OnNotificationToggleClicked(object sender, EventArgs e) 
 		{
 			SaveNotificationSetting ();
 		}
 
-		private void OnSoundCheckBoxClicked() 
+		private void OnSoundCheckBoxClicked(object sender, EventArgs e) 
 		{
 			SaveNotificationSetting ();
 		}
 
-		private void OnVibrationCheckBoxClicked() 
+		private void OnVibrationCheckBoxClicked(object sender, EventArgs e) 
 		{
 			SaveNotificationSetting ();
 		}
@@ -54,7 +55,7 @@ namespace eecegroup32.mojiotowingalert.android
 			edits.Commit();
 		}
 
-		private void SubscribeDongle(int id)
+		private void SubscribeDongle(string id)
 		{
 			// Fetch registration ID given to this app
 			var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
@@ -106,7 +107,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitiateView()
 		{
-			Button notificationToggle = FindViewById<Button>(Resource.Id.notificationToggleButton);
+			Button notificationToggle = FindViewById<Button>(Resource.Id.NotificationToggleButton);
 			notificationToggle.Click += new EventHandler(OnNotificationToggleClicked);
 			CheckBox SoundCheckBox = FindViewById<CheckBox>(Resource.Id.SoundCheckBox);
 			SoundCheckBox.Click += new EventHandler(OnSoundCheckBoxClicked);
@@ -136,7 +137,7 @@ namespace eecegroup32.mojiotowingalert.android
 				item.LayoutParameters = parameters;
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
-					SubscribeDongle (item.Id);
+					SubscribeDongle (moj.Id);
 				};
 				dongleListLayout.AddView (item);
 				dongleButtonLayout.AddView (button);

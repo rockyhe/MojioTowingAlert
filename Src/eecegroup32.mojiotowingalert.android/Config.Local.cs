@@ -17,8 +17,8 @@ namespace eecegroup32.mojiotowingalert.android
 		public Config()
 		{
 			//App ID and SecretKey from http://sandbox.developer.moj.io/account
-			MojioAppId = "0c47d9b4-0712-49ce-961e-ca1a4cdc3a4e";
-			MojioAppKey = "291a4b82-427a-42a4-aabe-b7b26066cf4a";
+			MojioAppId = "59f309b1-a318-4711-bf5c-aa7f861704d6";
+			MojioAppKey = "2158aa6b-efd4-46b3-a6cf-b6554303a2a7";
 
 			// The API endpoint to use.  Default is Sandbox.  This MUST match where you got your app id/key.
 			MojioApiEndpoint = MojioClient.Sandbox;

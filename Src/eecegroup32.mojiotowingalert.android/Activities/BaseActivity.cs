@@ -12,12 +12,18 @@ using Android.Widget;
 using Android.Net;
 
 using Mojio.Client;
+using PushSharp.Client;
 
 namespace eecegroup32.mojiotowingalert.android
 {
 	public class BaseActivity : Activity
 	{
 		public static bool ConnectedToNetwork;
+
+		public static string SharedPreferencesName = "MojioClientTestPreferences";
+		public static string DevicePrefs = "MOJIO_DEVICE";
+		public static string NotificationPref = "NOTIFICATION_SETTING";
+		public static NotificationSetting Notif = new NotificationSetting();
 
 		public MojioClient Client
 		{
@@ -40,6 +46,17 @@ namespace eecegroup32.mojiotowingalert.android
 				alert.SetPositiveButton("Exit", delegate { Finish(); });
 				alert.Show();
 				return;
+			}
+
+			// Lets make sure we have registered for GCM messages.
+			if (!PushClient.IsRegistered(this.ApplicationContext))
+			{
+				//Check to ensure everything's setup right
+				PushClient.CheckDevice(this.ApplicationContext);
+				PushClient.CheckManifest(this.ApplicationContext);
+
+				//Call to register
+				PushClient.Register(this.ApplicationContext, PushReceiver.SENDER_IDS);
 			}
 		}
 
