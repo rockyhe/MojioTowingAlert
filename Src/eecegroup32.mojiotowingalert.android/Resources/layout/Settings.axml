@@ -37,7 +37,7 @@
             <ToggleButton
                 p1:layout_width="wrap_content"
                 p1:layout_height="29.2dp"
-                p1:id="@+id/toggleButton1"
+                p1:id="@+id/NotificationToggleButton"
                 p1:layout_marginBottom="0.0dp"
                 p1:layout_centerVertical="true"
                 p1:layout_centerHorizontal="true" />
@@ -74,7 +74,7 @@
             <CheckBox
                 p1:layout_width="wrap_content"
                 p1:layout_height="wrap_content"
-                p1:id="@+id/checkBox1"
+                p1:id="@+id/SoundCheckBox"
                 p1:layout_centerHorizontal="true"
                 p1:layout_centerVertical="true" />
         </RelativeLayout>
@@ -102,7 +102,7 @@
             <CheckBox
                 p1:layout_width="wrap_content"
                 p1:layout_height="wrap_content"
-                p1:id="@+id/checkBox1"
+                p1:id="@+id/VibrationCheckBox"
                 p1:layout_centerHorizontal="true"
                 p1:layout_centerVertical="true" />
         </RelativeLayout>

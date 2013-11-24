@@ -249,17 +249,23 @@ namespace eecegroup32.mojiotowingalert.android
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f05001c
+			public const int NotificationToggleButton = 2131034140;
+			
 			// aapt resource value: 0x7f05000b
 			public const int Password = 2131034123;
+			
+			// aapt resource value: 0x7f05001f
+			public const int SoundCheckBox = 2131034143;
 			
 			// aapt resource value: 0x7f05000a
 			public const int Username = 2131034122;
 			
+			// aapt resource value: 0x7f050022
+			public const int VibrationCheckBox = 2131034146;
+			
 			// aapt resource value: 0x7f05000c
 			public const int button1 = 2131034124;
-			
-			// aapt resource value: 0x7f05001f
-			public const int checkBox1 = 2131034143;
 			
 			// aapt resource value: 0x7f050012
 			public const int currentDongleText = 2131034130;
@@ -267,11 +273,11 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050019
 			public const int dateLayout = 2131034137;
 			
-			// aapt resource value: 0x7f050024
-			public const int dongleListLayout = 2131034148;
-			
 			// aapt resource value: 0x7f050025
-			public const int dongleSubButtonLayout = 2131034149;
+			public const int dongleListLayout = 2131034149;
+			
+			// aapt resource value: 0x7f050026
+			public const int dongleSubButtonLayout = 2131034150;
 			
 			// aapt resource value: 0x7f050004
 			public const int hybrid = 2131034116;
@@ -288,11 +294,11 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050017
 			public const int linearLayout3 = 2131034135;
 			
-			// aapt resource value: 0x7f050022
-			public const int linearLayout4 = 2131034146;
-			
 			// aapt resource value: 0x7f050023
-			public const int linearLayout5 = 2131034147;
+			public const int linearLayout4 = 2131034147;
+			
+			// aapt resource value: 0x7f050024
+			public const int linearLayout5 = 2131034148;
 			
 			// aapt resource value: 0x7f050009
 			public const int logInButton = 2131034121;
@@ -353,9 +359,6 @@ namespace eecegroup32.mojiotowingalert.android
 			
 			// aapt resource value: 0x7f050016
 			public const int textView2 = 2131034134;
-			
-			// aapt resource value: 0x7f05001c
-			public const int toggleButton1 = 2131034140;
 			
 			// aapt resource value: 0x7f050007
 			public const int usernameEntry = 2131034119;
