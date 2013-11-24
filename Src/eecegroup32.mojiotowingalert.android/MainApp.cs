@@ -20,6 +20,8 @@ namespace eecegroup32.mojiotowingalert.android
 		public static Config ConfigSettings;
 		public static MojioClient Client;
 
+		public MainApp (IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer) { }
+
 		public override void OnCreate()
 		{
 			base.OnCreate();
