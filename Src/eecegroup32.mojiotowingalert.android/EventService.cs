@@ -77,10 +77,6 @@ namespace eecegroup32.mojiotowingalert.android
     {
 		public readonly ILogger Log;
 
-        public PushService() : base(PushReceiver.SENDER_IDS) { 
-			Log = DependancyResolver.Get <ILogger> ();
-		}
-
         protected override void OnRegistered(Context context, string registrationId)
         {
             Log.Verbose("GCM Registered: " + registrationId);

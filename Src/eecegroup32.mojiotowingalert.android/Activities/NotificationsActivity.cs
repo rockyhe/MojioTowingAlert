@@ -43,70 +43,40 @@ namespace eecegroup32.mojiotowingalert.android
 
 			// Register the receiver to receive our GCM events
 			RegisterReceiver(_receiver, _intentFilter);
-			if (Dev != null)
-				RegisterEventsNotice();
+
+		}
+
+		protected override void OnResume()
+		{
+			base.OnResume();
+			ShowNotifications();
+		}
+
+		protected void ShowNotifications()
+		{
+			//Add to notifications screen
+			var notificationList = this.FindViewById<LinearLayout>(Resource.Id.notificationIDLayout);
+			TextView notificationToAdd = new TextView(this);
+			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
+			{
+				notificationToAdd.Text = (notif.getmMyNotificationId ());
+				notificationList.AddView (notificationToAdd);
+			}
+
+			var dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
+			TextView dateToAdd = new TextView(this);;
+			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
+			{
+				dateToAdd.Text = notif.getEvent ().Time.ToString ("f");
+				notificationList.AddView (dateToAdd);
+			}
+
 		}
 
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
 			UnregisterReceiver(_receiver);
-		}
-
-		private void RegisterEventsNotice()
-		{
-			// Fetch registration ID given to this app
-			var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
-
-			if (String.IsNullOrWhiteSpace (registrationId)) {
-				Log.Error ("Could not register for events, no registration ID.");
-				return;
-			}
-
-			int trials = 3; 
-			HttpStatusCode stat;
-			string msg;
-			Subscription sub;
-			bool succeed = false;
-			do
-			{
-				// Notify mojio servers what types of events we wish to receive.
-				sub = Client.SubscribeGcm(registrationId, new Subscription()
-					{
-						Event = EventType.TripStart,			// We want to register to TripStart events
-						EntityId = Dev.Id,						// For this particular mojio device
-						EntityType = SubscriptionType.Mojio,
-					}, out stat, out msg);
-
-				if (sub != null)
-				{
-					Log.Verbose("Event subscription succeeded: " + msg);
-					succeed = true;
-					break;
-				}
-				if(stat == HttpStatusCode.NotModified)
-				{
-					// We were already registered to this event type.
-					Log.Notice("Event already subscribed.");
-					succeed = true;
-					break;
-				}
-
-				trials--;
-				Log.Notice("GPSEvent subscription failed, trials left: " + trials);
-				Log.Notice("HttpStatusCode: "+ stat.ToString() + " Message:" + msg);
-			}
-			while (trials > 0);
-
-			if (!succeed)
-			{
-				// Write the checkpoint to Test Flight.
-				Log.Error("User GPSEvent subscription failure.");
-
-				Toast tmp = Toast.MakeText(this, "Subscription failed, please check network status", ToastLength.Long);
-				tmp.SetGravity(GravityFlags.CenterVertical, 0, 0);
-				tmp.Show();
-			}
 		}
 
 		/*		*
@@ -119,18 +89,17 @@ namespace eecegroup32.mojiotowingalert.android
 		 */
 		public class TestReceiver : EventReceiver
 		{
-			private readonly ILogger Log = DependancyResolver.Get <ILogger> ();
 
 			protected override void OnEvent(Context context, Event ev)
 			{
 				if (context != CurContext)
 					return;
 
-				if( context is EventBaseActivity )
-					(context as EventBaseActivity).OnMojioEventReceived(ev);
+				if( context is NotificationsActivity )
+					(context as NotificationsActivity).OnMojioEventReceived(ev);
 
-				Log.Verbose(string.Format("Event Received Context: {0} EventType: {1}",
-					context.GetType().ToString(), ev.EventType.ToString()) );
+				//Log.Verbose(string.Format("Event Received Context: {0} EventType: {1}",
+				//context.GetType().ToString(), ev.EventType.ToString()) );
 			}
 		}
 
@@ -145,12 +114,6 @@ namespace eecegroup32.mojiotowingalert.android
 			//Add to notifications
 			myNotificationManager.AddMyNotification (notification);
 
-			//Add to notificatiosn screen
-			var notificationList = this.FindViewById<LinearLayout>(Resource.Id.notificationIDLayout);
-			TextView notificationToAdd = new TextView();
-			notificationToAdd.Text (notification.getmMyNotificationId ());
-			notificationList.AddView (notificationToAdd);
-
 
 			if (!IsActivityVisible())
 				SendSystemNotification(CurContext, eve);
@@ -158,9 +121,6 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected void AddMojioEvent(Event eve)
 		{
-			if (ReceivedEvents.Exists (e => e.Id == eve.Id))
-				Log.Error ("Duplicate event received!  " + eve.Id);
-			else
 				ReceivedEvents.Add(eve);
 		}
 

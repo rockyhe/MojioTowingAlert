@@ -12,12 +12,19 @@ using Android.Widget;
 using Android.Net;
 
 using Mojio.Client;
+using Mojio;
 
 namespace eecegroup32.mojiotowingalert.android
 {
 	public class BaseActivity : Activity
 	{
 		public static bool ConnectedToNetwork;
+
+		public static Device Dev;
+
+		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
+
+		private static bool ActivityVisible;
 
 		public MojioClient Client
 		{
@@ -52,6 +59,21 @@ namespace eecegroup32.mojiotowingalert.android
 				return true;
 			}
 			return false;
+		}
+
+		public static void ActivityResumed()
+		{
+			ActivityVisible = true;
+		}
+
+		public static void ActivityPaused()
+		{
+			ActivityVisible = false;
+		}
+
+		public static bool IsActivityVisible()
+		{
+			return ActivityVisible;
 		}
 
 	}
