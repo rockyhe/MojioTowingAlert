@@ -17,4 +17,6 @@
 	<string name="subscription">Subscriptions</string>
 	<string name="dongleSubscriptions">Dongle Subscriptions</string>
 	<string name="currentdongle">Current Dongle Location</string>
+	<string name="notificationID">Notification ID</string>
+	<string name="dateTime">Date</string>
 </resources>

@@ -258,17 +258,20 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f05000c
 			public const int button1 = 2131034124;
 			
-			// aapt resource value: 0x7f05001d
-			public const int checkBox1 = 2131034141;
+			// aapt resource value: 0x7f05001f
+			public const int checkBox1 = 2131034143;
 			
 			// aapt resource value: 0x7f050012
 			public const int currentDongleText = 2131034130;
 			
-			// aapt resource value: 0x7f050022
-			public const int dongleListLayout = 2131034146;
+			// aapt resource value: 0x7f050019
+			public const int dateLayout = 2131034137;
 			
-			// aapt resource value: 0x7f050023
-			public const int dongleSubButtonLayout = 2131034147;
+			// aapt resource value: 0x7f050024
+			public const int dongleListLayout = 2131034148;
+			
+			// aapt resource value: 0x7f050025
+			public const int dongleSubButtonLayout = 2131034149;
 			
 			// aapt resource value: 0x7f050004
 			public const int hybrid = 2131034116;
@@ -279,20 +282,17 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050005
 			public const int linearLayout1 = 2131034117;
 			
-			// aapt resource value: 0x7f050015
-			public const int linearLayout2 = 2131034133;
-			
-			// aapt resource value: 0x7f05001a
-			public const int linearLayout3 = 2131034138;
-			
-			// aapt resource value: 0x7f050020
-			public const int linearLayout4 = 2131034144;
-			
-			// aapt resource value: 0x7f050021
-			public const int linearLayout5 = 2131034145;
-			
 			// aapt resource value: 0x7f050014
-			public const int listView1 = 2131034132;
+			public const int linearLayout2 = 2131034132;
+			
+			// aapt resource value: 0x7f050017
+			public const int linearLayout3 = 2131034135;
+			
+			// aapt resource value: 0x7f050022
+			public const int linearLayout4 = 2131034146;
+			
+			// aapt resource value: 0x7f050023
+			public const int linearLayout5 = 2131034147;
 			
 			// aapt resource value: 0x7f050009
 			public const int logInButton = 2131034121;
@@ -312,29 +312,32 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050001
 			public const int normal = 2131034113;
 			
+			// aapt resource value: 0x7f050018
+			public const int notificationIDLayout = 2131034136;
+			
 			// aapt resource value: 0x7f05000e
 			public const int notificationsButton = 2131034126;
 			
 			// aapt resource value: 0x7f050008
 			public const int passwordEntry = 2131034120;
 			
-			// aapt resource value: 0x7f050016
-			public const int relativeLayout1 = 2131034134;
-			
-			// aapt resource value: 0x7f050018
-			public const int relativeLayout2 = 2131034136;
+			// aapt resource value: 0x7f05001a
+			public const int relativeLayout1 = 2131034138;
 			
 			// aapt resource value: 0x7f05001b
-			public const int relativeLayout3 = 2131034139;
+			public const int relativeLayout2 = 2131034139;
 			
-			// aapt resource value: 0x7f05001c
-			public const int relativeLayout4 = 2131034140;
+			// aapt resource value: 0x7f05001d
+			public const int relativeLayout3 = 2131034141;
 			
 			// aapt resource value: 0x7f05001e
-			public const int relativeLayout5 = 2131034142;
+			public const int relativeLayout4 = 2131034142;
 			
-			// aapt resource value: 0x7f05001f
-			public const int relativeLayout6 = 2131034143;
+			// aapt resource value: 0x7f050020
+			public const int relativeLayout5 = 2131034144;
+			
+			// aapt resource value: 0x7f050021
+			public const int relativeLayout6 = 2131034145;
 			
 			// aapt resource value: 0x7f050002
 			public const int satellite = 2131034114;
@@ -345,11 +348,14 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f050003
 			public const int terrain = 2131034115;
 			
-			// aapt resource value: 0x7f050017
-			public const int textView1 = 2131034135;
+			// aapt resource value: 0x7f050015
+			public const int textView1 = 2131034133;
 			
-			// aapt resource value: 0x7f050019
-			public const int toggleButton1 = 2131034137;
+			// aapt resource value: 0x7f050016
+			public const int textView2 = 2131034134;
+			
+			// aapt resource value: 0x7f05001c
+			public const int toggleButton1 = 2131034140;
 			
 			// aapt resource value: 0x7f050007
 			public const int usernameEntry = 2131034119;
@@ -510,6 +516,9 @@ namespace eecegroup32.mojiotowingalert.android
 			// aapt resource value: 0x7f06002b
 			public const int currentdongle = 2131099691;
 			
+			// aapt resource value: 0x7f06002d
+			public const int dateTime = 2131099693;
+			
 			// aapt resource value: 0x7f06002a
 			public const int dongleSubscriptions = 2131099690;
 			
@@ -530,6 +539,9 @@ namespace eecegroup32.mojiotowingalert.android
 			
 			// aapt resource value: 0x7f060022
 			public const int maps = 2131099682;
+			
+			// aapt resource value: 0x7f06002c
+			public const int notificationID = 2131099692;
 			
 			// aapt resource value: 0x7f060021
 			public const int notifications = 2131099681;

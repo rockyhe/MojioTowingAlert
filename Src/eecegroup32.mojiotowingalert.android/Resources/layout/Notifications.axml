@@ -1,7 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:p1="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:p1="http://schemas.android.com/apk/res/android"
+    p1:orientation="vertical"
     p1:minWidth="25px"
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
-    p1:id="@+id/listView1" />
+    p1:id="@+id/linearLayout1">
+    <LinearLayout
+        p1:orientation="horizontal"
+        p1:minWidth="25px"
+        p1:minHeight="25px"
+        p1:layout_width="match_parent"
+        p1:layout_height="41.4dp"
+        p1:id="@+id/linearLayout2">
+        <TextView
+            p1:text="@string/notificationID"
+            p1:textAppearance="?android:attr/textAppearanceMedium"
+            p1:layout_width="205.8dp"
+            p1:layout_height="match_parent"
+            p1:id="@+id/textView1"
+            p1:layout_gravity="center"
+            p1:textAlignment="center"
+            p1:gravity="center" />
+        <TextView
+            p1:text="@string/dateTime"
+            p1:textAppearance="?android:attr/textAppearanceMedium"
+            p1:layout_width="match_parent"
+            p1:layout_height="match_parent"
+            p1:id="@+id/textView2"
+            p1:layout_gravity="fill"
+            p1:textAlignment="center"
+            p1:gravity="center" />
+    </LinearLayout>
+    <LinearLayout
+        p1:orientation="horizontal"
+        p1:minWidth="25px"
+        p1:minHeight="25px"
+        p1:layout_width="match_parent"
+        p1:layout_height="match_parent"
+        p1:id="@+id/linearLayout3">
+        <LinearLayout
+            p1:orientation="vertical"
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="206.9dp"
+            p1:layout_height="match_parent"
+            p1:id="@+id/notificationIDLayout" />
+        <LinearLayout
+            p1:orientation="vertical"
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="111.6dp"
+            p1:layout_height="match_parent"
+            p1:id="@+id/dateLayout" />
+    </LinearLayout>
+</LinearLayout>
