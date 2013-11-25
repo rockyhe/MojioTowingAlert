@@ -14,8 +14,6 @@ TestResults
 *.sln.docstates
 *.userprefs
 
-# Local Config file for Mojio AppId and SecretKey
-Config.Local.cs
 
 # Build results
 [Dd]ebug/

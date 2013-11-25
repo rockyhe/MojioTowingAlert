@@ -10,22 +10,6 @@ using Android.Views;
 using Android.Widget;
 using Mojio.Client;
 
-/*
-//Make a Config.Local.cs file that looks like this:
-public partial class Config
-{
-	public Config()
-	{
-		//App ID and SecretKey from http://sandbox.developer.moj.io/account
-		MojioAppId = <your app id here>;
-		MojioAppKey = <your app key here>;
-
-		// The API endpoint to use.  Default is Sandbox.  This MUST match where you got your app id/key.
-		MojioApiEndpoint = MojioClient.Sandbox;
-	}
-}
-*/
-
 namespace eecegroup32.mojiotowingalert.android
 {
 	public partial class Config
