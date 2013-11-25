@@ -97,8 +97,6 @@ namespace eecegroup32.mojiotowingalert.android
 
 			if (!succeed)
 			{
-				// Write the checkpoint to Test Flight.
-
 				Toast tmp = Toast.MakeText(this, "Subscription failed, please check network status", ToastLength.Long);
 				tmp.SetGravity(GravityFlags.CenterVertical, 0, 0);
 				tmp.Show();

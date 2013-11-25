@@ -25,6 +25,9 @@ namespace eecegroup32.mojiotowingalert.android
 		public static string NotificationPref = "NOTIFICATION_SETTING";
 		public static NotificationSetting Notif = new NotificationSetting();
 
+		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
+		private static bool ActivityVisible;
+
 		public MojioClient Client
 		{
 			get { return MainApp.Client; }
@@ -57,6 +60,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 				//Call to register
 				PushClient.Register(this.ApplicationContext, PushReceiver.SENDER_IDS);
+				Boolean x = PushClient.IsRegistered (this.ApplicationContext);
 			}
 		}
 
@@ -69,6 +73,39 @@ namespace eecegroup32.mojiotowingalert.android
 				return true;
 			}
 			return false;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+		}
+
+		// bookkeeping status of the app: in foreground or not
+		protected override void OnResume()
+		{
+			base.OnResume();
+			ActivityResumed();
+		}
+
+		protected override void OnPause()
+		{
+			base.OnPause();
+			ActivityPaused();
+		}
+
+		public static bool IsActivityVisible()
+		{
+			return ActivityVisible;
+		}
+
+		public static void ActivityResumed()
+		{
+			ActivityVisible = true;
+		}
+
+		public static void ActivityPaused()
+		{
+			ActivityVisible = false;
 		}
 
 	}
