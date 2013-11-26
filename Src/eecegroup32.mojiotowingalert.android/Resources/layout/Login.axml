@@ -5,12 +5,16 @@
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
-    p1:id="@+id/linearLayout1">
+    p1:id="@+id/linearLayout1"
+    p1:scrollbars="vertical"
+    p1:verticalScrollbarPosition="right"
+    p1:scrollbarStyle="insideInset">
     <ImageView
         p1:src="@drawable/MojioAppLogo"
         p1:layout_width="match_parent"
         p1:layout_height="235.1dp"
-        p1:id="@+id/imageView1" />
+        p1:id="@+id/imageView1"
+        p1:scrollbars="none" />
     <EditText
         p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
@@ -18,7 +22,8 @@
         p1:layout_marginLeft="50dp"
         p1:layout_marginRight="50dp"
         p1:hint="@string/username"
-        p1:maxLength="20" />
+        p1:maxLength="20"
+        p1:scrollbars="none" />
     <EditText
         p1:inputType="textPassword"
         p1:layout_width="match_parent"
@@ -26,10 +31,14 @@
         p1:id="@+id/passwordEntry"
         p1:layout_marginLeft="50dp"
         p1:layout_marginRight="50dp"
-        p1:hint="@string/password" />
+        p1:hint="@string/password"
+        p1:scrollbars="none" />
     <Button
         p1:text="@string/login"
         p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
-        p1:id="@+id/logInButton" />
+        p1:id="@+id/logInButton"
+        p1:layout_marginRight="101.3dp"
+        p1:layout_marginLeft="101.3dp"
+        p1:scrollbars="none" />
 </LinearLayout>

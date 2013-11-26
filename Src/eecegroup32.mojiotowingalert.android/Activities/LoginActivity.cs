@@ -36,7 +36,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		}
 
-		public void OnLoginClicked(object sender, EventArgs e)
+		private void OnLoginClicked(object sender, EventArgs e)
 		{
 			EditText username = FindViewById<EditText>(Resource.Id.usernameEntry);
 			EditText password = FindViewById<EditText>(Resource.Id.passwordEntry);
@@ -61,7 +61,7 @@ namespace eecegroup32.mojiotowingalert.android
 					//Check if login was a success or not
 					if (Client.IsLoggedIn())
 					{
-						GotoMainMenu(username.Text);
+						GotoMainMenu();
 					}
 					else
 					{
@@ -72,10 +72,9 @@ namespace eecegroup32.mojiotowingalert.android
 			});
 		}
 
-		private void GotoMainMenu(string username)
+		private void GotoMainMenu()
 		{
 			var menu = new Intent(this, typeof(MainMenuActivity));
-			menu.PutExtra("UsernameData", username);
 			StartActivity(menu);
 		}
 

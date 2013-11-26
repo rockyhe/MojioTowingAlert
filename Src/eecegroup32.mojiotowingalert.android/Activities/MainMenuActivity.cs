@@ -31,7 +31,14 @@ namespace eecegroup32.mojiotowingalert.android
 			SetContentView (Resource.Layout.MainMenu);
 
 			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
-			welcome.Text = "Welcome " + Intent.GetStringExtra ("UsernameData");
+
+			string username = string.Empty;
+			if (Client != null && Client.CurrentUser != null)
+			{
+				username = Client.CurrentUser.UserName;
+			}
+
+			welcome.Text = "Welcome " + username;
 			// Get button from the layout resource and attach an event to it
 			notifcationButton = FindViewById<Button>(Resource.Id.notificationsButton);
 			notifcationButton.Click += new EventHandler(OnNotificationsClicked);
@@ -63,28 +70,36 @@ namespace eecegroup32.mojiotowingalert.android
 			CurContext = this;
 		}
 
-		public void OnNotificationsClicked(object sender, EventArgs e)
+		private void OnNotificationsClicked(object sender, EventArgs e)
 		{
-			var login = new Intent(this, typeof(NotificationsActivity));
-			StartActivity(login);
+			var notif = new Intent(this, typeof(NotificationsActivity));
+			StartActivity(notif);
 		}
 
-		public void OnMapsClicked(object sender, EventArgs e)
+		private void OnMapsClicked(object sender, EventArgs e)
 		{
-			var login = new Intent(this, typeof(MapsActivity));
-			StartActivity(login);
+			var maps = new Intent(this, typeof(MapsActivity));
+			StartActivity(maps);
 		}
 
-		public void OnSettingsClicked(object sender, EventArgs e)
+		private void OnSettingsClicked(object sender, EventArgs e)
 		{
-			var login = new Intent(this, typeof(SettingsActivity));
+			var settings = new Intent(this, typeof(SettingsActivity));
 			/** NEED TO PREVENT MAIN MENU ACTIVITY FROM BEING DESTROYED **/
-			StartActivity(login);
+			StartActivity(settings);
 		}
 
-		public void OnLogOutClicked(object sender, EventArgs e)
+		private void OnLogOutClicked(object sender, EventArgs e)
+		{
+			//Clear the user session and go to login
+			Client.ClearUser();
+			GotoLogin();
+		}
+
+		private void GotoLogin()
 		{
 			var login = new Intent(this, typeof(LoginActivity));
+			login.AddFlags(ActivityFlags.ClearTop);
 			StartActivity(login);
 		}
 

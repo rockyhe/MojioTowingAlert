@@ -14,6 +14,9 @@ TestResults
 *.sln.docstates
 *.userprefs
 
+# Local files for MojioTowingAlert project
+Config.Local.cs
+API-Keys.xml
 
 # Build results
 [Dd]ebug/

@@ -5,7 +5,8 @@
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
-    p1:id="@+id/linearLayout1">
+    p1:id="@+id/linearLayout1"
+    p1:scrollbars="vertical">
     <ImageView
         p1:src="@drawable/MojioAppLogo"
         p1:layout_width="match_parent"
