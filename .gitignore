@@ -16,7 +16,7 @@ TestResults
 
 # Local files for MojioTowingAlert project
 Config.Local.cs
-AndroidManifest.xml
+API-Keys.xml
 
 # Build results
 [Dd]ebug/
