@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<!-- Put your own Google Maps V2 API Key here! -->
 	<string name="GoogleMapsKey">AIzaSyDFdmZ8XY0fpUiJhqayhzb1ss0FzK5t7BY</string>
 </resources>
