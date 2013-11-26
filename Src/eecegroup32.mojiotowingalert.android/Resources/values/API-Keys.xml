@@ -2,4 +2,6 @@
 <resources>
 	<!-- Put your own Google Maps V2 API Key here! -->
 	<string name="GoogleMapsKey">AIzaSyDFdmZ8XY0fpUiJhqayhzb1ss0FzK5t7BY</string>
+	<!-- Put your own Google API Console App Project ID here! -->
+	<string name="GoogleConsoleProjectId">44454218795</string>
 </resources>

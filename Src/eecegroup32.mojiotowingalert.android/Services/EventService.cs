@@ -1,17 +1,15 @@
 using System.Text;
+
 using Android.App;
 using Android.Content;
 using Android.Util;
+using Android.OS;
+
 using PushSharp.Client;
 using Mojio.Events;
 using Mojio.Client;
-using Android.OS;
 
-//VERY VERY VERY IMPORTANT NOTE!!!!
-// Your package name MUST NOT start with an uppercase letter.
-// Android does not allow permissions to start with an upper case letter
-// If it does you will get a very cryptic error in logcat and it will not be obvious why you are crying!
-// So please, for the love of all that is kind on this earth, use a LOWERCASE first letter in your Package Name!!!!
+//Make sure package name is lowercase!
 [assembly: Permission(Name = "@PACKAGE_NAME@.permission.C2D_MESSAGE")] //, ProtectionLevel = Android.Content.PM.Protection.Signature)]
 [assembly: UsesPermission(Name = "@PACKAGE_NAME@.permission.C2D_MESSAGE")]
 [assembly: UsesPermission(Name = "com.google.android.c2dm.permission.RECEIVE")]
@@ -35,7 +33,7 @@ namespace eecegroup32.mojiotowingalert.android
         //  Be sure to get the right Project ID from your Google APIs Console.  It's not the named project ID that appears in the Overview,
         //  but instead the numeric project id in the url: eg: https://code.google.com/apis/console/?pli=1#project:785671162406:overview
         //  where 785671162406 is the project id, which is the SENDER_ID to use!
-		public static string[] SENDER_IDS = new string[] { "477029438643" };
+		public static string[] SENDER_IDS = new string[] { Android.Content.Res.Resources.System.GetString(Resource.String.GoogleConsoleProjectId) };
 
         public const string TAG = "PushService";
     }
@@ -50,7 +48,7 @@ namespace eecegroup32.mojiotowingalert.android
             if (!string.IsNullOrEmpty(json))
             {
 				// Deserialize using Mojio's Deserializer
-                var ev = MojioClient.Deserialize<Event>(json);
+				Event ev = MojioClient.Deserialize<Event>(json);
 
                 if (ev != null)
                     OnEvent(context,ev);
@@ -92,7 +90,6 @@ namespace eecegroup32.mojiotowingalert.android
 
         protected override void OnMessage(Context context, Intent intent)
         {
-
             if (intent != null && intent.GetStringExtra("type") == "MojioEvent")
             {
                 var broadcast = new Intent();
@@ -105,7 +102,6 @@ namespace eecegroup32.mojiotowingalert.android
 
         protected override bool OnRecoverableError(Context context, string errorId)
         {
-
             return base.OnRecoverableError(context, errorId);
         }
 
