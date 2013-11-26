@@ -17,6 +17,8 @@ TestResults
 # Local files for MojioTowingAlert project
 Config.Local.cs
 API-Keys.xml
+Resource.Designer.cs
+
 
 # Build results
 [Dd]ebug/
