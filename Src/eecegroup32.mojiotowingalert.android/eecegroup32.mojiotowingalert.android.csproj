@@ -68,6 +68,7 @@
     <Compile Include="Services\EventService.cs" />
     <Compile Include="MyNotification.cs" />
     <Compile Include="MyNotificationManager.cs" />
+    <Compile Include="Activities\EventBaseActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

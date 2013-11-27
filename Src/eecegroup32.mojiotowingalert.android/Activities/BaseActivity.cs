@@ -12,6 +12,7 @@ using Android.Widget;
 using Android.Net;
 
 using Mojio.Client;
+using Mojio;
 using PushSharp.Client;
 
 namespace eecegroup32.mojiotowingalert.android
@@ -23,6 +24,7 @@ namespace eecegroup32.mojiotowingalert.android
 		public static string SharedPreferencesName = "MojioClientTestPreferences";
 		public static string DevicePrefs = "MOJIO_DEVICE";
 		public static string NotificationPref = "NOTIFICATION_SETTING";
+		public static Device Dev;
 		public static NotificationSetting Notif = new NotificationSetting();
 
 		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
@@ -63,6 +65,15 @@ namespace eecegroup32.mojiotowingalert.android
 				Boolean x = PushClient.IsRegistered (this.ApplicationContext);
 			}
 		}
+
+		public static void setupDevice()
+		{		
+			var res = MainApp.Client.UserMojios (MainApp.Client.CurrentUser.Id);
+			foreach (Device moj in res.Data) {
+				Dev = moj;
+			}
+		}
+
 
 		protected bool CheckNetworkConnection()
 		{
