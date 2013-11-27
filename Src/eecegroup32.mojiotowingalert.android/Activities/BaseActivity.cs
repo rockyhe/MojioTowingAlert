@@ -66,10 +66,12 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 		}
 
-		public static void setupDevice()
-		{		
-			var res = MainApp.Client.UserMojios (MainApp.Client.CurrentUser.Id);
-			foreach (Device moj in res.Data) {
+		public static void SetupDevice()
+		{
+			//TODO: Currently assuming only one device per user.
+			Results<Device> res = MainApp.Client.UserMojios(MainApp.Client.CurrentUser.Id);
+			foreach (Device moj in res.Data)
+			{
 				Dev = moj;
 			}
 		}

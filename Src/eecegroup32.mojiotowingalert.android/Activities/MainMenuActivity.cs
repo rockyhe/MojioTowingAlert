@@ -38,7 +38,7 @@ namespace eecegroup32.mojiotowingalert.android
 				username = Client.CurrentUser.UserName;
 			}
 
-			setupDevice ();
+			SetupDevice();
 
 			welcome.Text = "Welcome " + username;
 			// Get button from the layout resource and attach an event to it
