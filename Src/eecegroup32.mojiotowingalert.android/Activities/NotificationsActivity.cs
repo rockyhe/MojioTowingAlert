@@ -34,21 +34,20 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			//Add to notifications screen
 			var notificationList = this.FindViewById<LinearLayout>(Resource.Id.notificationIDLayout);
-			TextView notificationToAdd = new TextView(this);
 			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
 			{
+				TextView notificationToAdd = new TextView(this);
 				notificationToAdd.Text = (notif.getmMyNotificationId ());
 				notificationList.AddView (notificationToAdd);
 			}
 
 			var dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
-			TextView dateToAdd = new TextView(this);;
 			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
 			{
+				TextView dateToAdd = new TextView(this);
 				dateToAdd.Text = notif.getEvent ().Time.ToString ("f");
-				notificationList.AddView (dateToAdd);
+				dateList.AddView (dateToAdd);
 			}
-
 		}
 	}
 }
