@@ -14,12 +14,12 @@ namespace eecegroup32.mojiotowingalert.android
 {
 	public partial class Config
 	{
-		//App ID and SecretKey from http://sandbox.developer.moj.io/account
-		public string MojioAppId = null;
-		public string MojioAppKey = null;
-
-		// The API endpoint to use.  Default is Sandbox.  This MUST match where you got your app id/key.
-		public string MojioApiEndpoint = MojioClient.Sandbox;
+//		//App ID and SecretKey from http://sandbox.developer.moj.io/account
+//		public string MojioAppId = null;
+//		public string MojioAppKey = null;
+//
+//		// The API endpoint to use.  Default is Sandbox.  This MUST match where you got your app id/key.
+//		public string MojioApiEndpoint = MojioClient.Sandbox;
 	}
 }
 

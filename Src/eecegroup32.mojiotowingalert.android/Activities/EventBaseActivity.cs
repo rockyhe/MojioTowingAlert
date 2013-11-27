@@ -41,6 +41,8 @@ namespace eecegroup32.mojiotowingalert.android
             if (_intentFilter == null)
                 _intentFilter = new IntentFilter(EventReceiver.IntentAction);
 
+			SetupDevice();
+
 			// Register the receiver to receive our GCM events
             RegisterReceiver(_receiver, _intentFilter);
             if (Dev != null)
@@ -156,6 +158,9 @@ namespace eecegroup32.mojiotowingalert.android
         {
 			// Add the event to our event list
             AddMojioEvent(eve);
+
+			MyNotification notification = new MyNotification (eve);
+			myNotificationManager.AddMyNotification (notification);
 
             if (!IsActivityVisible())
                 SendSystemNotification(CurContext, eve);
