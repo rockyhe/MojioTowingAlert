@@ -30,6 +30,7 @@ namespace eecegroup32.mojiotowingalert.android
 		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
 		private static bool ActivityVisible;
 
+		//Reference to single instance of Mojio client
 		public MojioClient Client
 		{
 			get { return MainApp.Client; }
