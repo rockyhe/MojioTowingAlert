@@ -19,6 +19,7 @@ namespace eecegroup32.mojiotowingalert.android
 			//Show splash screen
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.SplashScreen);
+
 			SystemClock.Sleep(3000);
 
 			if (Client.IsLoggedIn())

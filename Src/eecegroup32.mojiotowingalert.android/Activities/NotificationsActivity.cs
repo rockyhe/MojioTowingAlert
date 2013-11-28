@@ -15,7 +15,7 @@ using Mojio.Events;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "NotificationsActivity")]			
-	public class NotificationsActivity : BaseActivity
+	public class NotificationsActivity : EventBaseActivity
 	{
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -28,25 +28,44 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			base.OnResume();
 			ShowNotifications();
+		}	
+
+		protected override void OnStart()
+		{
+			base.OnStart();
+			CurContext = this;
 		}
+
+		protected override void OnMojioEventReceived(Event eve)
+		{
+			MyNotification notification = new MyNotification (eve);
+			myNotificationManager.AddMyNotification (notification);
+
+			ShowNotifications ();
+			base.OnMojioEventReceived(eve);
+		}
+
 
 		protected void ShowNotifications()
 		{
+
 			//Add to notifications screen
 			var notificationList = this.FindViewById<LinearLayout>(Resource.Id.notificationIDLayout);
-			TextView notificationToAdd = new TextView(this);
+			notificationList.RemoveAllViewsInLayout ();
 			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
 			{
+				TextView notificationToAdd = new TextView(this);
 				notificationToAdd.Text = (notif.getmMyNotificationId ());
 				notificationList.AddView (notificationToAdd);
 			}
 
 			var dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
-			TextView dateToAdd = new TextView(this);;
+			dateList.RemoveAllViewsInLayout ();
 			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
 			{
+				TextView dateToAdd = new TextView(this);
 				dateToAdd.Text = notif.getEvent ().Time.ToString ("f");
-				notificationList.AddView (dateToAdd);
+				dateList.AddView (dateToAdd);
 			}
 
 		}

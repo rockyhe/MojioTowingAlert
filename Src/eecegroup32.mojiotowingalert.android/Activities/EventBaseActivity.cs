@@ -29,6 +29,8 @@ namespace eecegroup32.mojiotowingalert.android
         {
             base.OnCreate(bundle);
 
+			SetupDevice();
+
 			// Initialize our list of events with the last 5 events.
 			if (ReceivedEvents == null)
 				ReceivedEvents = new List<Event> ();
@@ -154,9 +156,6 @@ namespace eecegroup32.mojiotowingalert.android
 
         protected virtual void OnMojioEventReceived(Event eve)
         {
-			// Add the event to our event list
-            AddMojioEvent(eve);
-
             if (!IsActivityVisible())
                 SendSystemNotification(CurContext, eve);
         }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,18 +15,11 @@ namespace eecegroup32.mojiotowingalert.android
 		private Event mEvent { get; set; }
 		
 		//Constructor
-		public MyNotification (Event incomingEvent, System.Guid incomingGuid)
+		public MyNotification (Event incomingEvent)
 		{
-            mMyNotificationId = incomingGuid.ToString();
+			mMyNotificationId = incomingEvent.Id.ToString ();
             mEvent = incomingEvent;
 		}
-
-        //Constructor
-        public MyNotification(Event incomingEvent)
-        {
-            mMyNotificationId = System.Guid.NewGuid().ToString();
-            mEvent = incomingEvent;
-        }
 
         //Constructor
         public MyNotification()

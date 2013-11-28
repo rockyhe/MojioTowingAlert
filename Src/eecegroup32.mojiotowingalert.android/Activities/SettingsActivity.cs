@@ -18,7 +18,7 @@ using Mojio.Events;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "SettingsActivity")]			
-	public class SettingsActivity : EventBaseActivity
+	public class SettingsActivity : BaseActivity
 	{
 
 		protected override void OnCreate (Bundle bundle)
@@ -58,7 +58,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnStart()
 		{
 			base.OnStart();
-			CurContext = this;
+
 		}
 
 		protected override void OnResume()
@@ -66,10 +66,7 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnResume();
 		}
 
-		protected override void OnMojioEventReceived(Event eve)
-		{
-			base.OnMojioEventReceived(eve);
-		}
+
 
 		private void SubscribeDongle(string id)
 		{

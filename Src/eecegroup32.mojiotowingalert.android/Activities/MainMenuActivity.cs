@@ -23,7 +23,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		//private static TestReceiver _receiver;
 		//private static IntentFilter _intentFilter;
-		protected static Context CurContext;
+		//protected static Context CurContext;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -37,8 +37,7 @@ namespace eecegroup32.mojiotowingalert.android
 			{
 				username = Client.CurrentUser.UserName;
 			}
-
-			SetupDevice();
+		
 
 			welcome.Text = "Welcome " + username;
 			// Get button from the layout resource and attach an event to it
@@ -69,8 +68,13 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnStart()
 		{
 			base.OnStart();
-			CurContext = this;
 		}
+
+		protected override void OnResume()
+		{
+			base.OnResume();
+		}
+
 
 		private void OnNotificationsClicked(object sender, EventArgs e)
 		{
