@@ -41,11 +41,14 @@ namespace eecegroup32.mojiotowingalert.android
             if (_intentFilter == null)
                 _intentFilter = new IntentFilter(EventReceiver.IntentAction);
 
+			SetupDevice();
+
 			// Register the receiver to receive our GCM events
             RegisterReceiver(_receiver, _intentFilter);
-            if (Dev != null)
-                RegisterEventsNotice();
-
+			if (Dev != null)
+			{
+				RegisterEventsNotice ();
+			}
         }
 
         protected override void OnDestroy()

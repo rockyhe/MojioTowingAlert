@@ -13,7 +13,7 @@ using Mojio.Events;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "MainMenuActivity")]			
-	public class MainMenuActivity : BaseActivity
+	public class MainMenuActivity : EventBaseActivity
 	{
 		Button notifcationButton;
 		Button mapsButton;
@@ -36,7 +36,6 @@ namespace eecegroup32.mojiotowingalert.android
 				username = Client.CurrentUser.UserName;
 			}
 
-			SetupDevice();
 
 			welcome.Text = "Welcome " + username;
 			// Get button from the layout resource and attach an event to it
