@@ -60,7 +60,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			// Use Linq queries to query our API for list of events.
 			var query = from e in Client.Queryable<Event> ()
-							where e.EventType.Equals (EventType.TripStart)
+				            where e.EventType.Equals (EventType.Tow)
 							orderby e.Time descending
 						select e;
 
@@ -93,7 +93,7 @@ namespace eecegroup32.mojiotowingalert.android
 				// Notify mojio servers what types of events we wish to receive.
                 sub = Client.SubscribeGcm(registrationId, new Subscription()
                 {
-					Event = EventType.TripStart,			// We want to register to TripStart events
+					Event = EventType.Tow,			// We want to register to TripStart events
                     EntityId = Dev.Id,						// For this particular mojio device
                     EntityType = SubscriptionType.Mojio,
                 }, out stat, out msg);
@@ -174,9 +174,9 @@ namespace eecegroup32.mojiotowingalert.android
         {
 			// When event is received while app is inactive, lets create a notification popup.
             var nMgr = (NotificationManager)context.GetSystemService(NotificationService);
-            var notification = new Notification(Resource.Drawable.Icon, "New Mojio event received");
+			var notification = new Notification(Resource.Drawable.Icon, "Tow Alert received");
             var pendingIntent = PendingIntent.GetActivity(context, 0, new Intent(context, context.GetType()), 0);
-            notification.SetLatestEventInfo(context, "New Mojio event", eve.EventType.ToString(), pendingIntent);
+			notification.SetLatestEventInfo(context, "New Tow Alert", eve.EventType.ToString(), pendingIntent);
             notification.Flags = NotificationFlags.AutoCancel;
             nMgr.Notify(0, notification);
         }
