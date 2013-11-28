@@ -66,52 +66,8 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnResume();
 		}
 
-		private void SubscribeDongle(string id)
+		private void ToggleSubscribeDongle(string id)
 		{
-//			// Fetch registration ID given to this app
-//			var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
-//
-//			if (String.IsNullOrWhiteSpace (registrationId)) {
-//				return;
-//			}
-//
-//			int trials = 3; 
-//			HttpStatusCode stat;
-//			string msg;
-//			Subscription sub;
-//			bool succeed = false;
-//			do
-//			{
-//				// Notify mojio servers what types of events we wish to receive.
-//				sub = Client.SubscribeGcm(registrationId, new Subscription()
-//					{
-//						Event = EventType.TripStart,			// We want to register to TripStart events
-//						EntityId = id,						// For this particular mojio device
-//						EntityType = SubscriptionType.Mojio,
-//					}, out stat, out msg);
-//
-//				if (sub != null)
-//				{
-//					succeed = true;
-//					break;
-//				}
-//				if(stat == HttpStatusCode.NotModified)
-//				{
-//					// We were already registered to this event type.
-//					succeed = true;
-//					break;
-//				}
-//
-//				trials--;
-//			}
-//			while (trials > 0);
-//
-//			if (!succeed)
-//			{
-//				Toast tmp = Toast.MakeText(this, "Subscription failed, please check network status", ToastLength.Long);
-//				tmp.SetGravity(GravityFlags.CenterVertical, 0, 0);
-//				tmp.Show();
-//			}
 		}
 
 		private void InitiateView()
@@ -146,7 +102,7 @@ namespace eecegroup32.mojiotowingalert.android
 				item.LayoutParameters = parameters;
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
-					SubscribeDongle (moj.Id);
+					ToggleSubscribeDongle (moj.Id);
 				};
 				dongleListLayout.AddView (item);
 				dongleButtonLayout.AddView (button);

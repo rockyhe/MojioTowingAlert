@@ -19,9 +19,8 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		protected override void OnCreate (Bundle bundle)
 		{
-			base.OnCreate (bundle);
-			SetContentView (Resource.Layout.Notifications);
-			// Create your application here
+			base.OnCreate(bundle);
+			SetContentView(Resource.Layout.Notifications);
 		}
 
 		protected override void OnResume()
@@ -37,7 +36,7 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
 			{
 				TextView notificationToAdd = new TextView(this);
-				notificationToAdd.Text = (notif.getmMyNotificationId ());
+				notificationToAdd.Text = (notif.getmMyNotificationId());
 				notificationList.AddView (notificationToAdd);
 			}
 
@@ -45,7 +44,7 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
 			{
 				TextView dateToAdd = new TextView(this);
-				dateToAdd.Text = notif.getEvent ().Time.ToString ("f");
+				dateToAdd.Text = notif.getEvent().Time.ToString ("f");
 				dateList.AddView (dateToAdd);
 			}
 		}

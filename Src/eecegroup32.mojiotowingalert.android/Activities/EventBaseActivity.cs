@@ -157,9 +157,16 @@ namespace eecegroup32.mojiotowingalert.android
 			// Add the event to our event list
             AddMojioEvent(eve);
 
+			// Create a Notification object and add it to our notification list
+			MyNotification notification = new MyNotification(eve);
+			myNotificationManager.AddMyNotification(notification);
+
+			//Send a system notification only if activity is not visible
             if (!IsActivityVisible())
+			{
                 SendSystemNotification(CurContext, eve);
-        }
+        	}
+		}
 
         protected void AddMojioEvent(Event eve)
         {
