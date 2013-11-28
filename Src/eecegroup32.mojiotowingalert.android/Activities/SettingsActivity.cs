@@ -66,6 +66,11 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnResume();
 		}
 
+		protected override void OnMojioEventReceived(Event eve)
+		{
+			base.OnMojioEventReceived(eve);
+		}
+
 		private void SubscribeDongle(string id)
 		{
 //			// Fetch registration ID given to this app
