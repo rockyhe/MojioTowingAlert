@@ -23,9 +23,10 @@ namespace eecegroup32.mojiotowingalert.android
 
 		public static string SharedPreferencesName = "MojioClientTestPreferences";
 		public static string DevicePrefs = "MOJIO_DEVICE";
-		public static string NotificationPref = "NOTIFICATION_SETTING";
+		public static string NotificationTogglePref = "NOTIFICATION_TOGGLE_PREFERENCE";
+		public static string NotificationSoundPref = "NOTIFICATION_SOUND_PREFERENCE";
+		public static string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
 		public static Device Dev;
-		public static NotificationSetting Notif = new NotificationSetting();
 
 		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
 		private static bool ActivityVisible;
@@ -120,6 +121,28 @@ namespace eecegroup32.mojiotowingalert.android
 		public static void ActivityPaused()
 		{
 			ActivityVisible = false;
+		}
+
+		public bool GetNotificationTogglePref()
+		{
+			return GetNotificationSetting (NotificationTogglePref);
+		}
+
+		public bool GetNotificationSoundPref()
+		{
+			return GetNotificationSetting (NotificationSoundPref);
+		}
+
+		public bool GetNotificationVibrationPref()
+		{
+			return GetNotificationSetting (NotificationVibrationPref);
+		}
+
+		private bool GetNotificationSetting(String option)
+		{
+			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
+			var result = preferences.GetString (option, Boolean.TrueString);
+			return Boolean.Parse (result);
 		}
 
 	}

@@ -20,38 +20,40 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity (Label = "SettingsActivity")]			
 	public class SettingsActivity : EventBaseActivity
 	{
+		ToggleButton notificationToggle;
+		CheckBox soundCheckBox;
+		CheckBox vibrationCheckBox;
+		LinearLayout dongleListLayout;
+		LinearLayout dongleButtonLayout;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Settings);
-			InitiateView();
-			LoadDongles ();
+			InitiateContentView();
+			LoadDongleList ();
 		}
 
 		private void OnNotificationToggleClicked(object sender, EventArgs e) 
 		{
-			SaveNotificationSetting ();
+			SaveNotificationSetting (NotificationTogglePref, notificationToggle.Checked);
 		}
 
 		private void OnSoundCheckBoxClicked(object sender, EventArgs e) 
 		{
-			SaveNotificationSetting ();
+			SaveNotificationSetting (NotificationSoundPref, soundCheckBox.Checked);
 		}
 
 		private void OnVibrationCheckBoxClicked(object sender, EventArgs e) 
 		{
-			SaveNotificationSetting ();
+			SaveNotificationSetting (NotificationVibrationPref, vibrationCheckBox.Checked);
 		}
 
-		private void SaveNotificationSetting()
+		private void SaveNotificationSetting(String option, bool value)
 		{
 			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
 			var edits = preferences.Edit();
-			if (Notif != null)
-				edits.PutString(NotificationPref, Notif.ToString());
-			else if (preferences.Contains(NotificationPref))
-				edits.Remove(NotificationPref);
+			edits.PutString(option, value.ToString());
 			edits.Commit();
 		}
 
@@ -70,35 +72,48 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 		}
 
-		private void InitiateView()
+		private void InitializeComponents()
 		{
-			Button notificationToggle = FindViewById<Button>(Resource.Id.NotificationToggleButton);
-			notificationToggle.Click += new EventHandler(OnNotificationToggleClicked);
-			CheckBox SoundCheckBox = FindViewById<CheckBox>(Resource.Id.SoundCheckBox);
-			SoundCheckBox.Click += new EventHandler(OnSoundCheckBoxClicked);
-			CheckBox VibrationCheckBox = FindViewById<CheckBox>(Resource.Id.VibrationCheckBox);
-			VibrationCheckBox.Click += new EventHandler (OnVibrationCheckBoxClicked);
+			notificationToggle = FindViewById<ToggleButton>(Resource.Id.NotificationToggleButton);
+			soundCheckBox = FindViewById<CheckBox>(Resource.Id.SoundCheckBox);
+			vibrationCheckBox = FindViewById<CheckBox>(Resource.Id.VibrationCheckBox);
+			dongleListLayout = FindViewById<LinearLayout> (Resource.Id.dongleListLayout);
+			dongleButtonLayout = FindViewById<LinearLayout> (Resource.Id.dongleSubButtonLayout);
 		}
 
-		private void LoadDongles()
+		private void InitializeEventHandlers ()
 		{
-			var dongleListLayout = this.FindViewById<LinearLayout> (Resource.Id.dongleListLayout);
-			var dongleButtonLayout = this.FindViewById<LinearLayout> (Resource.Id.dongleSubButtonLayout);
-			var res = Client.UserMojios (Client.CurrentUser.Id);
+			notificationToggle.Click += new EventHandler (OnNotificationToggleClicked);
+			soundCheckBox.Click += new EventHandler (OnSoundCheckBoxClicked);
+			vibrationCheckBox.Click += new EventHandler (OnVibrationCheckBoxClicked);
+		}
+
+		private void InitiateContentView()
+		{
+			InitializeComponents ();
+			InitializeEventHandlers ();
+		}
+
+		private IEnumerable<Device> GetMojioDevices()
+		{
+			return Client.UserMojios (Client.CurrentUser.Id).Data;
+		}
+
+		private void LoadDongleList()
+		{
 			int i = 0;
-			foreach (Device moj in res.Data) {
+			foreach (Device moj in GetMojioDevices()) {
 				TextView item = new TextView (this);
 				item.Id = i;
+				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
 				ToggleButton button = new ToggleButton (this);
-				button.Id = i;
-				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);                
+				button.Id = i;				                
 				RelativeLayout.LayoutParams parameters = 
 					new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.FillParent, 
 						RelativeLayout.LayoutParams.WrapContent);
 				parameters.AddRule (LayoutRules.AlignParentBottom);
 				if (i != 0)
 					parameters.AddRule (LayoutRules.Above, i - 1);
-
 				item.LayoutParameters = parameters;
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {

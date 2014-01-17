@@ -183,13 +183,39 @@ namespace eecegroup32.mojiotowingalert.android
 
         protected void SendSystemNotification(Context context, Event eve)
         {
+			var isNotificationEnabled = GetNotificationTogglePref ();
+			if (!isNotificationEnabled)
+				return;
+
 			// When event is received while app is inactive, lets create a notification popup.
             var nMgr = (NotificationManager)context.GetSystemService(NotificationService);
             var notification = new Notification(Resource.Drawable.Icon, "New Mojio event received");
             var pendingIntent = PendingIntent.GetActivity(context, 0, new Intent(context, context.GetType()), 0);
             notification.SetLatestEventInfo(context, "New Mojio event", eve.EventType.ToString(), pendingIntent);
             notification.Flags = NotificationFlags.AutoCancel;
+
+			ConfigureNotificationSound (notification);
+			ConfigureNotificationVibration (notification);
+
             nMgr.Notify(0, notification);
         }
+
+		protected void ConfigureNotificationSound(Notification notif)
+		{
+			var isSoundEnabled = GetNotificationSoundPref ();
+			if (isSoundEnabled)
+				notif.Defaults |= NotificationDefaults.Sound;
+			else
+				notif.Sound = null;
+		}
+
+		protected void ConfigureNotificationVibration(Notification notif)
+		{
+			var isVibrationEnabled = GetNotificationVibrationPref ();
+			if (isVibrationEnabled)
+				notif.Defaults |= NotificationDefaults.Vibrate;
+			else
+				notif.Vibrate = null;
+		}
     }
 }

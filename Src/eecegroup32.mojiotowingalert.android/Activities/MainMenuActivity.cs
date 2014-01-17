@@ -50,6 +50,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 			logOutButton = FindViewById<Button>(Resource.Id.logOutButton);
 			logOutButton.Click += new EventHandler(OnLogOutClicked);
+
 		}
 
 		protected override void OnStart()
@@ -94,6 +95,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			base.OnDestroy();
 		}
+
 	}
 }
 

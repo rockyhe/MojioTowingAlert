@@ -40,7 +40,8 @@
                 p1:id="@+id/NotificationToggleButton"
                 p1:layout_marginBottom="0.0dp"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true" />
+                p1:layout_centerHorizontal="true"
+                p1:checked="true" />
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
@@ -76,7 +77,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/SoundCheckBox"
                 p1:layout_centerHorizontal="true"
-                p1:layout_centerVertical="true" />
+                p1:layout_centerVertical="true"
+                p1:checked="true" />
         </RelativeLayout>
         <RelativeLayout
             p1:minWidth="25px"
@@ -104,7 +106,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/VibrationCheckBox"
                 p1:layout_centerHorizontal="true"
-                p1:layout_centerVertical="true" />
+                p1:layout_centerVertical="true"
+                p1:checked="true" />
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
