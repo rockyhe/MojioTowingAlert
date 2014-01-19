@@ -20,6 +20,8 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity (Label = "SettingsActivity")]			
 	public class SettingsActivity : EventBaseActivity
 	{
+		string logTag = "SettingsActivity";
+
 		ToggleButton notificationToggle;
 		CheckBox soundCheckBox;
 		CheckBox vibrationCheckBox;
@@ -101,11 +103,14 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void LoadDongleList()
 		{
+			Android.Util.Log.Info (logTag, "Loading the dongle list...");
 			int i = 0;
-			foreach (Device moj in GetMojioDevices()) {
+			var mojioDevices = GetMojioDevices ();
+			foreach (Device moj in mojioDevices) {
 				TextView item = new TextView (this);
 				item.Id = i;
 				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
+				Android.Util.Log.Info (logTag, moj.Name + " retrieved.");
 				ToggleButton button = new ToggleButton (this);
 				button.Id = i;				                
 				RelativeLayout.LayoutParams parameters = 
@@ -123,6 +128,7 @@ namespace eecegroup32.mojiotowingalert.android
 				dongleButtonLayout.AddView (button);
 				i++;
 			}
+			Android.Util.Log.Info(logTag, string.Format("{0} dongle(s) loaded.", i)); 
 		}
 	}
 }

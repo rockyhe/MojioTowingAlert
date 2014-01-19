@@ -19,14 +19,14 @@ namespace eecegroup32.mojiotowingalert.android
 {
 	public class BaseActivity : Activity
 	{
-		public static bool ConnectedToNetwork;
+		private static string logTag = "BaseActivity";
 
+		public static bool ConnectedToNetwork;
 		public static string SharedPreferencesName = "MojioClientTestPreferences";
-		public static string DevicePrefs = "MOJIO_DEVICE";
 		public static string NotificationTogglePref = "NOTIFICATION_TOGGLE_PREFERENCE";
 		public static string NotificationSoundPref = "NOTIFICATION_SOUND_PREFERENCE";
 		public static string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
-		public static Device Dev;
+		public static Device MojioDevice;
 
 		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
 		private static bool ActivityVisible;
@@ -37,34 +37,44 @@ namespace eecegroup32.mojiotowingalert.android
 			get { return MainApp.Client; }
 		}
 
+		void DisplayNetworkAlert ()
+		{
+			AlertDialog.Builder alert = new AlertDialog.Builder (this);
+			alert.SetTitle ("Error");
+			alert.SetMessage (Resource.String.noConnectivity);
+			alert.SetPositiveButton ("Exit", delegate {
+				Finish ();
+			});
+			alert.Show ();
+		}
+
+		void RegisterForGcmMsgs ()
+		{
+			PushClient.CheckDevice (this.ApplicationContext);
+			PushClient.CheckManifest (this.ApplicationContext);
+			Android.Util.Log.Info (logTag, "Registering For GCM Msgs");
+			PushClient.Register (this.ApplicationContext, PushReceiver.SENDER_IDS);
+		}
+
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
-
 			ConnectedToNetwork = CheckNetworkConnection();
 
-			//If not connected to network, display an alert with an Exit button
-			//If Exit button is clicked, close the app
 			if (!ConnectedToNetwork)
 			{
-				AlertDialog.Builder alert = new AlertDialog.Builder(this);
-				alert.SetTitle("Error");
-				alert.SetMessage(Resource.String.noConnectivity);
-				alert.SetPositiveButton("Exit", delegate { Finish(); });
-				alert.Show();
+				DisplayNetworkAlert ();
 				return;
 			}
 
-			// Lets make sure we have registered for GCM messages.
-			if (!PushClient.IsRegistered(this.ApplicationContext))
-			{
-				//Check to ensure everything's setup right
-				PushClient.CheckDevice(this.ApplicationContext);
-				PushClient.CheckManifest(this.ApplicationContext);
+			var isRegisteredForGCM = PushClient.IsRegistered (this.ApplicationContext);
+			Android.Util.Log.Info(logTag, string.Format("Is Registered For GCM Msgs: {0}", isRegisteredForGCM));
 
-				//Call to register
-				PushClient.Register(this.ApplicationContext, PushReceiver.SENDER_IDS);
-				Boolean x = PushClient.IsRegistered (this.ApplicationContext);
+			if (!isRegisteredForGCM)
+			{
+				RegisterForGcmMsgs ();
+				isRegisteredForGCM = PushClient.IsRegistered (this.ApplicationContext);
+				Android.Util.Log.Info(logTag, string.Format("Is Registered For GCM Msgs: {0}", isRegisteredForGCM));
 			}
 		}
 
@@ -74,19 +84,23 @@ namespace eecegroup32.mojiotowingalert.android
 			Results<Device> res = MainApp.Client.UserMojios(MainApp.Client.CurrentUser.Id);
 			foreach (Device moj in res.Data)
 			{
-				Dev = moj;
+				MojioDevice = moj;
 			}
 		}
 
 
 		protected bool CheckNetworkConnection()
 		{
+			Android.Util.Log.Info(logTag, "Checking: Network Connection..."); 
 			ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService); 
 			NetworkInfo activeConnection = connectivityManager.ActiveNetworkInfo;
 			if ((activeConnection != null) && activeConnection.IsConnected)
 			{
+				Android.Util.Log.Info(logTag, "Network: Good"); 
 				return true;
 			}
+
+			Android.Util.Log.Error(logTag, "Network: Bad"); 
 			return false;
 		}
 
@@ -141,8 +155,9 @@ namespace eecegroup32.mojiotowingalert.android
 		private bool GetNotificationSetting(String option)
 		{
 			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
-			var result = preferences.GetString (option, Boolean.TrueString);
-			return Boolean.Parse (result);
+			var result = Boolean.Parse(preferences.GetString (option, Boolean.TrueString));
+			Android.Util.Log.Info(logTag, string.Format("Settings - {0}: {1}", option, result)); 
+			return result;
 		}
 
 	}

@@ -21,36 +21,39 @@ namespace eecegroup32.mojiotowingalert.android
 		Button logOutButton;
 		TextView welcome;
 
-		protected static Context CurContext;
+		private void InitializeComponents ()
+		{
+			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
+			notifcationButton = FindViewById<Button>(Resource.Id.notificationsButton);
+			mapsButton = FindViewById<Button>(Resource.Id.mapsButton);
+			settingsButton = FindViewById<Button>(Resource.Id.settingsButton);
+			logOutButton = FindViewById<Button>(Resource.Id.logOutButton);
+		}
+
+		private void InitializeEventHandlers()
+		{
+			notifcationButton.Click += new EventHandler(OnNotificationsClicked);
+			mapsButton.Click += new EventHandler(OnMapsClicked);
+			settingsButton.Click += new EventHandler(OnSettingsClicked);
+			logOutButton.Click += new EventHandler(OnLogOutClicked);
+		}
+
+		private void InitializeWelcomeScreen ()
+		{
+			string username = string.Empty;
+			if (Client != null && Client.CurrentUser != null) {
+				username = Client.CurrentUser.UserName;
+			}
+			welcome.Text = "Welcome " + username;
+		}
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.MainMenu);
-
-			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
-
-			string username = string.Empty;
-			if (Client != null && Client.CurrentUser != null)
-			{
-				username = Client.CurrentUser.UserName;
-			}
-
-
-			welcome.Text = "Welcome " + username;
-			// Get button from the layout resource and attach an event to it
-			notifcationButton = FindViewById<Button>(Resource.Id.notificationsButton);
-			notifcationButton.Click += new EventHandler(OnNotificationsClicked);
-
-			mapsButton = FindViewById<Button>(Resource.Id.mapsButton);
-			mapsButton.Click += new EventHandler(OnMapsClicked);
-
-			settingsButton = FindViewById<Button>(Resource.Id.settingsButton);
-			settingsButton.Click += new EventHandler(OnSettingsClicked);
-
-			logOutButton = FindViewById<Button>(Resource.Id.logOutButton);
-			logOutButton.Click += new EventHandler(OnLogOutClicked);
-
+			InitializeComponents ();
+			InitializeEventHandlers ();
+			InitializeWelcomeScreen ();
 		}
 
 		protected override void OnStart()
@@ -61,25 +64,21 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void OnNotificationsClicked(object sender, EventArgs e)
 		{
-			var notif = new Intent(this, typeof(NotificationsActivity));
-			StartActivity(notif);
+			StartActivity(new Intent(this, typeof(NotificationsActivity)));
 		}
 
 		private void OnMapsClicked(object sender, EventArgs e)
 		{
-			var maps = new Intent(this, typeof(MapsActivity));
-			StartActivity(maps);
+			StartActivity(new Intent(this, typeof(MapsActivity)));
 		}
 
 		private void OnSettingsClicked(object sender, EventArgs e)
 		{
-			var settings = new Intent(this, typeof(SettingsActivity));
-			StartActivity(settings);
+			StartActivity(new Intent(this, typeof(SettingsActivity)));
 		}
 
 		private void OnLogOutClicked(object sender, EventArgs e)
 		{
-			//Clear the user session and go to login
 			Client.ClearUser();
 			GotoLogin();
 		}

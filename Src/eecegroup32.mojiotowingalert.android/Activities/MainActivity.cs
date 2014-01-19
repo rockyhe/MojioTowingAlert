@@ -11,15 +11,16 @@ namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "@string/applicationName", MainLauncher = true)]
 	public class MainActivity : BaseActivity
-	{	
+	{
+		void ShowSplashScreen (long duration)
+		{
+			SetContentView (Resource.Layout.SplashScreen);
+			SystemClock.Sleep (duration);
+		}	
 		protected override void OnCreate(Bundle bundle)
 		{
 			base.OnCreate(bundle);
-
-			//Show splash screen
-			// Set our view from the "main" layout resource
-			SetContentView(Resource.Layout.SplashScreen);
-			SystemClock.Sleep(3000);
+			ShowSplashScreen (3000);
 
 			if (Client.IsLoggedIn())
 			{

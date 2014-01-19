@@ -17,10 +17,20 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity (Label = "NotificationsActivity")]			
 	public class NotificationsActivity : BaseActivity
 	{
+		LinearLayout notificationList;
+		LinearLayout dateList;
+
+		void InitializeComponents ()
+		{
+			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationIDLayout);
+			dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
+		}
+
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate(bundle);
 			SetContentView(Resource.Layout.Notifications);
+			InitializeComponents ();
 		}
 
 		protected override void OnResume()
@@ -29,24 +39,30 @@ namespace eecegroup32.mojiotowingalert.android
 			ShowNotifications();
 		}
 
+		private void AddNotificationsToScreen ()
+		{
+			TextView item;
+			foreach (MyNotification notif in myNotificationManager.getMyNotifications ()) {
+				item = new TextView (this);
+				item.Text = (notif.getmMyNotificationId ());
+				notificationList.AddView (item);
+			}
+		}
+
+		private void AddDatesToScreen ()
+		{
+			TextView item;
+			foreach (MyNotification notif in myNotificationManager.getMyNotifications ()) {
+				item = new TextView (this);
+				item.Text = notif.getEvent ().Time.ToString ("f");
+				dateList.AddView (item);
+			}
+		}
+
 		protected void ShowNotifications()
 		{
-			//Add to notifications screen
-			var notificationList = this.FindViewById<LinearLayout>(Resource.Id.notificationIDLayout);
-			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
-			{
-				TextView notificationToAdd = new TextView(this);
-				notificationToAdd.Text = (notif.getmMyNotificationId());
-				notificationList.AddView (notificationToAdd);
-			}
-
-			var dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
-			foreach (MyNotification notif in myNotificationManager.getMyNotifications())
-			{
-				TextView dateToAdd = new TextView(this);
-				dateToAdd.Text = notif.getEvent().Time.ToString ("f");
-				dateList.AddView (dateToAdd);
-			}
+			AddNotificationsToScreen ();
+			AddDatesToScreen ();
 		}
 	}
 }

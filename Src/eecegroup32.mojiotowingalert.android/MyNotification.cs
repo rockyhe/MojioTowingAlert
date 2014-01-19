@@ -13,35 +13,30 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		private string mMyNotificationId { get; set; }
 		private Event mEvent { get; set; }
-		
-		//Constructor
+
 		public MyNotification (Event incomingEvent, System.Guid incomingGuid)
 		{
             mMyNotificationId = incomingGuid.ToString();
             mEvent = incomingEvent;
 		}
 
-        //Constructor
         public MyNotification(Event incomingEvent)
         {
             mMyNotificationId = System.Guid.NewGuid().ToString();
             mEvent = incomingEvent;
         }
 
-        //Constructor
         public MyNotification()
         {
             mMyNotificationId = null;
             mEvent = null;
         }
 
-        //Returns mMyNotificationId
         public string getmMyNotificationId()
         {
             return mMyNotificationId;
         }
-
-        //Returns event
+		        
         public Event getEvent()
         {
             return mEvent;

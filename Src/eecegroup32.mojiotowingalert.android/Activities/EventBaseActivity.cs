@@ -45,7 +45,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 			// Register the receiver to receive our GCM events
             RegisterReceiver(_receiver, _intentFilter);
-			if (Dev != null)
+			if (MojioDevice != null)
 			{
 				RegisterEventsNotice ();
 			}
@@ -95,7 +95,7 @@ namespace eecegroup32.mojiotowingalert.android
                 sub = Client.SubscribeGcm(registrationId, new Subscription()
                 {
 					Event = EventType.TripStart,			// We want to register to TripStart events
-                    EntityId = Dev.Id,						// For this particular mojio device
+                    EntityId = MojioDevice.Id,						// For this particular mojio device
                     EntityType = SubscriptionType.Mojio,
                 }, out stat, out msg);
 
@@ -114,8 +114,6 @@ namespace eecegroup32.mojiotowingalert.android
                 }
 
                 trials--;
-				//Log.Notice("GPSEvent subscription failed, trials left: " + trials);
-				//Log.Notice("HttpStatusCode: "+ stat.ToString() + " Message:" + msg);
             }
             while (trials > 0);
 
