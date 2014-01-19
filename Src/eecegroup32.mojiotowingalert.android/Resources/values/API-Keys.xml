@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<!-- Put your own Google Maps V2 API Key here! -->
-	<string name="GoogleMapsKey">AIzaSyBzpEfyo48l_lU54Ykd_U-lPEIjpyn1K6k</string>
-	<!-- Put your own Google API Console App Project ID here! -->
-	<string name="GoogleConsoleProjectId">477029438643</string>
-</resources>
