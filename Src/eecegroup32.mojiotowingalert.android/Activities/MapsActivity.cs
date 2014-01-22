@@ -25,7 +25,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		List<Mojio.Device> mojioDevices;
 		List<LatLng> mojioLocations;
-		List<MarkerOptions> markers;
+		List<MarkerOptions> dongleMarkers;
 		LatLngBounds locationBoundary;
 
 
@@ -51,13 +51,14 @@ namespace eecegroup32.mojiotowingalert.android
 				SetupMojio();
 				GrabLocations();
 				SetupBoundary();
-
-				MarkerOptions markerOpt1 = new MarkerOptions ();
-				markerOpt1.SetPosition (new LatLng (lat, lang));
-				markerOpt1.SetTitle ("Your Dongle");
+				SetupMarkers ();
 
 				map.UiSettings.ZoomControlsEnabled = true;
-				map.AddMarker (markerOpt1);
+
+				foreach (MarkerOptions marker in dongleMarkers) {
+					map.AddMarker (marker);
+				}
+
 				map.MapType = GoogleMap.MapTypeNormal;
 				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom(locationBoundary.Center,10));
 			}
@@ -77,7 +78,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void GrabLocations()
 		{
 			mojioLocations = new List<LatLng>();
-			for(int i =0; i < (mojioDevices.Count - 1); i++)
+			for(int i =0; i < mojioDevices.Count ; i++)
 			{
 				mojioLocations.Add(new LatLng (mojioDevices [i].LastLocation.Lat, mojioDevices [i].LastLocation.Lng));
 			}
@@ -101,6 +102,16 @@ namespace eecegroup32.mojiotowingalert.android
 					break;
 			}
 		}
-		
+
+		private void SetupMarkers()
+		{
+			dongleMarkers = new List<MarkerOptions> ();
+			for (int i = 0; i < mojioLocations.Count; i++) {
+				MarkerOptions marker = new MarkerOptions ();
+				marker.SetPosition (mojioLocations[i]);
+				marker.SetTitle (mojioDevices[i].Name);
+				dongleMarkers.Add (marker);
+			}
+		}
 	}
 }
