@@ -23,7 +23,11 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		string logTag = "MapsActivity";
 
-		Mojio.Device mojio;
+		List<Mojio.Device> mojioDevices;
+		List<LatLng> mojioLocations;
+		List<MarkerOptions> markers;
+		LatLngBounds locationBoundary;
+
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -45,15 +49,8 @@ namespace eecegroup32.mojiotowingalert.android
 
 			if (map != null) {
 				SetupMojio();
-				float lat = mojio.LastLocation.Lat;
-				float lang = mojio.LastLocation.Lng;
-				CameraPosition.Builder builder = CameraPosition.InvokeBuilder ();
-				builder.Target (new LatLng (lat, lang));
-				builder.Zoom (18);
-				builder.Bearing (0);
-				builder.Tilt (0);
-				CameraPosition cameraPosition = builder.Build ();
-				CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition (cameraPosition);
+				GrabLocations();
+				SetupBoundary();
 
 				MarkerOptions markerOpt1 = new MarkerOptions ();
 				markerOpt1.SetPosition (new LatLng (lat, lang));
@@ -62,19 +59,48 @@ namespace eecegroup32.mojiotowingalert.android
 				map.UiSettings.ZoomControlsEnabled = true;
 				map.AddMarker (markerOpt1);
 				map.MapType = GoogleMap.MapTypeNormal;
-				map.MoveCamera (cameraUpdate);
+				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom(locationBoundary.Center,10));
 			}
 		}
 
 		private void SetupMojio()
 		{
 			//TODO: Currently assuming only one device per user.
+			mojioDevices = new List<Mojio.Device>();
 			var devices = Client.UserMojios(Client.CurrentUser.Id);
 			foreach(Device moj in devices.Data)
 			{
-				mojio = moj;
+				mojioDevices.Add(moj);
 			}
 		}
+
+		private void GrabLocations()
+		{
+			mojioLocations = new List<LatLng>();
+			for(int i =0; i < (mojioDevices.Count - 1); i++)
+			{
+				mojioLocations.Add(new LatLng (mojioDevices [i].LastLocation.Lat, mojioDevices [i].LastLocation.Lng));
+			}
+		}
+
+		private void SetupBoundary()
+		{
+			switch (mojioLocations.Count) 
+			{
+				case 1:
+					locationBoundary = new LatLngBounds (mojioLocations [0], mojioLocations[0]);
+					break;
+				case 2:
+					locationBoundary = new LatLngBounds (mojioLocations [0],mojioLocations [0]).Including(mojioLocations[1]);
+					break;
+				case 3:
+					locationBoundary = new LatLngBounds (mojioLocations [0],mojioLocations [0]).Including(mojioLocations[1]).Including(mojioLocations[2]);
+					break;
+				case 4:
+				locationBoundary = new LatLngBounds (mojioLocations [0],mojioLocations [0]).Including(mojioLocations[1]).Including(mojioLocations[2]).Including(mojioLocations[3]);
+					break;
+			}
+		}
+		
 	}
 }
-
