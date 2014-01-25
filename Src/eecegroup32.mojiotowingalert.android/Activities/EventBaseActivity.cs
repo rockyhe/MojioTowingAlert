@@ -25,6 +25,8 @@ namespace eecegroup32.mojiotowingalert.android
         protected static List<Event> ReceivedEvents;
         protected static Context CurContext;
 
+		private string logTag = "EventBaseActivity";
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -45,7 +47,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 			// Register the receiver to receive our GCM events
             RegisterReceiver(_receiver, _intentFilter);
-			if (MojioDevice != null)
+			if (MojioDevice != null && MojioDevice.Count != 0)
 			{
 				RegisterEventsNotice ();
 			}
@@ -76,7 +78,7 @@ namespace eecegroup32.mojiotowingalert.android
  
         private void RegisterEventsNotice()
         {
-			// Fetch registration ID given to this app
+
             var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
 
 			if (String.IsNullOrWhiteSpace (registrationId)) {
@@ -84,38 +86,42 @@ namespace eecegroup32.mojiotowingalert.android
 				return;
 			}
 
-            int trials = 3; 
+            int trials; 
             HttpStatusCode stat;
             string msg;
             Subscription sub;
             bool succeed = false;
-            do
-            {
-				// Notify mojio servers what types of events we wish to receive.
-                sub = Client.SubscribeGcm(registrationId, new Subscription()
-                {
-					Event = EventType.TripStart,			// We want to register to TripStart events
-                    EntityId = MojioDevice.Id,						// For this particular mojio device
-                    EntityType = SubscriptionType.Mojio,
-                }, out stat, out msg);
+			foreach (var mojioDevice in MojioDevice) 
+			{
+				trials = 3; 
+	            do
+	            {
+					// Notify mojio servers what types of events we wish to receive.
+	                sub = Client.SubscribeGcm(registrationId, new Subscription()
+	                {
+						Event = EventType.TripStart,			// We want to register to TripStart events
+							//TODO support multiple dongles
+						EntityId = mojioDevice.Id,						// For this particular mojio device
+	                    EntityType = SubscriptionType.Mojio,
+	                }, out stat, out msg);
 
-                if (sub != null)
-                {
-					//Log.Verbose("Event subscription succeeded: " + msg);
-                    succeed = true;
-                    break;
-                }
-                if(stat == HttpStatusCode.NotModified)
-                {
-					// We were already registered to this event type.
-					//Log.Notice("Event already subscribed.");
-                    succeed = true;
-                    break;
-                }
+	                if (sub != null)
+	                {
+						//Log.Verbose("Event subscription succeeded: " + msg);
+	                    succeed = true;
+	                    break;
+	                }
+	                if(stat == HttpStatusCode.NotModified)
+	                {
+						// We were already registered to this event type.
+						//Log.Notice("Event already subscribed.");
+	                    succeed = true;
+	                    break;
+	                }
+					trials--;
+				} while (trials > 0);
 
-                trials--;
-            }
-            while (trials > 0);
+            }            
 
             if (!succeed)
             {

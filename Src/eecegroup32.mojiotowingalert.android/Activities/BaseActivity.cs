@@ -19,25 +19,80 @@ namespace eecegroup32.mojiotowingalert.android
 {
 	public class BaseActivity : Activity
 	{
-		private static string logTag = "BaseActivity";
+		protected static readonly string SharedPreferencesName = "MOJIO_APP_PREFERENCES";
+		protected static readonly string NotificationTogglePref = "NOTIFICATION_TOGGLE_PREFERENCE";
+		protected static readonly string NotificationSoundPref = "NOTIFICATION_SOUND_PREFERENCE";
+		protected static readonly string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
 
-		public static bool ConnectedToNetwork;
-		public static string SharedPreferencesName = "MojioClientTestPreferences";
-		public static string NotificationTogglePref = "NOTIFICATION_TOGGLE_PREFERENCE";
-		public static string NotificationSoundPref = "NOTIFICATION_SOUND_PREFERENCE";
-		public static string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
-		public static Device MojioDevice;
+		protected static MyNotificationManager myNotificationManager = new MyNotificationManager();
+		protected static IList<Device> MojioDevice;
+		protected static bool ActivityVisible;
+		protected static bool ConnectedToNetwork;
 
-		public static MyNotificationManager myNotificationManager = new MyNotificationManager();
-		private static bool ActivityVisible;
+		protected static ILogger logger = MainApp.Logger;
 
-		//Reference to single instance of Mojio client
 		public MojioClient Client
 		{
 			get { return MainApp.Client; }
 		}
 
-		void DisplayNetworkAlert ()
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+
+			base.OnCreate(savedInstanceState);
+			MojioDevice = new List<Device> ();
+
+			if (!CheckNetworkConnection())
+			{
+				DisplayNetworkAlert ();
+				return;
+			}
+
+			SetupGCM ();
+			SetActivityVisible (true);
+
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+		}
+
+		protected override void OnDestroy()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+		}
+
+		protected override void OnResume()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume();
+			SetActivityVisible(true);
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause();
+			SetActivityVisible(false);
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+		}
+
+		protected void SetupGCM ()
+		{
+			var isRegisteredForGCM = PushClient.IsRegistered (this.ApplicationContext);
+			if (isRegisteredForGCM) {
+				logger.Information (this.LocalClassName, "GCM Registration: already registered.");
+			}
+			else {
+				logger.Information (this.LocalClassName, "GCM Registration: not registered.");
+				RegisterForGcmMsgs ();
+				isRegisteredForGCM = PushClient.IsRegistered (this.ApplicationContext);
+				logger.Information (this.LocalClassName, string.Format ("GCM Registration: {0}.", isRegisteredForGCM));
+			}
+		}
+
+		protected void DisplayNetworkAlert ()
 		{
 			AlertDialog.Builder alert = new AlertDialog.Builder (this);
 			alert.SetTitle ("Error");
@@ -48,93 +103,56 @@ namespace eecegroup32.mojiotowingalert.android
 			alert.Show ();
 		}
 
-		void RegisterForGcmMsgs ()
+		protected void RegisterForGcmMsgs ()
 		{
-			PushClient.CheckDevice (this.ApplicationContext);
-			PushClient.CheckManifest (this.ApplicationContext);
-			Android.Util.Log.Info (logTag, "Registering For GCM Msgs");
-			PushClient.Register (this.ApplicationContext, PushReceiver.SENDER_IDS);
-		}
-
-		protected override void OnCreate(Bundle savedInstanceState)
-		{
-			base.OnCreate(savedInstanceState);
-			ConnectedToNetwork = CheckNetworkConnection();
-
-			if (!ConnectedToNetwork)
-			{
-				DisplayNetworkAlert ();
-				return;
-			}
-
-			var isRegisteredForGCM = PushClient.IsRegistered (this.ApplicationContext);
-			Android.Util.Log.Info(logTag, string.Format("Is Registered For GCM Msgs: {0}", isRegisteredForGCM));
-
-			if (!isRegisteredForGCM)
-			{
-				RegisterForGcmMsgs ();
-				isRegisteredForGCM = PushClient.IsRegistered (this.ApplicationContext);
-				Android.Util.Log.Info(logTag, string.Format("Is Registered For GCM Msgs: {0}", isRegisteredForGCM));
+			logger.Information (this.LocalClassName, "GCM Registration: Registering...");
+			try {
+				PushClient.CheckDevice (this.ApplicationContext);
+				PushClient.CheckManifest (this.ApplicationContext);
+				PushClient.Register (this.ApplicationContext, PushReceiver.SENDER_IDS);
+				logger.Information (this.LocalClassName, "GCM Registration: Registration completed.");
+			} catch (Exception ex) {
+				logger.Error (this.LocalClassName, string.Format("GCM Registration: Registration failed. Exception: {0}", ex.Message));
 			}
 		}
 
-		public static void SetupDevice()
+		protected void SetupDevice()
 		{
-			//TODO: Currently assuming only one device per user.
+			logger.Information (this.LocalClassName, "Mojio Devices: Retrieving...");
 			Results<Device> res = MainApp.Client.UserMojios(MainApp.Client.CurrentUser.Id);
 			foreach (Device moj in res.Data)
 			{
-				MojioDevice = moj;
+				MojioDevice.Add(moj);
+				logger.Information (this.LocalClassName, string.Format("Mojio Devices: {0} retrieved.", moj.Name));
 			}
 		}
-
 
 		protected bool CheckNetworkConnection()
 		{
-			Android.Util.Log.Info(logTag, "Checking: Network Connection..."); 
+			logger.Information (this.LocalClassName, "Network Connection: Checking..."); 
 			ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService); 
 			NetworkInfo activeConnection = connectivityManager.ActiveNetworkInfo;
-			if ((activeConnection != null) && activeConnection.IsConnected)
-			{
-				Android.Util.Log.Info(logTag, "Network: Good"); 
+
+			if ((activeConnection != null) && activeConnection.IsConnected) {
+				logger.Information (this.LocalClassName, "Network Connection: Good"); 
 				return true;
+			} 
+			else 
+			{
+				logger.Information (this.LocalClassName, "Network Connection: Bad"); 
+				DisplayNetworkAlert ();
+				return false;
 			}
-
-			Android.Util.Log.Error(logTag, "Network: Bad"); 
-			return false;
 		}
 
-		protected override void OnDestroy()
-		{
-			base.OnDestroy();
-		}
-
-		// bookkeeping status of the app: in foreground or not
-		protected override void OnResume()
-		{
-			base.OnResume();
-			ActivityResumed();
-		}
-
-		protected override void OnPause()
-		{
-			base.OnPause();
-			ActivityPaused();
-		}
-
-		public static bool IsActivityVisible()
+		public bool IsActivityVisible()
 		{
 			return ActivityVisible;
 		}
 
-		public static void ActivityResumed()
+		private void SetActivityVisible(bool isVisible)
 		{
-			ActivityVisible = true;
-		}
-
-		public static void ActivityPaused()
-		{
-			ActivityVisible = false;
+			ActivityVisible = isVisible;
 		}
 
 		public bool GetNotificationTogglePref()
@@ -156,7 +174,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
 			var result = Boolean.Parse(preferences.GetString (option, Boolean.TrueString));
-			Android.Util.Log.Info(logTag, string.Format("Settings - {0}: {1}", option, result)); 
+			logger.Debug (this.LocalClassName, string.Format("Settings - {0}: {1}", option, result)); 
 			return result;
 		}
 
