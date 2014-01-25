@@ -11,18 +11,26 @@ namespace eecegroup32.mojiotowingalert.android
 {
     public class MyNotificationManager
 	{
-		private List<MyNotification> mMyNotifications = new List<MyNotification>();
+		public static readonly string logTag = "MyNotificationManager";
 
-		public MyNotification CreateMyNotification(Event incomingEvent)
+		private List<MyNotification> notifications;
+		private ILogger logger = MainApp.Logger;
+
+		public MyNotificationManager()
+		{
+			notifications = new List<MyNotification>();
+		}
+
+		public MyNotification Create(Event incomingEvent)
 		{
 			return new MyNotification(incomingEvent);
 		}
 
-		public MyNotification GetMyNotificationWithId(string notifId)
+		public MyNotification Find (string notifId)
 		{
-			foreach (MyNotification notification in mMyNotifications)
+			foreach (MyNotification notification in notifications)
 			{
-				if (notifId == notification.getmMyNotificationId())
+				if (notifId == notification.NotificationID)
 				{
 					return notification;
 				}
@@ -30,19 +38,25 @@ namespace eecegroup32.mojiotowingalert.android
             return null;
 		}
 
-        public void AddMyNotification(MyNotification incomingMyNotification)
+        public void Add(MyNotification incomingMyNotification)
         {
-            mMyNotifications.Add(incomingMyNotification);
+			var isDuplicate = notifications.Exists (x => x.NotificationID == incomingMyNotification.NotificationID);
+			if (isDuplicate) 
+			{
+				logger.Error(logTag, string.Format("Duplicate notification found - {0}. Not added.", incomingMyNotification.NotificationID)); 
+				return;
+			}
+            notifications.Add(incomingMyNotification);
         }
 
-		public void ClearMyNotifications()
+		public void Clear()
 		{
-			mMyNotifications.Clear();
+			notifications.Clear();
 		}
 
-        public List<MyNotification> getMyNotifications()
+        public List<MyNotification> GetAll()
         {
-            return mMyNotifications;
+            return notifications;
         }
 
 	}

@@ -11,35 +11,41 @@ namespace eecegroup32.mojiotowingalert.android
 {
     public class MyNotification
 	{
-		private string mMyNotificationId { get; set; }
-		private Event mEvent { get; set; }
+		private string _NotificationID { get; set; }
+		private Event _MojioEvent { get; set; }
 
-		public MyNotification (Event incomingEvent, System.Guid incomingGuid)
+		public MyNotification (Event eve, System.Guid guid)
 		{
-            mMyNotificationId = incomingGuid.ToString();
-            mEvent = incomingEvent;
+            _NotificationID = guid.ToString();
+			_MojioEvent = eve;
 		}
 
-        public MyNotification(Event incomingEvent)
+        public MyNotification(Event eve)
         {
-            mMyNotificationId = System.Guid.NewGuid().ToString();
-            mEvent = incomingEvent;
+            _NotificationID = System.Guid.NewGuid().ToString();
+			_MojioEvent = eve;
         }
 
         public MyNotification()
         {
-            mMyNotificationId = null;
-            mEvent = null;
+            _NotificationID = null;
+			_MojioEvent = null;
         }
 
-        public string getmMyNotificationId()
+        public string NotificationID
         {
-            return mMyNotificationId;
+			get 
+			{
+				return _NotificationID;
+			}
         }
 		        
-        public Event getEvent()
+        public Event MojioEvent
         {
-            return mEvent;
+			get
+			{
+				return _MojioEvent;
+			}
         }
 	
 	}

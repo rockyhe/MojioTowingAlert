@@ -76,27 +76,29 @@ namespace eecegroup32.mojiotowingalert.android
 		private void AddNotificationsToScreen ()
 		{
 			TextView item;
-			foreach (MyNotification notif in MyNotificationsMgr.getMyNotifications ()) {
+			foreach (MyNotification notif in MyNotificationsMgr.GetAll ()) {
 				item = new TextView (this);
-				item.Text = (notif.getmMyNotificationId ());
+				item.Text = (notif.NotificationID);
 				notificationList.AddView (item);
 			}
-		}
 
-		private void AddDatesToScreen ()
-		{
-			TextView item;
-			foreach (MyNotification notif in MyNotificationsMgr.getMyNotifications ()) {
+			foreach (MyNotification notif in MyNotificationsMgr.GetAll ()) {
 				item = new TextView (this);
-				item.Text = notif.getEvent ().Time.ToString ("f");
+				item.Text = notif.MojioEvent.Time.ToString ("f");
 				dateList.AddView (item);
 			}
 		}
 
-		protected void ShowNotificationList()
+		private void ClearNotificationList ()
 		{
+			notificationList.RemoveAllViews ();
+			dateList.RemoveAllViews ();
+		}
+
+		private void ShowNotificationList()
+		{
+			ClearNotificationList ();
 			AddNotificationsToScreen ();
-			AddDatesToScreen ();
 		}
 	}
 }

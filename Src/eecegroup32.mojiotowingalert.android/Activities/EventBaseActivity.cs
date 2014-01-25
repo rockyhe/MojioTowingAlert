@@ -179,10 +179,9 @@ namespace eecegroup32.mojiotowingalert.android
             {
 				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
 
-                if (context != CurrentContext)
-                    return;
+				if (context != CurrentContext)
+				  return;
 
-				//TODO Check if events can still be recieved when not in EventBaseActivity
 				if( context is EventBaseActivity )
                 	(context as EventBaseActivity).OnMojioEventReceived(ev);
             }
@@ -190,16 +189,16 @@ namespace eecegroup32.mojiotowingalert.android
 
         protected virtual void OnMojioEventReceived(Event eve)
         {
-			MyNotificationsMgr.AddMyNotification(new MyNotification(eve));
+			MyNotificationsMgr.Add(new MyNotification(eve));
 			SendSystemNotification(CurrentContext, eve);
 		}
 
         protected void SendSystemNotification(Context context, Event eve)
         {
 			logger.Information ("NOTIFICATION", "Local Notification: Preparing...");
-
 			var isNotificationEnabled = GetNotificationTogglePref ();
 			logger.Information ("NOTIFICATION", string.Format("Enable Preference: {0}", isNotificationEnabled));
+
 			if (!isNotificationEnabled)
 				return;
             
@@ -213,7 +212,6 @@ namespace eecegroup32.mojiotowingalert.android
 
 			var nMgr = (NotificationManager) context.GetSystemService(NotificationService);
             nMgr.Notify(0, notification);
-
 			logger.Information ("NOTIFICATION", "Local Notification: Completed.");
         }
 
@@ -221,6 +219,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var isSoundEnabled = GetNotificationSoundPref ();
 			logger.Information ("NOTIFICATION", string.Format("Sound Preference: {0}", isSoundEnabled));
+
 			if (isSoundEnabled)
 				notif.Defaults |= NotificationDefaults.Sound;
 			else
@@ -231,6 +230,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var isVibrationEnabled = GetNotificationVibrationPref ();
 			logger.Information ("NOTIFICATION", string.Format("Vibration Preference: {0}", isVibrationEnabled));
+
 			if (isVibrationEnabled)
 				notif.Defaults |= NotificationDefaults.Vibrate;
 			else

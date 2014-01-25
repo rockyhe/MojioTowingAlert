@@ -20,6 +20,7 @@ namespace eecegroup32.mojiotowingalert.android
 		public static Config ConfigSettings;
 		public static MojioClient Client;
 		public static ILogger Logger;
+		public static MyNotificationManager MyNotificationsMgr;
 
 		public MainApp (IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer) { }
 
@@ -45,6 +46,11 @@ namespace eecegroup32.mojiotowingalert.android
 				throw new Exception ("You must fill in the App ID and Key MojioTowingAlert.cs");
 		}
 
+		private void SetupNotificationMgr()
+		{
+			MyNotificationsMgr = new MyNotificationManager();
+		}
+
 		public override void OnCreate()
 		{
 			base.OnCreate();
@@ -52,6 +58,7 @@ namespace eecegroup32.mojiotowingalert.android
 			SetupConfigSettings ();
 			SetupMojioClient ();
 			SetupLogger ();
+			SetupNotificationMgr ();
 		}
 	}
 }
