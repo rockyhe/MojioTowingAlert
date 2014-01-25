@@ -17,11 +17,38 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity(Label = "LoginActivity")]
 	public class LoginActivity : BaseActivity
 	{
-		string logTag = "LoginActivity";
+		private Button loginButton;
+		private EditText username;
+		private EditText password;
 
-		Button loginButton;
-		EditText username;
-		EditText password;
+		protected override void OnCreate(Bundle bundle)
+		{
+			base.OnCreate(bundle);
+			SetContentView(Resource.Layout.Login);
+			InitializeComponents ();
+			InitializeEventHandlers ();
+		}
+
+		protected override void OnDestroy()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+		}
+
+		protected override void OnResume()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+		}
 
 		private void InitializeComponents ()
 		{
@@ -35,41 +62,38 @@ namespace eecegroup32.mojiotowingalert.android
 			loginButton.Click += new EventHandler (OnLoginClicked);
 		}
 
-		protected override void OnCreate(Bundle bundle)
-		{
-			base.OnCreate(bundle);
-			SetContentView(Resource.Layout.Login);
-			InitializeComponents ();
-			InitializeEventHandlers ();
-		}
-
 		private bool IsCredentialEmpty ()
 		{
 			bool isEmpty = string.IsNullOrEmpty (username.Text) || string.IsNullOrEmpty (password.Text);
-			Android.Util.Log.Info(logTag, string.Format("Credential: {0}", isEmpty ? "Empty" : "Exists")); 
 			return isEmpty;
 		}
 
-		private void PrepareForAsyncLogin ()
+		private void AsyncLoginPrep ()
 		{
 			loginButton.Activated = false;
 		}
 
+		private void AyncLoginCleanup()
+		{
+			loginButton.Activated = true;
+		}
+
 		private void SubmitAsyncLoginRequest ()
 		{
+			AsyncLoginPrep ();
 			Client.SetUserAsync (username.Text, password.Text).ContinueWith (r =>  {
 				MojioResponse<Mojio.Token> response = r.Result;
 				RunOnUiThread (() =>  {
 					if (Client.IsLoggedIn ()) 
 					{
-						Android.Util.Log.Info(logTag, "Login Attempt: Pass"); 
+						logger.Information (this.LocalClassName, string.Format("Login Attempt: Pass - {0}", response.Data.ToString())); 
 						GotoMainMenu ();
 					}
 					else 
 					{
-						loginButton.Activated = true;
-						Android.Util.Log.Info(logTag, "Login Attempt: Fail"); 
-						ErrorMessage (Resource.String.wrongCredentials);
+						AyncLoginCleanup();
+						logger.Information (this.LocalClassName, "Login Attempt: Fail"); 
+						ShowErrorMessage (Resource.String.wrongCredentials);
 					}
 				});
 			});
@@ -78,11 +102,10 @@ namespace eecegroup32.mojiotowingalert.android
 		private void OnLoginClicked(object sender, EventArgs e)
 		{
 			if (IsCredentialEmpty ()) {
-				ErrorMessage (Resource.String.missingUsernameOrPassword);
+				ShowErrorMessage (Resource.String.missingUsernameOrPassword);
 				return;
 			}
 
-			PrepareForAsyncLogin ();
 			SubmitAsyncLoginRequest ();
 		}
 
@@ -91,7 +114,7 @@ namespace eecegroup32.mojiotowingalert.android
 			StartActivity(new Intent(this, typeof(MainMenuActivity)));
 		}
 
-		private void ErrorMessage(int errorId)
+		private void ShowErrorMessage(int errorId)
 		{
 			var temp = Toast.MakeText(this, errorId, ToastLength.Long);
 			temp.SetGravity(GravityFlags.CenterVertical, 0, 0);
