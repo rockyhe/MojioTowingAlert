@@ -20,20 +20,58 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity (Label = "SettingsActivity")]			
 	public class SettingsActivity : EventBaseActivity
 	{
-		string logTag = "SettingsActivity";
-
-		ToggleButton notificationToggle;
-		CheckBox soundCheckBox;
-		CheckBox vibrationCheckBox;
-		LinearLayout dongleListLayout;
-		LinearLayout dongleButtonLayout;
+		private ToggleButton notificationToggle;
+		private CheckBox soundCheckBox;
+		private CheckBox vibrationCheckBox;
+		private LinearLayout dongleListLayout;
+		private LinearLayout dongleButtonLayout;
 
 		protected override void OnCreate (Bundle bundle)
 		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Settings);
 			InitiateContentView();
 			LoadDongleList ();
+
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+		}
+
+		protected override void OnStart()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart();
+			CurrentContext = this;
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+		}
+
+		protected override void OnDestroy()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+		}
+
+		protected override void OnResume()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
 		private void OnNotificationToggleClicked(object sender, EventArgs e) 
@@ -57,19 +95,10 @@ namespace eecegroup32.mojiotowingalert.android
 			var edits = preferences.Edit();
 			edits.PutString(option, value.ToString());
 			edits.Commit();
+			logger.Information (this.LocalClassName, string.Format("Settings: {0} [{1}] saved.", SharedPreferencesName, value)); 
 		}
 
-		protected override void OnStart()
-		{
-			base.OnStart();
-			CurrentContext = this;
-		}
-
-		protected override void OnResume()
-		{
-			base.OnResume();
-		}
-
+		//TODO Implement toggling individual device
 		private void ToggleSubscribeDongle(string id)
 		{
 		}
@@ -96,23 +125,18 @@ namespace eecegroup32.mojiotowingalert.android
 			InitializeEventHandlers ();
 		}
 
-		private IEnumerable<Device> GetMojioDevices()
-		{
-			return Client.UserMojios (Client.CurrentUser.Id).Data;
-		}
-
 		private void LoadDongleList()
 		{
-			Android.Util.Log.Info (logTag, "Loading the dongle list...");
+			logger.Information (this.LocalClassName, "Dongle List: loading..."); 
 			int i = 0;
-			var mojioDevices = GetMojioDevices ();
-			foreach (Device moj in mojioDevices) {
-				TextView item = new TextView (this);
+			ToggleButton button;
+			TextView item;
+			LoadMojioDevices ();
+			foreach (Device moj in MojioDevices) {
+				item = new TextView (this);
 				item.Id = i;
 				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
-				Android.Util.Log.Info (logTag, moj.Name + " retrieved.");
-				ToggleButton button = new ToggleButton (this);
-				button.Id = i;				                
+				logger.Information (this.LocalClassName, string.Format ("Dongle List: {0} loaded.", moj.Name));
 				RelativeLayout.LayoutParams parameters = 
 					new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.FillParent, 
 						RelativeLayout.LayoutParams.WrapContent);
@@ -120,6 +144,8 @@ namespace eecegroup32.mojiotowingalert.android
 				if (i != 0)
 					parameters.AddRule (LayoutRules.Above, i - 1);
 				item.LayoutParameters = parameters;
+				button = new ToggleButton (this);
+				button.Id = i;				                
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
 					ToggleSubscribeDongle (moj.Id);
@@ -128,7 +154,7 @@ namespace eecegroup32.mojiotowingalert.android
 				dongleButtonLayout.AddView (button);
 				i++;
 			}
-			Android.Util.Log.Info(logTag, string.Format("{0} dongle(s) loaded.", i)); 
+			logger.Information (this.LocalClassName, string.Format("{0} dongle(s) loaded.", i));
 		}
 	}
 }

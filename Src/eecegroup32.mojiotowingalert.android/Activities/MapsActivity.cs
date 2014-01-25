@@ -21,41 +21,80 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity (Label = "MapsActivity")]			
 	public class MapsActivity : BaseActivity
 	{
-		string logTag = "MapsActivity";
-
-		List<Mojio.Device> mojioDevices;
-		List<LatLng> mojioLocations;
-		List<MarkerOptions> dongleMarkers;
-		LatLngBounds locationBoundary;
-
+		private List<LatLng> mojioLocations;
+		private List<MarkerOptions> dongleMarkers;
+		private LatLngBounds locationBoundary;
 
 		protected override void OnCreate (Bundle bundle)
 		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Maps);
 			SetupMaps();
+
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+		}
+
+		protected override void OnStart()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+		}
+
+		protected override void OnDestroy()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+		}
+
+		protected override void OnResume()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
 		private void SetupMaps()
 		{
-			try {
+			try 
+			{
 				MapsInitializer.Initialize(this);
-			} catch (Exception e) {
-				Android.Util.Log.Error (logTag, string.Format("Exception while initializing the map: {0}", e.Message));
+			} 
+			catch (Exception e) 
+			{
+				logger.Error (this.LocalClassName, string.Format("Exception while initializing the map: {0}", e.Message));
 			}
 
 			MapFragment mapFrag = (MapFragment) FragmentManager.FindFragmentById(Resource.Id.map);
 			GoogleMap map = mapFrag.Map;
 
-			if (map != null) {
-				SetupMojio();
+			if (map != null) 
+			{
 				GrabLocations();
 				SetupBoundary();
 				SetupMarkers ();
 
 				map.UiSettings.ZoomControlsEnabled = true;
 
-				foreach (MarkerOptions marker in dongleMarkers) {
+				foreach (MarkerOptions marker in dongleMarkers) 
+				{
 					map.AddMarker (marker);
 				}
 
@@ -64,23 +103,16 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 		}
 
-		private void SetupMojio()
-		{
-			//TODO: Currently assuming only one device per user.
-			mojioDevices = new List<Mojio.Device>();
-			var devices = Client.UserMojios(Client.CurrentUser.Id);
-			foreach(Device moj in devices.Data)
-			{
-				mojioDevices.Add(moj);
-			}
-		}
-
 		private void GrabLocations()
 		{
+			LoadMojioDevices ();
+			Device mojioDevice;
 			mojioLocations = new List<LatLng>();
-			for(int i =0; i < mojioDevices.Count ; i++)
+			for(int i =0; i < MojioDevices.Count ; i++)
 			{
-				mojioLocations.Add(new LatLng (mojioDevices [i].LastLocation.Lat, mojioDevices [i].LastLocation.Lng));
+				mojioDevice = MojioDevices [i];
+				mojioLocations.Add(new LatLng (mojioDevice.LastLocation.Lat, mojioDevice.LastLocation.Lng));
+				logger.Information (this.LocalClassName, string.Format("Mojio Location: {0} found at Latitude {1} Longitude {2}", mojioDevice.Name, mojioDevice.LastLocation.Lat, mojioDevice.LastLocation.Lng)); 
 			}
 		}
 
@@ -109,7 +141,7 @@ namespace eecegroup32.mojiotowingalert.android
 			for (int i = 0; i < mojioLocations.Count; i++) {
 				MarkerOptions marker = new MarkerOptions ();
 				marker.SetPosition (mojioLocations[i]);
-				marker.SetTitle (mojioDevices[i].Name);
+				marker.SetTitle (MojioDevices[i].Name);
 				dongleMarkers.Add (marker);
 			}
 		}

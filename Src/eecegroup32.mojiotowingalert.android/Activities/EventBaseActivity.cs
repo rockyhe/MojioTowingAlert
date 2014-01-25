@@ -30,18 +30,39 @@ namespace eecegroup32.mojiotowingalert.android
 
             base.OnCreate(bundle);
             InitializeComponents ();
-			SetupDevice();
+			LoadMojioDevices();
             RegisterReceiver(Receiver, IntFilter);
 			RegisterEventsNotice ();
 
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
         }
 
+		protected override void OnStart()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+		}
+
 		protected override void OnDestroy()
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
 			base.OnDestroy();
-			UnregisterReceiver(Receiver);
+			try 
+			{
+				UnregisterReceiver(Receiver);
+			}
+			catch (Exception ex) 
+			{
+				logger.Error (this.LocalClassName, string.Format ("Tried to unregister when not registered. Exception: {0}", ex.Message));
+			}
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
@@ -103,7 +124,7 @@ namespace eecegroup32.mojiotowingalert.android
  
         private void RegisterEventsNotice()
         {
-			if (MojioDevice == null || MojioDevice.Count == 0)
+			if (MojioDevices == null || MojioDevices.Count == 0)
 				return;
 
             var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
@@ -120,7 +141,7 @@ namespace eecegroup32.mojiotowingalert.android
 			bool isSubscribed = false;
 
 			//TODO Support multiple dongles using the settings configuration
-			foreach (var mojioDevice in MojioDevice) 
+			foreach (var mojioDevice in MojioDevices) 
 			{
 				trials = 3; 
 	            do

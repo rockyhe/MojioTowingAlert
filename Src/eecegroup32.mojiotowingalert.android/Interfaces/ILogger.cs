@@ -12,6 +12,8 @@ namespace eecegroup32.mojiotowingalert.android
 		void Information(string tag, string message);
 
 		void Debug(string tag, string message);
+
+		void SetVerbosityLevel (int level);
 	}
 }
 

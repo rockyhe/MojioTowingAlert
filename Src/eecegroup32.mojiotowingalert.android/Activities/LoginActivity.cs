@@ -33,6 +33,20 @@ namespace eecegroup32.mojiotowingalert.android
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
+		protected override void OnStart()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+		}
+
 		protected override void OnDestroy()
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");

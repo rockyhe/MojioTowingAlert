@@ -6,14 +6,19 @@ namespace eecegroup32.mojiotowingalert.android
 	public class MyLogger: ILogger
 	{
 		public enum Level {
-			Error,
-			Warning,
+			Debug,
 			Information,
-			Debug
+			Warning,
+			Error
 		}
+
+		private Level VerbosityLevel = Level.Debug;
 
 		public void Write(string tag, string message, Level level = Level.Information)
 		{
+			if (VerbosityLevel > level)
+				return;
+
 			var str = new StringBuilder ();
 			str.Append ("(");
 			str.Append (level.ToString ());
@@ -23,6 +28,19 @@ namespace eecegroup32.mojiotowingalert.android
 			str.Append ("] ");
 			str.Append(message);
 			Console.WriteLine (str.ToString());
+		}
+
+		public void SetVerbosityLevel (int level)
+		{
+			try 
+			{
+				VerbosityLevel = (Level) level;
+			}
+			catch (IndexOutOfRangeException) 
+			{
+				VerbosityLevel = Level.Error;
+				Error ("Logger", "Verbosity level out of range. Set to the highest instead.");
+			}
 		}
 
 		public void Error(string tag, string message)

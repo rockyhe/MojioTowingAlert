@@ -17,26 +17,60 @@ namespace eecegroup32.mojiotowingalert.android
 	[Activity (Label = "NotificationsActivity")]			
 	public class NotificationsActivity : BaseActivity
 	{
-		LinearLayout notificationList;
-		LinearLayout dateList;
-
-		void InitializeComponents ()
-		{
-			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationIDLayout);
-			dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
-		}
+		private LinearLayout notificationList;
+		private LinearLayout dateList;
 
 		protected override void OnCreate (Bundle bundle)
 		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+
 			base.OnCreate(bundle);
 			SetContentView(Resource.Layout.Notifications);
 			InitializeComponents ();
+
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+		}
+
+		protected override void OnStart()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+		}
+
+		protected override void OnDestroy()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
 		protected override void OnResume()
 		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume();
-			ShowNotifications();
+			ShowNotificationList();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+		}
+
+		private void InitializeComponents ()
+		{
+			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationIDLayout);
+			dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
 		}
 
 		private void AddNotificationsToScreen ()
@@ -59,7 +93,7 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 		}
 
-		protected void ShowNotifications()
+		protected void ShowNotificationList()
 		{
 			AddNotificationsToScreen ();
 			AddDatesToScreen ();

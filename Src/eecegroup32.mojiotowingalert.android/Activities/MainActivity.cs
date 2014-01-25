@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 
+//TODO why don't we just remove this splash screen? 
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "@string/applicationName", MainLauncher = true)]

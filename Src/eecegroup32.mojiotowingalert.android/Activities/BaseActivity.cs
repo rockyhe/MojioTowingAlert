@@ -25,7 +25,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected static readonly string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
 
 		protected static MyNotificationManager MyNotificationsMgr = new MyNotificationManager();
-		protected static IList<Device> MojioDevice;
+		protected static IList<Device> MojioDevices;
 		protected static bool ActivityVisible;
 		protected static bool ConnectedToNetwork;
 
@@ -41,7 +41,7 @@ namespace eecegroup32.mojiotowingalert.android
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 
 			base.OnCreate(savedInstanceState);
-			MojioDevice = new List<Device> ();
+			MojioDevices = new List<Device> ();
 
 			if (!CheckNetworkConnection())
 			{
@@ -76,6 +76,20 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnPause();
 			SetActivityVisible(false);
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+		}
+
+		protected override void OnStart()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnDestroy();		
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
 		}
 
 		protected void SetupGCM ()
@@ -116,13 +130,21 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 		}
 
-		protected void SetupDevice()
+		protected virtual void LoadMojioDevices()
 		{
 			logger.Information (this.LocalClassName, "Mojio Devices: Retrieving...");
 			Results<Device> res = MainApp.Client.UserMojios(MainApp.Client.CurrentUser.Id);
+
+			if (MojioDevices == null) 
+			{
+				MojioDevices = new List<Device> ();
+			}
+
+			MojioDevices.Clear ();
+
 			foreach (Device moj in res.Data)
 			{
-				MojioDevice.Add(moj);
+				MojioDevices.Add(moj);
 				logger.Information (this.LocalClassName, string.Format("Mojio Devices: {0} retrieved.", moj.Name));
 			}
 		}
@@ -174,7 +196,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
 			var result = Boolean.Parse(preferences.GetString (option, Boolean.TrueString));
-			logger.Debug (this.LocalClassName, string.Format("Settings - {0}: {1}", option, result)); 
+			logger.Information (this.LocalClassName, string.Format("Settings - {0}: {1}", option, result)); 
 			return result;
 		}
 
