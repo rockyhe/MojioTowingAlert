@@ -59,7 +59,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnStart()
 		{
 			base.OnStart();
-			CurContext = this;
+			CurrentContext = this;
 		}
 
 		private void OnNotificationsClicked(object sender, EventArgs e)

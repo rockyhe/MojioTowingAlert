@@ -24,7 +24,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected static readonly string NotificationSoundPref = "NOTIFICATION_SOUND_PREFERENCE";
 		protected static readonly string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
 
-		protected static MyNotificationManager myNotificationManager = new MyNotificationManager();
+		protected static MyNotificationManager MyNotificationsMgr = new MyNotificationManager();
 		protected static IList<Device> MojioDevice;
 		protected static bool ActivityVisible;
 		protected static bool ConnectedToNetwork;

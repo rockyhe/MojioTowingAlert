@@ -20,47 +20,57 @@ namespace eecegroup32.mojiotowingalert.android
 {
     public abstract class EventBaseActivity : BaseActivity
     {
-        private static TestReceiver _receiver;
-        private static IntentFilter _intentFilter;
-        protected static List<Event> ReceivedEvents;
-        protected static Context CurContext;
-
-		private string logTag = "EventBaseActivity";
+		protected static IntentFilter IntFilter;
+        protected static Context CurrentContext;
+		protected static PushEventReceiver Receiver;
 
         protected override void OnCreate(Bundle bundle)
         {
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+
             base.OnCreate(bundle);
-
-			// Initialize our list of events with the last 5 events.
-			if (ReceivedEvents == null)
-				ReceivedEvents = new List<Event> ();
-
-			// Instanciate a new push receiver.
-            if(_receiver == null)
-                _receiver = new TestReceiver();
-
-			// Retrieve the intent type broadcasted by Event Receiver.
-            if (_intentFilter == null)
-                _intentFilter = new IntentFilter(EventReceiver.IntentAction);
-
+            InitializeComponents ();
 			SetupDevice();
+            RegisterReceiver(Receiver, IntFilter);
+			RegisterEventsNotice ();
 
-			// Register the receiver to receive our GCM events
-            RegisterReceiver(_receiver, _intentFilter);
-			if (MojioDevice != null && MojioDevice.Count != 0)
-			{
-				RegisterEventsNotice ();
-			}
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            UnregisterReceiver(_receiver);
-        }
+		protected override void OnDestroy()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy();
+			UnregisterReceiver(Receiver);
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+		}
+
+		protected override void OnResume()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause()
+		{
+			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause();
+			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+		}
+
+		private void InitializeComponents ()
+		{
+			if (Receiver == null)
+				Receiver = new PushEventReceiver ();
+
+			if (IntFilter == null)
+				IntFilter = new IntentFilter (EventReceiver.IntentAction);
+		}
 
 		private void LoadLastEvents(int count = 10)
 		{
+			/*
 			// Use Linq queries to query our API for list of events.
 			var query = from e in Client.Queryable<Event> ()
 							where e.EventType.Equals (EventType.TripStart)
@@ -74,125 +84,104 @@ namespace eecegroup32.mojiotowingalert.android
 			//  Now make API call and fetch entries and iterate over them
 			foreach (var eve in query)
 				RunOnUiThread( () => AddMojioEvent (eve) );
+			*/
+		}
+
+		private Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice)
+		{
+			return Client.SubscribeGcm (registrationId, new Subscription () {
+				Event = EventType.TripStart,
+				EntityId = mojioDevice.Id,
+				EntityType = SubscriptionType.Mojio,
+			}, out httpStatusCode, out msg);
+		}
+
+		private bool CheckSubscriptionStatus (HttpStatusCode httpStatusCode)
+		{
+			return httpStatusCode == HttpStatusCode.NotModified;
 		}
  
         private void RegisterEventsNotice()
         {
+			if (MojioDevice == null || MojioDevice.Count == 0)
+				return;
 
             var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
-
+			logger.Information (this.LocalClassName, string.Format("Event Notice Registration: ID {0} retrieved.", registrationId));
 			if (String.IsNullOrWhiteSpace (registrationId)) {
-				//Log.Error ("Could not register for events, no registration ID.");
+				logger.Error (this.LocalClassName, "Event Notice Registration: failed - no registration ID retrieved.");
 				return;
 			}
 
-            int trials; 
-            HttpStatusCode stat;
-            string msg;
-            Subscription sub;
-            bool succeed = false;
+			HttpStatusCode statusCode;
+			Subscription subscription;
+			int trials; 
+			string msg;
+			bool isSubscribed = false;
+
+			//TODO Support multiple dongles using the settings configuration
 			foreach (var mojioDevice in MojioDevice) 
 			{
 				trials = 3; 
 	            do
 	            {
-					// Notify mojio servers what types of events we wish to receive.
-	                sub = Client.SubscribeGcm(registrationId, new Subscription()
+					subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice);
+					if (subscription != null)
 	                {
-						Event = EventType.TripStart,			// We want to register to TripStart events
-							//TODO support multiple dongles
-						EntityId = mojioDevice.Id,						// For this particular mojio device
-	                    EntityType = SubscriptionType.Mojio,
-	                }, out stat, out msg);
+						isSubscribed = true;
+						logger.Information (this.LocalClassName, string.Format("Event Subscription: {0} - {1}.", "successful", msg));	                    
+	                    break;
+	                }
 
-	                if (sub != null)
-	                {
-						//Log.Verbose("Event subscription succeeded: " + msg);
-	                    succeed = true;
-	                    break;
-	                }
-	                if(stat == HttpStatusCode.NotModified)
-	                {
-						// We were already registered to this event type.
-						//Log.Notice("Event already subscribed.");
-	                    succeed = true;
-	                    break;
-	                }
+					if (CheckSubscriptionStatus (statusCode)) {
+						isSubscribed = true;
+						logger.Information (this.LocalClassName, "Event Subscription: Event already subscribed.");	                    
+						break;
+					}
+
 					trials--;
 				} while (trials > 0);
-
             }            
 
-            if (!succeed)
+            if (!isSubscribed)
             {
-                // Write the checkpoint to Test Flight.
-				//Log.Error("User GPSEvent subscription failure.");
-
+				logger.Error (this.LocalClassName, "Event Subscription: Failed.");
                 Toast tmp = Toast.MakeText(this, "Subscription failed, please check network status", ToastLength.Long);
                 tmp.SetGravity(GravityFlags.CenterVertical, 0, 0);
                 tmp.Show();
             }
         }
 
-		/**
-		 * This is a demo event receiver.  This will be called any time an event
-		 * is received via push notifications.  
-		 * (It was defined as a receiver in EventBaseActivity::OnCreate)
-		 * 
-		 * Events to be broadcast to this device are set in 
-		 * EventsBaseActivity::RegisterEventsNotice
-		 */
-        public class TestReceiver : EventReceiver
+        public class PushEventReceiver : EventReceiver
         {
-			//private readonly ILogger Log = DependancyResolver.Get <ILogger> ();
-
             protected override void OnEvent(Context context, Event ev)
             {
-                if (context != CurContext)
+				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
+
+                if (context != CurrentContext)
                     return;
 
+				//TODO Check if events can still be recieved when not in EventBaseActivity
 				if( context is EventBaseActivity )
                 	(context as EventBaseActivity).OnMojioEventReceived(ev);
-
-				//Log.Verbose(string.Format("Event Received Context: {0} EventType: {1}",
-				//                        context.GetType().ToString(), ev.EventType.ToString()) );
             }
         }
 
         protected virtual void OnMojioEventReceived(Event eve)
         {
-			// Add the event to our event list
-            AddMojioEvent(eve);
-
-			// Create a Notification object and add it to our notification list
-			MyNotification notification = new MyNotification(eve);
-			myNotificationManager.AddMyNotification(notification);
-
-			//Send a system notification only if activity is not visible
-            if (!IsActivityVisible())
-			{
-                SendSystemNotification(CurContext, eve);
-        	}
+			MyNotificationsMgr.AddMyNotification(new MyNotification(eve));
+			SendSystemNotification(CurrentContext, eve);
 		}
-
-        protected void AddMojioEvent(Event eve)
-        {
-			if (ReceivedEvents.Exists (e => e.Id == eve.Id))
-				return;//Log.Error ("Duplicate event received!  " + eve.Id);;
-			else
-                ReceivedEvents.Add(eve);
-        }
-
-        protected void ClearMojioEvents() { ReceivedEvents.Clear(); }
 
         protected void SendSystemNotification(Context context, Event eve)
         {
+			logger.Information ("NOTIFICATION", "Local Notification: Preparing...");
+
 			var isNotificationEnabled = GetNotificationTogglePref ();
+			logger.Information ("NOTIFICATION", string.Format("Enable Preference: {0}", isNotificationEnabled));
 			if (!isNotificationEnabled)
 				return;
-
-			// When event is received while app is inactive, lets create a notification popup.
-            var nMgr = (NotificationManager)context.GetSystemService(NotificationService);
+            
             var notification = new Notification(Resource.Drawable.Icon, "New Mojio event received");
             var pendingIntent = PendingIntent.GetActivity(context, 0, new Intent(context, context.GetType()), 0);
             notification.SetLatestEventInfo(context, "New Mojio event", eve.EventType.ToString(), pendingIntent);
@@ -201,12 +190,16 @@ namespace eecegroup32.mojiotowingalert.android
 			ConfigureNotificationSound (notification);
 			ConfigureNotificationVibration (notification);
 
+			var nMgr = (NotificationManager) context.GetSystemService(NotificationService);
             nMgr.Notify(0, notification);
+
+			logger.Information ("NOTIFICATION", "Local Notification: Completed.");
         }
 
 		protected void ConfigureNotificationSound(Notification notif)
 		{
 			var isSoundEnabled = GetNotificationSoundPref ();
+			logger.Information ("NOTIFICATION", string.Format("Sound Preference: {0}", isSoundEnabled));
 			if (isSoundEnabled)
 				notif.Defaults |= NotificationDefaults.Sound;
 			else
@@ -216,6 +209,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected void ConfigureNotificationVibration(Notification notif)
 		{
 			var isVibrationEnabled = GetNotificationVibrationPref ();
+			logger.Information ("NOTIFICATION", string.Format("Vibration Preference: {0}", isVibrationEnabled));
 			if (isVibrationEnabled)
 				notif.Defaults |= NotificationDefaults.Vibrate;
 			else

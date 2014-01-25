@@ -62,7 +62,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnStart()
 		{
 			base.OnStart();
-			CurContext = this;
+			CurrentContext = this;
 		}
 
 		protected override void OnResume()

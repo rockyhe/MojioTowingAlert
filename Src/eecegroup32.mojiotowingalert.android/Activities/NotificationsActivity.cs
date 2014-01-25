@@ -42,7 +42,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void AddNotificationsToScreen ()
 		{
 			TextView item;
-			foreach (MyNotification notif in myNotificationManager.getMyNotifications ()) {
+			foreach (MyNotification notif in MyNotificationsMgr.getMyNotifications ()) {
 				item = new TextView (this);
 				item.Text = (notif.getmMyNotificationId ());
 				notificationList.AddView (item);
@@ -52,7 +52,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void AddDatesToScreen ()
 		{
 			TextView item;
-			foreach (MyNotification notif in myNotificationManager.getMyNotifications ()) {
+			foreach (MyNotification notif in MyNotificationsMgr.getMyNotifications ()) {
 				item = new TextView (this);
 				item.Text = notif.getEvent ().Time.ToString ("f");
 				dateList.AddView (item);
