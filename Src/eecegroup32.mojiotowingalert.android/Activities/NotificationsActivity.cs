@@ -74,12 +74,20 @@ namespace eecegroup32.mojiotowingalert.android
 			dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
 		}
 
+		private void OnEventItemClicked(MyNotification notif)
+		{
+			MainApp.SelectedNotification = notif;
+			logger.Information (this.LocalClassName, string.Format ("Notificiation Clicked: {0}", notif.NotificationID));
+			StartActivity(new Intent(this, typeof(DetailsActivity)));
+		}
+
 		private void AddNotificationsToScreen ()
 		{
 			TextView item;
 			foreach (MyNotification notif in MyNotificationsMgr.GetAll ()) {
 				item = new TextView (this);
 				item.Text = (notif.NotificationID);
+				item.Click += (sender, e) => OnEventItemClicked (notif);
 				notificationList.AddView (item);
 			}
 

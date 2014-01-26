@@ -21,6 +21,7 @@ namespace eecegroup32.mojiotowingalert.android
 		public static MojioClient Client;
 		public static ILogger Logger;
 		public static MyNotificationManager MyNotificationsMgr;
+		public static MyNotification SelectedNotification;
 
 		private static Activity _CurrentActivity;
 

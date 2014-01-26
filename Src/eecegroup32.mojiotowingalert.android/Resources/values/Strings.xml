@@ -22,4 +22,8 @@
 	<string name="notificationID">Notification ID</string>
 	<string name="dateTime">Date</string>
 	<string name="noConnectivity">Please check your network connection</string>
+	<string name="eventDate">Date</string>
+	<string name="eventTime">Time</string>
+	<string name="eventDongleID">Dongle ID</string>
+	<string name="eventLocation">Location</string>
 </resources>

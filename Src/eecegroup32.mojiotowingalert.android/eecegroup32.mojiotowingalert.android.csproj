@@ -71,6 +71,7 @@
     <Compile Include="Activities\EventBaseActivity.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Services\MyLogger.cs" />
+    <Compile Include="Activities\DetailsActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -89,6 +90,7 @@
     <AndroidResource Include="Resources\layout\SplashScreen.axml" />
     <AndroidResource Include="Resources\drawable\MojioAppLogo.png" />
     <AndroidResource Include="Resources\values\API-Keys.xml" />
+    <AndroidResource Include="Resources\layout\NotificationDetail.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
