@@ -42,16 +42,19 @@ namespace eecegroup32.mojiotowingalert.android
 
     public abstract class EventReceiver : BroadcastReceiver
     {
+		private ILogger logger = MainApp.Logger;
+
         public const string IntentAction = "MojioEvent";
 
         public override void OnReceive(Context context, Intent intent)
         {
+			logger.Information ("EventReceiver", "Event JSON: Received.");
+
             var json = intent.GetStringExtra("data");
             if (!string.IsNullOrEmpty(json))
             {
-				// Deserialize using Mojio's Deserializer
                 var ev = MojioClient.Deserialize<Event>(json);
-
+				logger.Information ("EventReceiver", string.Format ("Event JSON: Deserialized. {0}", ev.EventType));
                 if (ev != null)
                     OnEvent(context,ev);
             }
@@ -75,6 +78,7 @@ namespace eecegroup32.mojiotowingalert.android
     [Service] //Must use the service tag
     public class PushService : PushHandlerServiceBase
     {
+		private ILogger logger = MainApp.Logger;
 	
         public PushService() : base(PushReceiver.SENDER_IDS) { 
 
@@ -92,12 +96,12 @@ namespace eecegroup32.mojiotowingalert.android
 
         protected override void OnMessage(Context context, Intent intent)
         {
-
+			logger.Information ("PushService", "Push Message: Received");
+			logger.Information ("PushService", string.Format ("Push Message: {0}", intent == null ? "false message": "type " + intent.GetStringExtra("type")));
             if (intent != null && intent.GetStringExtra("type") == "MojioEvent")
             {
                 var broadcast = new Intent();
                 broadcast.PutExtras(intent);
-
                 broadcast.SetAction(EventReceiver.IntentAction);
                 SendBroadcast(broadcast);
             }
