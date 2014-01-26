@@ -179,8 +179,10 @@ namespace eecegroup32.mojiotowingalert.android
             {
 				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
 
-				if (context != CurrentContext)
-				  return;
+				if (context != CurrentContext) {
+					logger.Information (this.Class.SimpleName, string.Format ("Context: Conflict! Received event context = {0}, CurrentContext = {1}", context.GetType(), CurrentContext.GetType()));
+					return;
+				}
 
 				if( context is EventBaseActivity )
                 	(context as EventBaseActivity).OnMojioEventReceived(ev);
