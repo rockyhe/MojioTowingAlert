@@ -43,7 +43,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnStop()
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnDestroy();		
+			base.OnStop();		
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
 		}
 

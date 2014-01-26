@@ -21,7 +21,7 @@ namespace eecegroup32.mojiotowingalert.android
     public abstract class EventBaseActivity : BaseActivity
     {
 		protected static IntentFilter IntFilter;
-        protected static Context CurrentContext;
+		//protected static Context CurrentContext;
 		protected static PushEventReceiver Receiver;
 
         protected override void OnCreate(Bundle bundle)
@@ -47,14 +47,13 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnStop()
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnDestroy();		
+			base.OnStop ();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
 		}
 
 		protected override void OnDestroy()
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			base.OnDestroy();
 			try 
 			{
 				UnregisterReceiver(Receiver);
@@ -63,6 +62,7 @@ namespace eecegroup32.mojiotowingalert.android
 			{
 				logger.Error (this.LocalClassName, string.Format ("Tried to unregister when not registered. Exception: {0}", ex.Message));
 			}
+			base.OnDestroy();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
@@ -179,10 +179,10 @@ namespace eecegroup32.mojiotowingalert.android
             {
 				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
 
-				if (context != CurrentContext) {
-					logger.Information (this.Class.SimpleName, string.Format ("Context: Conflict! Received event context = {0}, CurrentContext = {1}", context.GetType(), CurrentContext.GetType()));
-					return;
-				}
+//				if (context != CurrentContext) {
+//					logger.Information (this.Class.SimpleName, string.Format ("Context: Conflict! Received event context = {0}, CurrentContext = {1}", context.GetType(), CurrentContext.GetType()));
+//					return;
+//				}
 
 				if( context is EventBaseActivity )
                 	(context as EventBaseActivity).OnMojioEventReceived(ev);
@@ -192,7 +192,7 @@ namespace eecegroup32.mojiotowingalert.android
         protected virtual void OnMojioEventReceived(Event eve)
         {
 			MyNotificationsMgr.Add(new MyNotification(eve));
-			SendSystemNotification(CurrentContext, eve);
+			SendSystemNotification(this, eve);
 		}
 
         protected void SendSystemNotification(Context context, Event eve)
