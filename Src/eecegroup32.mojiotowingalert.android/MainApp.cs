@@ -22,6 +22,8 @@ namespace eecegroup32.mojiotowingalert.android
 		public static ILogger Logger;
 		public static MyNotificationManager MyNotificationsMgr;
 
+		private static Activity _CurrentActivity;
+
 		public MainApp (IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer) { }
 
 		private void SetupMojioClient ()
@@ -59,6 +61,17 @@ namespace eecegroup32.mojiotowingalert.android
 			SetupMojioClient ();
 			SetupLogger ();
 			SetupNotificationMgr ();
+		}
+
+		public static Activity GetCurrentActivity()
+		{
+			return _CurrentActivity;
+		}
+
+		public static void SetCurrentActivity(Activity activity)
+		{
+			_CurrentActivity = activity;
+			Logger.Information("MainApp", string.Format("Current activity set to {0}", activity.LocalClassName));
 		}
 	}
 }

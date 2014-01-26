@@ -17,7 +17,7 @@ using PushSharp.Client;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-	public class BaseActivity : Activity
+	public abstract class BaseActivity : Activity
 	{
 		protected static readonly string SharedPreferencesName = "MOJIO_APP_PREFERENCES";
 		protected static readonly string NotificationTogglePref = "NOTIFICATION_TOGGLE_PREFERENCE";

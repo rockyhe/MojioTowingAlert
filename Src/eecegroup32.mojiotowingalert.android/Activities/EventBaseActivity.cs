@@ -24,6 +24,17 @@ namespace eecegroup32.mojiotowingalert.android
 		//protected static Context CurrentContext;
 		protected static PushEventReceiver Receiver;
 
+		public class PushEventReceiver : EventReceiver
+		{
+			protected override void OnEvent(Context context, Event ev)
+			{
+				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
+
+				if( context is EventBaseActivity )
+					(context as EventBaseActivity).OnMojioEventReceived(ev);
+			}
+		}
+
         protected override void OnCreate(Bundle bundle)
         {
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
@@ -173,25 +184,13 @@ namespace eecegroup32.mojiotowingalert.android
             }
         }
 
-        public class PushEventReceiver : EventReceiver
-        {
-            protected override void OnEvent(Context context, Event ev)
-            {
-				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
-
-//				if (context != CurrentContext) {
-//					logger.Information (this.Class.SimpleName, string.Format ("Context: Conflict! Received event context = {0}, CurrentContext = {1}", context.GetType(), CurrentContext.GetType()));
-//					return;
-//				}
-
-				if( context is EventBaseActivity )
-                	(context as EventBaseActivity).OnMojioEventReceived(ev);
-            }
-        }
-
         protected virtual void OnMojioEventReceived(Event eve)
         {
 			MyNotificationsMgr.Add(new MyNotification(eve));
+			if (MainApp.GetCurrentActivity() is NotificationsActivity) 
+			{
+				((NotificationsActivity)MainApp.GetCurrentActivity ()).Update ();
+			}
 			SendSystemNotification(this, eve);
 		}
 

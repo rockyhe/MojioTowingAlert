@@ -56,6 +56,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume();
+			MainApp.SetCurrentActivity (this);
 			ShowNotificationList();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
@@ -95,10 +96,18 @@ namespace eecegroup32.mojiotowingalert.android
 			dateList.RemoveAllViews ();
 		}
 
+		//TODO load events stored in the server too
 		private void ShowNotificationList()
 		{
 			ClearNotificationList ();
 			AddNotificationsToScreen ();
+		}
+
+		//TODO update just the new event
+		public void Update()
+		{
+			logger.Information (this.LocalClassName, "Notification List updated.");
+			ShowNotificationList ();
 		}
 	}
 }

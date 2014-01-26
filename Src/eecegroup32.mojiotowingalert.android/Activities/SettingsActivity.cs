@@ -63,6 +63,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume();
+			MainApp.SetCurrentActivity (this);
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 

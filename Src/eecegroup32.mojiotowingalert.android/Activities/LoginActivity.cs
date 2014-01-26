@@ -58,6 +58,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume();
+			MainApp.SetCurrentActivity (this);
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
@@ -129,7 +130,9 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void GotoMainMenu()
 		{
-			StartActivity(new Intent(this, typeof(MainMenuActivity)));
+			var mainMenu = new Intent(this, typeof(MainMenuActivity));
+			mainMenu.AddFlags(ActivityFlags.ClearTask);
+			StartActivity(mainMenu);
 		}
 
 		private void ShowErrorMessage(int errorId)

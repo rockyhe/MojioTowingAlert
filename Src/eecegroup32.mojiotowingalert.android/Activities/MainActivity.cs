@@ -36,7 +36,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void GotoLogin()
 		{
 			var login = new Intent(this, typeof(LoginActivity));
-			login.AddFlags(ActivityFlags.ClearTop);
+			login.AddFlags(ActivityFlags.ClearTask);
 			StartActivity(login);
 		}
 
