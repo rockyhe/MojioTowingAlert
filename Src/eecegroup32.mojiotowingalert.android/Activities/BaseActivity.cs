@@ -20,6 +20,7 @@ namespace eecegroup32.mojiotowingalert.android
 	public abstract class BaseActivity : Activity
 	{
 		protected static readonly string SharedPreferencesName = "MOJIO_APP_PREFERENCES";
+		protected static readonly string SubscriptionTogglePref = "SUBSCRIPTION_TOGGLE_PREFERENCE";
 		protected static readonly string NotificationTogglePref = "NOTIFICATION_TOGGLE_PREFERENCE";
 		protected static readonly string NotificationSoundPref = "NOTIFICATION_SOUND_PREFERENCE";
 		protected static readonly string NotificationVibrationPref = "NOTIFICATION_VIBRATION_PREFERENCE";
@@ -27,6 +28,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected static bool ActivityVisible;
 		protected static bool ConnectedToNetwork;
 		protected static IList<Device> MojioDevices;
+		protected static readonly Mojio.Events.EventType MojioEventType = Mojio.Events.EventType.TripStart;
 		protected static ILogger logger = MainApp.Logger;
 		protected static MyNotificationManager MyNotificationsMgr = MainApp.MyNotificationsMgr;
 
@@ -191,10 +193,26 @@ namespace eecegroup32.mojiotowingalert.android
 			return GetNotificationSetting (NotificationVibrationPref);
 		}
 
-		private bool GetNotificationSetting(String option)
+		public string GetDeviceSubscriptionPrefKey(string id)
+		{
+			return SubscriptionTogglePref + "=" + id;
+		}
+
+		public bool GetDeviceSubscriptionPref(string id)
+		{
+			return GetNotificationSetting (GetDeviceSubscriptionPrefKey(id));
+		}
+
+		protected bool GetNotificationSetting(String option)
 		{
 			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
-			var result = Boolean.Parse(preferences.GetString (option, Boolean.TrueString));
+			var resultString = preferences.GetString (option, Boolean.TrueString);
+			if (resultString == null) 
+			{
+				logger.Information (this.LocalClassName, string.Format("Settings - {0}: {1}", option, "Not Found")); 
+				return false;
+			}
+			var result = Boolean.Parse(resultString);
 			logger.Information (this.LocalClassName, string.Format("Settings - {0}: {1}", option, result)); 
 			return result;
 		}

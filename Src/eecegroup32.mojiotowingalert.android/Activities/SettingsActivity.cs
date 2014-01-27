@@ -25,6 +25,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private CheckBox vibrationCheckBox;
 		private LinearLayout dongleListLayout;
 		private LinearLayout dongleButtonLayout;
+		private ISharedPreferencesEditor preferencesEdit;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -34,6 +35,7 @@ namespace eecegroup32.mojiotowingalert.android
 			SetContentView (Resource.Layout.Settings);
 			InitiateContentView();
 			LoadDongleList ();
+			OpenPreferenceEdit(); 
 
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
@@ -55,6 +57,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnDestroy()
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			ClosePreferenceEdit();
 			base.OnDestroy();		
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
@@ -74,40 +77,53 @@ namespace eecegroup32.mojiotowingalert.android
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
+		private void OpenPreferenceEdit()
+		{
+			preferencesEdit = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private).Edit(); 
+			logger.Information (this.LocalClassName, string.Format ("{0} opened. Settings ready to be edited.", SharedPreferencesName));
+		}
+
+		private void ClosePreferenceEdit()
+		{
+			preferencesEdit.Commit();
+			logger.Information (this.LocalClassName, string.Format ("{0} closed. All changes saved.", SharedPreferencesName));
+		}
+
 		private void OnNotificationToggleClicked(object sender, EventArgs e) 
 		{
-			SaveNotificationSetting (NotificationTogglePref, notificationToggle.Checked);
+			EditNotificationSetting (NotificationTogglePref, notificationToggle.Checked);
 		}
 
 		private void OnSoundCheckBoxClicked(object sender, EventArgs e) 
 		{
-			SaveNotificationSetting (NotificationSoundPref, soundCheckBox.Checked);
+			EditNotificationSetting (NotificationSoundPref, soundCheckBox.Checked);
 		}
 
 		private void OnVibrationCheckBoxClicked(object sender, EventArgs e) 
 		{
-			SaveNotificationSetting (NotificationVibrationPref, vibrationCheckBox.Checked);
+			EditNotificationSetting (NotificationVibrationPref, vibrationCheckBox.Checked);
 		}
 
-		private void SaveNotificationSetting(String option, bool value)
+		private void EditNotificationSetting(String option, bool value)
 		{
-			var preferences = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private); 
-			var edits = preferences.Edit();
-			edits.PutString(option, value.ToString());
-			edits.Commit();
-			logger.Information (this.LocalClassName, string.Format("Settings: {0} [{1}] saved.", SharedPreferencesName, value)); 
+			preferencesEdit.PutString(option, value.ToString());
+			logger.Information (this.LocalClassName, string.Format("Settings: {0} edited to {1}.", option, value)); 
 		}
 
-		//TODO Implement toggling individual device
-		private void ToggleSubscribeDongle(string id)
+		private void OnDeviceSubscriptionToggleClicked(string id, bool toggleStatus) 
 		{
+			EditNotificationSetting (GetDeviceSubscriptionPrefKey(id), toggleStatus);
 		}
 
+		//TODO Make setting preferences user specific.
 		private void InitializeComponents()
 		{
 			notificationToggle = FindViewById<ToggleButton>(Resource.Id.NotificationToggleButton);
+			notificationToggle.Checked = GetNotificationTogglePref ();
 			soundCheckBox = FindViewById<CheckBox>(Resource.Id.SoundCheckBox);
+			soundCheckBox.Checked = GetNotificationSoundPref ();
 			vibrationCheckBox = FindViewById<CheckBox>(Resource.Id.VibrationCheckBox);
+			vibrationCheckBox.Checked = GetNotificationVibrationPref ();
 			dongleListLayout = FindViewById<LinearLayout> (Resource.Id.dongleListLayout);
 			dongleButtonLayout = FindViewById<LinearLayout> (Resource.Id.dongleSubButtonLayout);
 		}
@@ -125,6 +141,7 @@ namespace eecegroup32.mojiotowingalert.android
 			InitializeEventHandlers ();
 		}
 
+		//TODO maybe async load?
 		private void LoadDongleList()
 		{
 			logger.Information (this.LocalClassName, "Dongle List: loading..."); 
@@ -148,8 +165,9 @@ namespace eecegroup32.mojiotowingalert.android
 				button.Id = i;				                
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
-					ToggleSubscribeDongle (moj.Id);
+					OnDeviceSubscriptionToggleClicked (moj.Id, button.Checked);
 				};
+				button.Checked = GetDeviceSubscriptionPref (moj.Id);
 				dongleListLayout.AddView (item);
 				dongleButtonLayout.AddView (button);
 				i++;

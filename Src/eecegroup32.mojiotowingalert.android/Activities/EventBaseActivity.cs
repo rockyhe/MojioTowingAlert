@@ -43,7 +43,6 @@ namespace eecegroup32.mojiotowingalert.android
             InitializeComponents ();
 			LoadMojioDevices();
             RegisterReceiver(Receiver, IntFilter);
-			RegisterEventsNotice ();
 
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
         }
@@ -81,6 +80,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume();
+			RegisterEventsNotice ();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
@@ -119,18 +119,26 @@ namespace eecegroup32.mojiotowingalert.android
 			*/
 		}
 
-		private Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice)
+		protected Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice)
 		{
 			return Client.SubscribeGcm (registrationId, new Subscription () {
-				Event = EventType.TripStart,
+				Event = MojioEventType,
 				EntityId = mojioDevice.Id,
 				EntityType = SubscriptionType.Mojio,
 			}, out httpStatusCode, out msg);
 		}
 
-		private bool CheckSubscriptionStatus (HttpStatusCode httpStatusCode)
+		protected bool CheckSubscriptionStatus (HttpStatusCode httpStatusCode)
 		{
 			return httpStatusCode == HttpStatusCode.NotModified;
+		}
+
+		protected void UnsubscribeForEvent (string dongleID)
+		{
+			//TODO unsubscribe
+			logger.Information (this.LocalClassName, string.Format ("Subscription (TO BE IMPLEMENTED): {0} unsubscribed for event type {1}", dongleID, MojioEventType));
+//			Client.Unsubscribe(dongleID, new List<EventType> { MojioEventType });
+//			logger.Information (this.LocalClassName, string.Format ("Subscription: {0} unsubscribed for event type {1}", dongleID, MojioEventType));
 		}
  
         private void RegisterEventsNotice()
@@ -145,34 +153,26 @@ namespace eecegroup32.mojiotowingalert.android
 				return;
 			}
 
-			HttpStatusCode statusCode;
-			Subscription subscription;
 			int trials; 
-			string msg;
 			bool isSubscribed = false;
 
 			//TODO Support multiple dongles using the settings configuration
 			foreach (var mojioDevice in MojioDevices) 
 			{
-				trials = 3; 
-	            do
-	            {
-					subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice);
-					if (subscription != null)
-	                {
-						isSubscribed = true;
-						logger.Information (this.LocalClassName, string.Format("Event Subscription: {0} - {1}.", "successful", msg));	                    
-	                    break;
-	                }
-
-					if (CheckSubscriptionStatus (statusCode)) {
-						isSubscribed = true;
-						logger.Information (this.LocalClassName, "Event Subscription: Event already subscribed.");	                    
-						break;
-					}
-
-					trials--;
-				} while (trials > 0);
+				if (!GetDeviceSubscriptionPref (mojioDevice.Id)) {
+					UnsubscribeForEvent(mojioDevice.Id);
+					continue;
+				} 
+				else 
+				{
+					trials = 3; 
+					do {
+						isSubscribed = SubscribeForEvent(mojioDevice, registrationId);
+						if (isSubscribed)
+							break;
+						trials--;
+					} while (trials > 0);
+				}
             }            
 
             if (!isSubscribed)
@@ -184,6 +184,25 @@ namespace eecegroup32.mojiotowingalert.android
             }
         }
 
+		protected bool SubscribeForEvent(Device mojioDevice, string registrationId)
+		{
+			HttpStatusCode statusCode;
+			string msg;
+			Subscription subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice);
+			if (subscription != null) {
+				logger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "successful", msg));	                    
+				return true;
+			}
+
+			if (CheckSubscriptionStatus (statusCode)) {
+				logger.Information (this.LocalClassName, "Event Subscription: Event already subscribed.");	                    
+				return true;
+			}
+
+			return false;
+		}
+
+		//TODO show on the notification button how many new notifications there are
         protected virtual void OnMojioEventReceived(Event eve)
         {
 			MyNotificationsMgr.Add(new MyNotification(eve));

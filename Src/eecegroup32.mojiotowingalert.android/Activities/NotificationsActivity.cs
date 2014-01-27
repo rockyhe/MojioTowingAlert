@@ -81,20 +81,23 @@ namespace eecegroup32.mojiotowingalert.android
 			StartActivity(new Intent(this, typeof(DetailsActivity)));
 		}
 
+		//TODO Instead of separate textview for id and date, combine them
+		//TODO notification id not so meaningful. Use something else.
 		private void AddNotificationsToScreen ()
 		{
-			TextView item;
-			foreach (MyNotification notif in MyNotificationsMgr.GetAll ()) {
-				item = new TextView (this);
-				item.Text = (notif.NotificationID);
-				item.Click += (sender, e) => OnEventItemClicked (notif);
-				notificationList.AddView (item);
-			}
+			TextView eventID, eventDate;
 
 			foreach (MyNotification notif in MyNotificationsMgr.GetAll ()) {
-				item = new TextView (this);
-				item.Text = notif.MojioEvent.Time.ToString ("f");
-				dateList.AddView (item);
+				eventID = new TextView (this);
+				eventID.Text = (notif.NotificationID);
+				eventID.Clickable = true;
+				eventID.Click += (sender, e) => OnEventItemClicked (notif);
+				notificationList.AddView (eventID);
+				eventDate = new TextView (this);
+				eventDate.Text = notif.MojioEvent.Time.ToString ("f");
+				eventDate.Clickable = true;
+				eventDate.Click += (sender, e) => OnEventItemClicked (notif);
+				dateList.AddView (eventDate);
 			}
 		}
 
