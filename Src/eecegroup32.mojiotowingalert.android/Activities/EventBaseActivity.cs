@@ -156,7 +156,6 @@ namespace eecegroup32.mojiotowingalert.android
 			int trials; 
 			bool isSubscribed = false;
 
-			//TODO Support multiple dongles using the settings configuration
 			foreach (var mojioDevice in MojioDevices) 
 			{
 				if (!GetDeviceSubscriptionPref (mojioDevice.Id)) {
