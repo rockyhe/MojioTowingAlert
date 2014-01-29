@@ -15,6 +15,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private List<MyNotification> notifications;
 		private ILogger logger = MainApp.Logger;
+		private int NumberOfNewNotifications;
 
 		public MyNotificationManager()
 		{
@@ -47,6 +48,7 @@ namespace eecegroup32.mojiotowingalert.android
 				return;
 			}
             notifications.Add(incomingMyNotification);
+			NumberOfNewNotifications++;
         }
 
 		public void Clear()
@@ -56,8 +58,24 @@ namespace eecegroup32.mojiotowingalert.android
 
         public List<MyNotification> GetAll()
         {
+			notifications.Sort ((e1, e2) =>  e1.Date.CompareTo(e2.Date));
             return notifications;
         }
+
+		public void SetNumberOfNewNotifications (int n)
+		{
+			NumberOfNewNotifications = n;
+		}
+
+		public void ClearNumberOfNewNotifications()
+		{
+			NumberOfNewNotifications = 0;
+		}
+
+		public int GetNumberOfNewNotifications()
+		{
+			return NumberOfNewNotifications;
+		}
 
 	}
 }

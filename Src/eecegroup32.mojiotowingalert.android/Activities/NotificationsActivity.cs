@@ -82,7 +82,6 @@ namespace eecegroup32.mojiotowingalert.android
 		}
 
 		//TODO Instead of separate textview for id and date, combine them
-		//TODO notification id not so meaningful. Use something else.
 		private void AddNotificationsToScreen ()
 		{
 			TextView eventID, eventDate;
@@ -107,7 +106,6 @@ namespace eecegroup32.mojiotowingalert.android
 			dateList.RemoveAllViews ();
 		}
 
-		//TODO load events stored in the server too
 		private void ShowNotificationList()
 		{
 			ClearNotificationList ();

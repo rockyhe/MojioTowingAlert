@@ -31,7 +31,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void PopulateEventInfo(Event eve)
 		{
 			TripEvent e = (TripEvent) eve;
-			_NotificationID = e.Id.ToString();
+			_NotificationID = e.EventType.ToString();
 			_LatLng = new LatLng (e.Location.Lat, e.Location.Lng);
 			_Date = e.Time.ToLongDateString();
 			_Time = e.Time.ToLongTimeString();

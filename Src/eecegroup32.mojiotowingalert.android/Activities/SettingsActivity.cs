@@ -77,9 +77,14 @@ namespace eecegroup32.mojiotowingalert.android
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
+		private string GetSharedPreferencesName()
+		{
+			return string.Format ("{0}_{1}", SharedPreferencesName, Client.CurrentUser);
+		}
+
 		private void OpenPreferenceEdit()
 		{
-			preferencesEdit = GetSharedPreferences(SharedPreferencesName, FileCreationMode.Private).Edit(); 
+			preferencesEdit = GetSharedPreferences(GetSharedPreferencesName(), FileCreationMode.Private).Edit(); 
 			logger.Information (this.LocalClassName, string.Format ("{0} opened. Settings ready to be edited.", SharedPreferencesName));
 		}
 
@@ -114,8 +119,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			EditNotificationSetting (GetDeviceSubscriptionPrefKey(id), toggleStatus);
 		}
-
-		//TODO Make setting preferences user specific.
+			
 		private void InitializeComponents()
 		{
 			notificationToggle = FindViewById<ToggleButton>(Resource.Id.NotificationToggleButton);

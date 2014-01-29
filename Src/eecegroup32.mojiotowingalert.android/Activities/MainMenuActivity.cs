@@ -40,6 +40,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
 			base.OnStart();
+			LoadLastEvents ();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
 		}
 
@@ -62,6 +63,7 @@ namespace eecegroup32.mojiotowingalert.android
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume();
 			MainApp.SetCurrentActivity (this);
+			UpdateNumberOfNewEvents ();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
@@ -96,6 +98,36 @@ namespace eecegroup32.mojiotowingalert.android
 				username = Client.CurrentUser.UserName;
 			}
 			welcome.Text = "Welcome " + username;
+		}
+
+		protected override void OnMojioEventReceived(Event eve)
+		{
+			base.OnMojioEventReceived (eve);
+			UpdateNumberOfNewEvents ();
+		}
+
+		private void UpdateNumberOfNewEvents()
+		{
+			if (!(MainApp.GetCurrentActivity() is MainMenuActivity)) 
+			{
+				logger.Information (this.LocalClassName, string.Format ("Notification Button not updated because MainMenuActivity is not visible."));
+			}
+			else
+			{
+				int numberOfNewEvents = MainApp.MyNotificationsMgr.GetNumberOfNewNotifications ();
+				logger.Information (this.LocalClassName, string.Format ("{0} New Events found.", numberOfNewEvents));
+				if (numberOfNewEvents == 0) 
+				{
+					notifcationButton.Text = Resources.GetString(Resource.String.notifications);
+				} 
+				else 
+				{
+					var msg = string.Format (" ({0})", numberOfNewEvents);
+					notifcationButton.Text += msg;
+					MainApp.MyNotificationsMgr.ClearNumberOfNewNotifications ();
+					logger.Information (this.LocalClassName, string.Format ("Number of new notifications set to 0"));
+				}
+			}
 		}
 
 		private void OnNotificationsClicked(object sender, EventArgs e)

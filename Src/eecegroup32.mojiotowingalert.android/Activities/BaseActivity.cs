@@ -28,7 +28,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected static bool ActivityVisible;
 		protected static bool ConnectedToNetwork;
 		protected static IList<Device> MojioDevices;
-		protected static readonly Mojio.Events.EventType MojioEventType = Mojio.Events.EventType.TripStart;
+		protected static readonly Mojio.Events.EventType EventToSubscribe = Mojio.Events.EventType.TripStart;
 		protected static ILogger logger = MainApp.Logger;
 		protected static MyNotificationManager MyNotificationsMgr = MainApp.MyNotificationsMgr;
 

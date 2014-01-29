@@ -32,6 +32,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 				if( context is EventBaseActivity )
 					(context as EventBaseActivity).OnMojioEventReceived(ev);
+
 			}
 		}
 
@@ -100,29 +101,26 @@ namespace eecegroup32.mojiotowingalert.android
 				IntFilter = new IntentFilter (EventReceiver.IntentAction);
 		}
 
-		private void LoadLastEvents(int count = 10)
+		protected void LoadLastEvents(int count = 10)
 		{
-			/*
-			// Use Linq queries to query our API for list of events.
 			var query = from e in Client.Queryable<Event> ()
-							where e.EventType.Equals (EventType.TripStart)
+				            where e.EventType.Equals (EventToSubscribe)
 							orderby e.Time descending
 						select e;
 
-			// Specify how many entries to receive
 			query.Take (count);
 
 			// No requests have been sent to our server until this point.
 			//  Now make API call and fetch entries and iterate over them
 			foreach (var eve in query)
-				RunOnUiThread( () => AddMojioEvent (eve) );
-			*/
+				RunOnUiThread( () => MainApp.MyNotificationsMgr.Add(new MyNotification (eve)) );
+
 		}
 
 		protected Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice)
 		{
 			return Client.SubscribeGcm (registrationId, new Subscription () {
-				Event = MojioEventType,
+				Event = EventToSubscribe,
 				EntityId = mojioDevice.Id,
 				EntityType = SubscriptionType.Mojio,
 			}, out httpStatusCode, out msg);
@@ -136,7 +134,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected void UnsubscribeForEvent (string dongleID)
 		{
 			//TODO unsubscribe
-			logger.Information (this.LocalClassName, string.Format ("Subscription (TO BE IMPLEMENTED): {0} unsubscribed for event type {1}", dongleID, MojioEventType));
+			logger.Information (this.LocalClassName, string.Format ("Subscription (TO BE IMPLEMENTED): {0} unsubscribed for event type {1}", dongleID, EventToSubscribe));
 //			Client.Unsubscribe(dongleID, new List<EventType> { MojioEventType });
 //			logger.Information (this.LocalClassName, string.Format ("Subscription: {0} unsubscribed for event type {1}", dongleID, MojioEventType));
 		}
@@ -201,15 +199,33 @@ namespace eecegroup32.mojiotowingalert.android
 			return false;
 		}
 
-		//TODO show on the notification button how many new notifications there are
         protected virtual void OnMojioEventReceived(Event eve)
         {
 			MyNotificationsMgr.Add(new MyNotification(eve));
+
 			if (MainApp.GetCurrentActivity() is NotificationsActivity) 
 			{
 				((NotificationsActivity)MainApp.GetCurrentActivity ()).Update ();
 			}
-			SendSystemNotification(this, eve);
+
+			if (ActivityVisible) {
+				logger.Information (this.Class.SimpleName, "App Visibility: Visible.");
+				SendSystemNotification (this, eve);
+			} 
+			else 
+			{
+				logger.Information (this.Class.SimpleName, "App Visibility: Not Visible.");
+				SendNotificationToast ();
+			}
+		}
+
+		protected void SendNotificationToast(string msg="")
+		{
+			if (msg == "")
+				msg = "New Notification Arrived!";
+			var temp = Toast.MakeText(this, msg, ToastLength.Long);
+			temp.SetGravity(GravityFlags.CenterVertical, 0, 0);
+			temp.Show();
 		}
 
         protected void SendSystemNotification(Context context, Event eve)
@@ -221,7 +237,8 @@ namespace eecegroup32.mojiotowingalert.android
 			if (!isNotificationEnabled)
 				return;
             
-            var notification = new Notification(Resource.Drawable.Icon, "New Mojio event received");
+			var notificationMsg = string.Format ("New {0} Mojio Event Received!", eve.EventType.ToString ());
+			var notification = new Notification(Resource.Drawable.Icon, notificationMsg);
             var pendingIntent = PendingIntent.GetActivity(context, 0, new Intent(context, context.GetType()), 0);
             notification.SetLatestEventInfo(context, "New Mojio event", eve.EventType.ToString(), pendingIntent);
             notification.Flags = NotificationFlags.AutoCancel;
