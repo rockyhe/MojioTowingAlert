@@ -59,6 +59,7 @@ namespace eecegroup32.mojiotowingalert.android
         public List<MyNotification> GetAll()
         {
 			notifications.Sort ((e1, e2) =>  e1.Date.CompareTo(e2.Date));
+			notifications.Reverse ();
             return notifications;
         }
 
