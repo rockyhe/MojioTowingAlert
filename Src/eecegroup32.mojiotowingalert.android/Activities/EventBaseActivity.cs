@@ -101,20 +101,19 @@ namespace eecegroup32.mojiotowingalert.android
 				IntFilter = new IntentFilter (EventReceiver.IntentAction);
 		}
 
-		protected void LoadLastEvents(int count = 10)
+		protected void LoadLastEvents(int count = 5)
 		{
 			var query = from e in Client.Queryable<Event> ()
 				            where e.EventType.Equals (EventToSubscribe)
-							orderby e.Time descending
-						select e;
-
+							select e;
 			query.Take (count);
-
+			logger.Information (this.LocalClassName, "Querying...");
 			// No requests have been sent to our server until this point.
 			//  Now make API call and fetch entries and iterate over them
-			foreach (var eve in query)
-				RunOnUiThread( () => MainApp.MyNotificationsMgr.Add(new MyNotification (eve)) );
-
+			foreach (var eve in query) {
+				MainApp.MyNotificationsMgr.Add (new MyNotification (eve));
+				logger.Information (this.LocalClassName, string.Format ("{0} is added from the Mojio sever", eve.Id));
+			}
 		}
 
 		protected Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice)
@@ -202,7 +201,10 @@ namespace eecegroup32.mojiotowingalert.android
         protected virtual void OnMojioEventReceived(Event eve)
         {
 			MyNotificationsMgr.Add(new MyNotification(eve));
-
+			if (MainApp.GetCurrentActivity () is NotificationsActivity)
+				MyNotificationsMgr.ClearNumberOfNewNotifications ();
+			else
+				MyNotificationsMgr.IncrementNumberOfNewNotifications();
 			if (MainApp.GetCurrentActivity() is NotificationsActivity) 
 			{
 				((NotificationsActivity)MainApp.GetCurrentActivity ()).Update ();
@@ -210,12 +212,13 @@ namespace eecegroup32.mojiotowingalert.android
 
 			if (ActivityVisible) {
 				logger.Information (this.Class.SimpleName, "App Visibility: Visible.");
-				SendSystemNotification (this, eve);
+				SendNotificationToast ();
 			} 
 			else 
 			{
 				logger.Information (this.Class.SimpleName, "App Visibility: Not Visible.");
-				SendNotificationToast ();
+
+				SendSystemNotification (this, eve);
 			}
 		}
 
@@ -223,7 +226,8 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			if (msg == "")
 				msg = "New Notification Arrived!";
-			var temp = Toast.MakeText(this, msg, ToastLength.Long);
+			logger.Information (this.Class.SimpleName, "Creating a toast for the new notification...");
+			var temp = Toast.MakeText(MainApp.GetCurrentActivity(), msg, ToastLength.Long);
 			temp.SetGravity(GravityFlags.CenterVertical, 0, 0);
 			temp.Show();
 		}

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -40,7 +40,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
 			base.OnStart();
-			//LoadLastEvents ();
+			ThreadPool.QueueUserWorkItem(o=>LoadLastEvents ());
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
 		}
 
@@ -122,8 +122,8 @@ namespace eecegroup32.mojiotowingalert.android
 				} 
 				else 
 				{
-					var msg = string.Format (" ({0})", numberOfNewEvents);
-					notifcationButton.Text += msg;
+					var msg = string.Format ("{0} ({1})", Resources.GetString(Resource.String.notifications), numberOfNewEvents);
+					notifcationButton.Text = msg;
 					MainApp.MyNotificationsMgr.ClearNumberOfNewNotifications ();
 					logger.Information (this.LocalClassName, string.Format ("Number of new notifications set to 0"));
 				}

@@ -48,7 +48,6 @@ namespace eecegroup32.mojiotowingalert.android
 				return;
 			}
             notifications.Add(incomingMyNotification);
-			NumberOfNewNotifications++;
         }
 
 		public void Clear()
@@ -58,14 +57,18 @@ namespace eecegroup32.mojiotowingalert.android
 
         public List<MyNotification> GetAll()
         {
-			notifications.Sort ((e1, e2) =>  e1.Date.CompareTo(e2.Date));
-			notifications.Reverse ();
+			notifications.Sort ((e1, e2) =>  e2.MojioEvent.Time.CompareTo(e1.MojioEvent.Time));
             return notifications;
         }
 
 		public void SetNumberOfNewNotifications (int n)
 		{
 			NumberOfNewNotifications = n;
+		}
+
+		public void IncrementNumberOfNewNotifications()
+		{
+			NumberOfNewNotifications++;
 		}
 
 		public void ClearNumberOfNewNotifications()
