@@ -100,7 +100,7 @@ namespace eecegroup32.mojiotowingalert.android
 				}
 
 				map.MapType = GoogleMap.MapTypeNormal;
-				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom(locationBoundary.Center,10));
+				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom(locationBoundary.Center,0));
 			}
 		}
 

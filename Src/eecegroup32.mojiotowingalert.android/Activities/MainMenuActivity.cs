@@ -40,7 +40,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
 			base.OnStart();
-			LoadLastEvents ();
+			//LoadLastEvents ();
 			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
 		}
 

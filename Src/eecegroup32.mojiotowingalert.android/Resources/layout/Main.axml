@@ -32,5 +32,6 @@
         p1:text="@string/login"
         p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
-        p1:id="@+id/button1" />
+        p1:id="@+id/button1"
+        p1:background="@drawable/android_button" />
 </LinearLayout>
