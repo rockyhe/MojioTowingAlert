@@ -3,130 +3,133 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-
 using PushSharp.Client;
 using Mojio;
 using Mojio.Events;
+using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
+	public delegate void ChangedEventHandler (string deviceId, bool isChecked);
 	[Activity (Label = "SettingsActivity")]			
 	public class SettingsActivity : BaseActivity
 	{
+		public static event ChangedEventHandler OnSubscriptionChanged;
+
 		private ToggleButton notificationToggle;
 		private CheckBox soundCheckBox;
 		private CheckBox vibrationCheckBox;
 		private LinearLayout dongleListLayout;
 		private LinearLayout dongleButtonLayout;
-		private ISharedPreferencesEditor preferencesEdit;
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Settings);
-			InitiateContentView();
+			InitiateContentView ();
 			LoadDongleList ();
-			OpenPreferenceEdit(); 
-
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
-		}
-
-		protected override void OnStart()
-		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
-		}
-
-		protected override void OnStop()
-		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnStop();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
-		}
-
-		protected override void OnDestroy()
-		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			ClosePreferenceEdit();
-			base.OnDestroy();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
-		}
-
-		protected override void OnResume()
-		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
-			base.OnResume();
-			MainApp.SetCurrentActivity (this);
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
-		}
-
-		protected override void OnPause()
-		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
-		}
-
-		private string GetSharedPreferencesName()
-		{
-			return string.Format ("{0}_{1}", SharedPreferencesName, Client.CurrentUser);
-		}
-
-		private void OpenPreferenceEdit()
-		{
-			preferencesEdit = GetSharedPreferences(GetSharedPreferencesName(), FileCreationMode.Private).Edit(); 
-			logger.Information (this.LocalClassName, string.Format ("{0} opened. Settings ready to be edited.", SharedPreferencesName));
-		}
-
-		private void ClosePreferenceEdit()
-		{
-			preferencesEdit.Commit();
-			logger.Information (this.LocalClassName, string.Format ("{0} closed. All changes saved.", SharedPreferencesName));
-		}
-
-		private void OnNotificationToggleClicked(object sender, EventArgs e) 
-		{
-			EditNotificationSetting (NotificationTogglePref, notificationToggle.Checked);
-		}
-
-		private void OnSoundCheckBoxClicked(object sender, EventArgs e) 
-		{
-			EditNotificationSetting (NotificationSoundPref, soundCheckBox.Checked);
-		}
-
-		private void OnVibrationCheckBoxClicked(object sender, EventArgs e) 
-		{
-			EditNotificationSetting (NotificationVibrationPref, vibrationCheckBox.Checked);
-		}
-
-		private void EditNotificationSetting(String option, bool value)
-		{
-			preferencesEdit.PutString(option, value.ToString());
-			logger.Information (this.LocalClassName, string.Format("Settings: {0} edited to {1}.", option, value)); 
-		}
-
-		private void OnDeviceSubscriptionToggleClicked(string id, bool toggleStatus) 
-		{
-			EditNotificationSetting (GetDeviceSubscriptionPrefKey(id), toggleStatus);
-		}
 			
-		private void InitializeComponents()
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+		}
+
+		protected override void OnStart ()
 		{
-			notificationToggle = FindViewById<ToggleButton>(Resource.Id.NotificationToggleButton);
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnStop ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+		}
+
+		protected override void OnDestroy ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+		}
+
+		protected override void OnResume ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume ();
+			MainApp.SetCurrentActivity (this);
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+		}
+
+		protected override void OnPause ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+		}
+
+		private void OnNotificationToggleClicked (object sender, EventArgs e)
+		{
+			CurrentUserPreference.NotificationChecked = notificationToggle.Checked;
+			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", "Notification Toggle", notificationToggle.Checked));
+			SaveUserPreferences ();
+		}
+
+		private void OnSoundCheckBoxClicked (object sender, EventArgs e)
+		{
+			CurrentUserPreference.SoundChecked = soundCheckBox.Checked;
+			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", "Sound Toggle", soundCheckBox.Checked));
+			SaveUserPreferences ();
+		}
+
+		private void OnVibrationCheckBoxClicked (object sender, EventArgs e)
+		{
+			CurrentUserPreference.VibrationChecked = vibrationCheckBox.Checked;	
+			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", "Vibration Toggle", vibrationCheckBox.Checked));
+			SaveUserPreferences ();
+		}
+
+		private void SaveUserPreferences ()
+		{	
+			var succeed = MyDataManager.SaveUserPreference (CurrentUserPreference);
+			var msg = string.Format ("User Preference: {0} ", succeed ? "Saved" : "Not Saved");
+			MyLogger.Information (this.LocalClassName, msg);
+			ShowToastAtCenter (msg);
+		}
+
+		private void ShowToastAtCenter (string msg)
+		{
+			var toast = Toast.MakeText (this, msg, ToastLength.Short);
+			toast.SetGravity (GravityFlags.Center, 0, 0);
+			toast.Show ();
+		}
+
+		private void OnDeviceSubscriptionToggleClicked (string id, bool isChecked)
+		{
+			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", id, isChecked));
+			if (isChecked)
+				CurrentUserPreference.AddToSubscriptionList (EventType.Tow, id);
+			else
+				CurrentUserPreference.RemoveFromSubscriptionList (EventType.Tow, id);
+			OnSubscriptionChanged (id, isChecked);
+			SaveUserPreferences ();
+		}
+
+		private void InitializeComponents ()
+		{
+			notificationToggle = FindViewById<ToggleButton> (Resource.Id.NotificationToggleButton);
 			notificationToggle.Checked = GetNotificationTogglePref ();
-			soundCheckBox = FindViewById<CheckBox>(Resource.Id.SoundCheckBox);
+			soundCheckBox = FindViewById<CheckBox> (Resource.Id.SoundCheckBox);
 			soundCheckBox.Checked = GetNotificationSoundPref ();
-			vibrationCheckBox = FindViewById<CheckBox>(Resource.Id.VibrationCheckBox);
+			vibrationCheckBox = FindViewById<CheckBox> (Resource.Id.VibrationCheckBox);
 			vibrationCheckBox.Checked = GetNotificationVibrationPref ();
 			dongleListLayout = FindViewById<LinearLayout> (Resource.Id.dongleListLayout);
 			dongleButtonLayout = FindViewById<LinearLayout> (Resource.Id.dongleSubButtonLayout);
@@ -139,25 +142,24 @@ namespace eecegroup32.mojiotowingalert.android
 			vibrationCheckBox.Click += new EventHandler (OnVibrationCheckBoxClicked);
 		}
 
-		private void InitiateContentView()
+		private void InitiateContentView ()
 		{
 			InitializeComponents ();
 			InitializeEventHandlers ();
 		}
-
-		//TODO maybe async load?
-		private void LoadDongleList()
+		//TODO: Bad Impelmentation
+		private void LoadDongleList ()
 		{
-			logger.Information (this.LocalClassName, "Dongle List: loading..."); 
+			MyLogger.Information (this.LocalClassName, "Dongle List: loading..."); 
 			int i = 0;
 			ToggleButton button;
 			TextView item;
 			LoadMojioDevices ();
-			foreach (Device moj in MojioDevices) {
+			foreach (Device moj in UserDevices) {
 				item = new TextView (this);
 				item.Id = i;
 				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
-				logger.Information (this.LocalClassName, string.Format ("Dongle List: {0} loaded.", moj.Name));
+				MyLogger.Information (this.LocalClassName, string.Format ("Dongle List: {0} loaded.", moj.Name));
 				RelativeLayout.LayoutParams parameters = 
 					new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.FillParent, 
 						RelativeLayout.LayoutParams.WrapContent);
@@ -171,12 +173,12 @@ namespace eecegroup32.mojiotowingalert.android
 				button.Click += (o, args) => {
 					OnDeviceSubscriptionToggleClicked (moj.Id, button.Checked);
 				};
-				button.Checked = GetDeviceSubscriptionPref (moj.Id);
+				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.Tow, moj.Id);
 				dongleListLayout.AddView (item);
 				dongleButtonLayout.AddView (button);
 				i++;
 			}
-			logger.Information (this.LocalClassName, string.Format("{0} dongle(s) loaded.", i));
+			MyLogger.Information (this.LocalClassName, string.Format ("{0} dongle(s) loaded.", i));
 		}
 	}
 }

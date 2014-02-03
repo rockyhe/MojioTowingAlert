@@ -1,20 +1,21 @@
 using System;
 using System.Text;
 
-namespace eecegroup32.mojiotowingalert.android
+namespace eecegroup32.mojiotowingalert.core
 {
-	public class MyLogger: ILogger
+	public static class MyLogger
 	{
-		public enum Level {
+		public enum Level
+		{
 			Debug,
 			Information,
 			Warning,
 			Error
 		}
 
-		private Level VerbosityLevel = Level.Debug;
+		private static Level VerbosityLevel = Level.Debug;
 
-		public void Write(string tag, string message, Level level = Level.Information)
+		public static void Write (string tag, string message, Level level = Level.Information)
 		{
 			if (VerbosityLevel > level)
 				return;
@@ -26,39 +27,36 @@ namespace eecegroup32.mojiotowingalert.android
 			str.Append ("[");
 			str.Append (tag);
 			str.Append ("] ");
-			str.Append(message);
-			Console.WriteLine (str.ToString());
+			str.Append (message);
+			Console.WriteLine (str.ToString ());
 		}
 
-		public void SetVerbosityLevel (int level)
+		public static void SetVerbosityLevel (int level)
 		{
-			try 
-			{
-				VerbosityLevel = (Level) level;
-			}
-			catch (IndexOutOfRangeException) 
-			{
+			try {
+				VerbosityLevel = (Level)level;
+			} catch (IndexOutOfRangeException) {
 				VerbosityLevel = Level.Error;
 				Error ("Logger", "Verbosity level out of range. Set to the highest instead.");
 			}
 		}
 
-		public void Error(string tag, string message)
+		public static void Error (string tag, string message)
 		{
 			Write (tag, message, Level.Error);
 		}
 
-		public void Warning(string tag, string message)
+		public static void Warning (string tag, string message)
 		{
 			Write (tag, message, Level.Warning);
 		}
 
-		public void Information(string tag, string message)
+		public static void Information (string tag, string message)
 		{
 			Write (tag, message, Level.Information);
 		}
 
-		public void Debug(string tag, string message)
+		public static void Debug (string tag, string message)
 		{
 			Write (tag, message, Level.Debug);
 		}

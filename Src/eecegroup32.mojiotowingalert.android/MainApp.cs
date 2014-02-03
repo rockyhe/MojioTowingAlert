@@ -1,31 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
-using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
+using Mojio;
 using Mojio.Client;
+using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Application]
 	public class MainApp : Application
 	{
-		public static Config ConfigSettings;
-		public static MojioClient Client;
-		public static ILogger Logger;
-		public static MyNotificationManager MyNotificationsMgr;
-		public static MyNotification SelectedNotification;
+		public static Config ConfigSettings { get; set; }
+
+		public static MojioClient Client { get; set; }
 
 		private static Activity _CurrentActivity;
 
-		public MainApp (IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer) { }
+		public MainApp (IntPtr javaReference, JniHandleOwnership transfer) : base (javaReference, transfer)
+		{
+		}
 
 		private void SetupMojioClient ()
 		{
@@ -36,11 +30,6 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 		}
 
-		private void SetupLogger()
-		{
-			Logger = new MyLogger ();
-		}
-
 		static void SetupConfigSettings ()
 		{
 			ConfigSettings = new Config ();
@@ -49,30 +38,23 @@ namespace eecegroup32.mojiotowingalert.android
 				throw new Exception ("You must fill in the App ID and Key MojioTowingAlert.cs");
 		}
 
-		private void SetupNotificationMgr()
+		public override void OnCreate ()
 		{
-			MyNotificationsMgr = new MyNotificationManager();
-		}
-
-		public override void OnCreate()
-		{
-			base.OnCreate();
-
+			base.OnCreate ();
 			SetupConfigSettings ();
 			SetupMojioClient ();
-			SetupLogger ();
-			SetupNotificationMgr ();
 		}
 
-		public static Activity GetCurrentActivity()
+		public static Activity GetCurrentActivity ()
 		{
+			MyLogger.Information ("MainApp", string.Format ("Current Activity: {0} returned", _CurrentActivity.LocalClassName));
 			return _CurrentActivity;
 		}
 
-		public static void SetCurrentActivity(Activity activity)
+		public static void SetCurrentActivity (Activity activity)
 		{
 			_CurrentActivity = activity;
-			Logger.Information("MainApp", string.Format("Current activity set to {0}", activity.LocalClassName));
+			MyLogger.Information ("MainApp", string.Format ("Current Activity: Set To {0}", activity.LocalClassName));
 		}
 	}
 }

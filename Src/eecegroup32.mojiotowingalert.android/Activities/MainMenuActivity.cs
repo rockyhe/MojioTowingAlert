@@ -9,8 +9,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-
 using Mojio.Events;
+using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -25,70 +25,69 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.MainMenu);
-			InitializeComponents ();
+			InitializeVariables ();
 			InitializeEventHandlers ();
 			InitializeWelcomeScreen ();
 
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
-		protected override void OnStart()
+		protected override void OnStart ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart();
-			ThreadPool.QueueUserWorkItem(o=>LoadLastEvents ());
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart ();			
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
 		}
 
-		protected override void OnStop()
+		protected override void OnStop ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnStop();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnStop ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
 		}
 
-		protected override void OnDestroy()
+		protected override void OnDestroy ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			base.OnDestroy();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
-		protected override void OnResume()
+		protected override void OnResume ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
-			base.OnResume();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume ();
 			MainApp.SetCurrentActivity (this);
 			UpdateNumberOfNewEvents ();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
-		protected override void OnPause()
+		protected override void OnPause ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
-		private void InitializeComponents ()
+		private void InitializeVariables ()
 		{
 			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
-			notifcationButton = FindViewById<Button>(Resource.Id.notificationsButton);
-			mapsButton = FindViewById<Button>(Resource.Id.mapsButton);
-			settingsButton = FindViewById<Button>(Resource.Id.settingsButton);
-			logOutButton = FindViewById<Button>(Resource.Id.logOutButton);
+			notifcationButton = FindViewById<Button> (Resource.Id.notificationsButton);
+			mapsButton = FindViewById<Button> (Resource.Id.mapsButton);
+			settingsButton = FindViewById<Button> (Resource.Id.settingsButton);
+			logOutButton = FindViewById<Button> (Resource.Id.logOutButton);
 		}
 
-		private void InitializeEventHandlers()
+		private void InitializeEventHandlers ()
 		{
-			notifcationButton.Click += new EventHandler(OnNotificationsClicked);
-			mapsButton.Click += new EventHandler(OnMapsClicked);
-			settingsButton.Click += new EventHandler(OnSettingsClicked);
-			logOutButton.Click += new EventHandler(OnLogOutClicked);
+			notifcationButton.Click += new EventHandler (OnNotificationsClicked);
+			mapsButton.Click += new EventHandler (OnMapsClicked);
+			settingsButton.Click += new EventHandler (OnSettingsClicked);
+			logOutButton.Click += new EventHandler (OnLogOutClicked);
 		}
 
 		private void InitializeWelcomeScreen ()
@@ -100,64 +99,57 @@ namespace eecegroup32.mojiotowingalert.android
 			welcome.Text = "Welcome " + username;
 		}
 
-		protected override void OnMojioEventReceived(Event eve)
+		protected override void OnMojioEventReceived (Event eve)
 		{
 			base.OnMojioEventReceived (eve);
 			UpdateNumberOfNewEvents ();
 		}
 
-		private void UpdateNumberOfNewEvents()
+		private void UpdateNumberOfNewEvents ()
 		{
-			if (!(MainApp.GetCurrentActivity() is MainMenuActivity)) 
-			{
-				logger.Information (this.LocalClassName, string.Format ("Notification Button not updated because MainMenuActivity is not visible."));
-			}
-			else
-			{
-				int numberOfNewEvents = MainApp.MyNotificationsMgr.GetNumberOfNewNotifications ();
-				logger.Information (this.LocalClassName, string.Format ("{0} New Events found.", numberOfNewEvents));
-				if (numberOfNewEvents == 0) 
-				{
-					notifcationButton.Text = Resources.GetString(Resource.String.notifications);
-				} 
-				else 
-				{
-					var msg = string.Format ("{0} ({1})", Resources.GetString(Resource.String.notifications), numberOfNewEvents);
+			if (!(MainApp.GetCurrentActivity () is MainMenuActivity)) {
+				MyLogger.Information (this.LocalClassName, string.Format ("Notification Button not updated because MainMenuActivity is not visible."));
+			} else {
+				int numberOfNewEvents = TowManager.GetNewEventNumber ();
+				MyLogger.Information (this.LocalClassName, string.Format ("{0} New Events found.", numberOfNewEvents));
+				if (numberOfNewEvents == 0) {
+					notifcationButton.Text = Resources.GetString (Resource.String.notifications);
+				} else {
+					var msg = string.Format ("{0} ({1})", Resources.GetString (Resource.String.notifications), numberOfNewEvents);
 					notifcationButton.Text = msg;
-					MainApp.MyNotificationsMgr.ClearNumberOfNewNotifications ();
-					logger.Information (this.LocalClassName, string.Format ("Number of new notifications set to 0"));
+					TowManager.ClearNewEventNumber ();
+					MyLogger.Information (this.LocalClassName, string.Format ("Number of new notifications set to 0"));
 				}
 			}
 		}
 
-		private void OnNotificationsClicked(object sender, EventArgs e)
+		private void OnNotificationsClicked (object sender, EventArgs e)
 		{
-			StartActivity(new Intent(this, typeof(NotificationsActivity)));
+			StartActivity (new Intent (this, typeof(NotificationsActivity)));
 		}
 
-		private void OnMapsClicked(object sender, EventArgs e)
+		private void OnMapsClicked (object sender, EventArgs e)
 		{
-			StartActivity(new Intent(this, typeof(MapsActivity)));
+			StartActivity (new Intent (this, typeof(MapsActivity)));
 		}
 
-		private void OnSettingsClicked(object sender, EventArgs e)
+		private void OnSettingsClicked (object sender, EventArgs e)
 		{
-			StartActivity(new Intent(this, typeof(SettingsActivity)));
+			StartActivity (new Intent (this, typeof(SettingsActivity)));
 		}
 
-		private void OnLogOutClicked(object sender, EventArgs e)
+		private void OnLogOutClicked (object sender, EventArgs e)
 		{
-			Client.ClearUser();
-			GotoLogin();
+			Client.ClearUser ();
+			GotoLogin ();
 		}
 
-		private void GotoLogin()
+		private void GotoLogin ()
 		{
-			var login = new Intent(this, typeof(LoginActivity));
-			login.AddFlags(ActivityFlags.ClearTop);
-			StartActivity(login);
+			var login = new Intent (this, typeof(LoginActivity));
+			login.AddFlags (ActivityFlags.ClearTop);
+			StartActivity (login);
 		}
-
 	}
 }
 

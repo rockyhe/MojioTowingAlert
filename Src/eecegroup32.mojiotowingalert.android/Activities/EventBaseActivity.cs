@@ -1,98 +1,109 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
-using Android.App;
-using Android.Content;
+using System.Linq;
+using System.Collections.Generic;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
+using Android.App;
 using Android.Widget;
-using Mojio.Events;
-using Android.Util;
-using PushSharp.Client;
+using Android.Views;
+using Android.Content;
 using Mojio;
-using Mojio.Client;
-using System.Threading;
+using Mojio.Events;
+using PushSharp.Client;
+using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-    public abstract class EventBaseActivity : BaseActivity
-    {
-		protected static IntentFilter IntFilter;
-		//protected static Context CurrentContext;
-		protected static PushEventReceiver Receiver;
+	public abstract class EventBaseActivity : BaseActivity
+	{
+		protected static IntentFilter IntFilter{ get; set; }
+
+		protected static PushEventReceiver Receiver{ get; set; }
 
 		public class PushEventReceiver : EventReceiver
 		{
-			protected override void OnEvent(Context context, Event ev)
+			protected override void OnEvent (Context context, Event ev)
 			{
-				logger.Information (this.Class.SimpleName, string.Format("Event Received: Context-{0} EventType-{1}", context.GetType().ToString(), ev.EventType.ToString()) );
+				MyLogger.Information (this.Class.SimpleName, string.Format ("Event Received: Context-{0} EventType-{1}", context.GetType ().ToString (), ev.EventType.ToString ()));
 
-				if( context is EventBaseActivity )
-					(context as EventBaseActivity).OnMojioEventReceived(ev);
-
+				if (context is EventBaseActivity)
+					(context as EventBaseActivity).OnMojioEventReceived (ev);
 			}
 		}
 
-        protected override void OnCreate(Bundle bundle)
-        {
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
-            base.OnCreate(bundle);
-            InitializeComponents ();
-			LoadMojioDevices();
-            RegisterReceiver(Receiver, IntFilter);
-
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
-        }
-
-		protected override void OnStart()
+		protected override void OnCreate (Bundle bundle)
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+
+			base.OnCreate (bundle);
+			InitializeVariables ();
+			LoadUserPreference ();
+			LoadMojioDevices (); 
+			RegisterReceiver (Receiver, IntFilter);
+			RegisterSubscriptionEventListener ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
-		protected override void OnStop()
+		protected void RegisterSubscriptionEventListener ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			SettingsActivity.OnSubscriptionChanged += RegisterEvenForNotice;
+		}
+
+		private void LoadUserPreference ()
+		{
+			MyLogger.Information (this.LocalClassName, string.Format ("Loading User Preference for {0}.", Client.CurrentUser.UserName));
+			var r = MyDataManager.GetUserPreference (Client.CurrentUser.UserName);
+			if (r != null) {
+				CurrentUserPreference = r;
+				MyLogger.Information (this.LocalClassName, string.Format ("User Preference Retrieved for {0}.", Client.CurrentUser.UserName));
+			} else {
+				CurrentUserPreference = new UserPreference () { UserId = Client.CurrentUser.UserName };
+				MyLogger.Information (this.LocalClassName, string.Format ("Default User Preference Created for {0}.", Client.CurrentUser.UserName));
+			}
+		}
+
+		protected override void OnStart ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+		}
+
+		protected override void OnStop ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
 			base.OnStop ();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
 		}
 
-		protected override void OnDestroy()
+		protected override void OnDestroy ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			try 
-			{
-				UnregisterReceiver(Receiver);
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			try {
+				UnregisterReceiver (Receiver);
+			} catch (Exception ex) {
+				MyLogger.Error (this.LocalClassName, string.Format ("Tried to unregister when not registered. Exception: {0}", ex.Message));
 			}
-			catch (Exception ex) 
-			{
-				logger.Error (this.LocalClassName, string.Format ("Tried to unregister when not registered. Exception: {0}", ex.Message));
-			}
-			base.OnDestroy();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+			base.OnDestroy ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
-		protected override void OnResume()
+		protected override void OnResume ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
-			base.OnResume();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume ();
 			RegisterEventsNotice ();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
-		protected override void OnPause()
+		protected override void OnPause ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
-		private void InitializeComponents ()
+		private void InitializeVariables ()
 		{
 			if (Receiver == null)
 				Receiver = new PushEventReceiver ();
@@ -101,25 +112,10 @@ namespace eecegroup32.mojiotowingalert.android
 				IntFilter = new IntentFilter (EventReceiver.IntentAction);
 		}
 
-		protected void LoadLastEvents(int count = 5)
-		{
-			var query = from e in Client.Queryable<Event> ()
-				            where e.EventType.Equals (EventToSubscribe)
-							select e;
-			query.Take (count);
-			logger.Information (this.LocalClassName, "Querying...");
-			// No requests have been sent to our server until this point.
-			//  Now make API call and fetch entries and iterate over them
-			foreach (var eve in query) {
-				MainApp.MyNotificationsMgr.Add (new MyNotification (eve));
-				logger.Information (this.LocalClassName, string.Format ("{0} is added from the Mojio sever", eve.Id));
-			}
-		}
-
-		protected Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice)
+		protected Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice, EventType eventToSubscribe)
 		{
 			return Client.SubscribeGcm (registrationId, new Subscription () {
-				Event = EventToSubscribe,
+				Event = eventToSubscribe,
 				EntityId = mojioDevice.Id,
 				EntityType = SubscriptionType.Mojio,
 			}, out httpStatusCode, out msg);
@@ -130,151 +126,132 @@ namespace eecegroup32.mojiotowingalert.android
 			return httpStatusCode == HttpStatusCode.NotModified;
 		}
 
-		protected void UnsubscribeForEvent (string dongleID)
+		protected bool UnsubscribeForEvent (Device device)
 		{
-			//TODO unsubscribe
-			logger.Information (this.LocalClassName, string.Format ("Subscription (TO BE IMPLEMENTED): {0} unsubscribed for event type {1}", dongleID, EventToSubscribe));
-//			Client.Unsubscribe(dongleID, new List<EventType> { MojioEventType });
-//			logger.Information (this.LocalClassName, string.Format ("Subscription: {0} unsubscribed for event type {1}", dongleID, MojioEventType));
+			//Client.Unsubscribe((()))
+			MyLogger.Information (this.LocalClassName, string.Format ("Subscription (TO BE Implemented): {0} unsubscribed for event type {1}", device.Id, "Event"));
+			return true;
 		}
- 
-        private void RegisterEventsNotice()
-        {
-			if (MojioDevices == null || MojioDevices.Count == 0)
-				return;
 
-            var registrationId = PushClient.GetRegistrationId(this.ApplicationContext);
-			logger.Information (this.LocalClassName, string.Format("Event Notice Registration: ID {0} retrieved.", registrationId));
-			if (String.IsNullOrWhiteSpace (registrationId)) {
-				logger.Error (this.LocalClassName, "Event Notice Registration: failed - no registration ID retrieved.");
+		protected bool IsNullOrEmpty (IEnumerable<Object> collection)
+		{
+			return collection == null || collection.Count () == 0;
+		}
+
+		protected bool IsNullOrEmpty (IEnumerable<EventType> collection)
+		{
+			return collection == null || collection.Count () == 0;
+		}
+
+		/// <summary>
+		/// Registers all the events notices for all the devices IAW the current user preference.
+		/// </summary>
+		protected void RegisterEventsNotice ()
+		{
+			if (IsNullOrEmpty (UserDevices)) {
+				MyLogger.Error (this.LocalClassName, string.Format ("Event Notice Registration: Incomplete. UserDevice null or 0."));
+				return;
+			}
+				
+			if (IsNullOrEmpty (EventsToSubscribe)) {
+				MyLogger.Error (this.LocalClassName, string.Format ("Event Notice Registration: Incomplete. Events to Subscribe null or 0."));
 				return;
 			}
 
-			int trials; 
-			bool isSubscribed = false;
-
-			foreach (var mojioDevice in MojioDevices) 
-			{
-				if (!GetDeviceSubscriptionPref (mojioDevice.Id)) {
-					UnsubscribeForEvent(mojioDevice.Id);
+			if (string.IsNullOrEmpty (RegistrationId))
+				RegistrationId = PushClient.GetRegistrationId (this.ApplicationContext);
+				
+			MyLogger.Information (this.LocalClassName, string.Format ("Event Notice Registration: ID {0} Retrieved.", RegistrationId));
+			if (String.IsNullOrWhiteSpace (RegistrationId)) {
+				MyLogger.Error (this.LocalClassName, "Event Notice Registration: Failed - No Registration ID Retrieved.");
+				return;
+			}
+			
+			foreach (var eventToSubscribe in EventsToSubscribe) {
+				var subscribedDevices = CurrentUserPreference.GetAllSubscribedDevices (eventToSubscribe);
+				if (subscribedDevices == null || subscribedDevices.Count () == 0)
 					continue;
-				} 
-				else 
-				{
-					trials = 3; 
-					do {
-						isSubscribed = SubscribeForEvent(mojioDevice, registrationId);
-						if (isSubscribed)
-							break;
-						trials--;
-					} while (trials > 0);
+				foreach (var userDevice in UserDevices) {					
+					if (subscribedDevices.Contains (userDevice.Id))
+						RegisterEvenForNotice (userDevice.Id, true);
+					else
+						RegisterEvenForNotice (userDevice.Id, false);					
+				}            				
+			}
+		}
+
+		protected virtual void ShowToastAtCenter (string msg)
+		{
+			Toast toast = Toast.MakeText (this, msg, ToastLength.Short);
+			toast.SetGravity (GravityFlags.CenterVertical, 0, 0);
+			toast.Show ();
+		}
+
+		protected void RegisterEvenForNotice (string deviceId, bool toSubscribe)
+		{
+			if (string.IsNullOrEmpty (RegistrationId))
+				RegistrationId = PushClient.GetRegistrationId (this.ApplicationContext);
+			var trials = 3; 
+			var device = UserDevices.First (x => x.Id == deviceId);
+			if (device == null) {
+				MyLogger.Error (this.LocalClassName, string.Format ("Device {0} not found. Subscription canceled.", deviceId));
+				return;
+			}
+			do {
+				if (!toSubscribe) {
+					if (UnsubscribeForEvent (device))
+						return;	
+				} else {
+					if (SubscribeForEvent (device, RegistrationId))
+						return;
 				}
-            }            
+				trials--;
+			} while (trials > 0);
+			MyLogger.Error (this.LocalClassName, string.Format ("{0} Subscription/Unsubscription failed.", deviceId));
+		}
 
-            if (!isSubscribed)
-            {
-				logger.Error (this.LocalClassName, "Event Subscription: Failed.");
-                Toast tmp = Toast.MakeText(this, "Subscription failed, please check network status", ToastLength.Long);
-                tmp.SetGravity(GravityFlags.CenterVertical, 0, 0);
-                tmp.Show();
-            }
-        }
-
-		protected bool SubscribeForEvent(Device mojioDevice, string registrationId)
+		protected bool SubscribeForEvent (Device mojioDevice, string registrationId)
 		{
 			HttpStatusCode statusCode;
 			string msg;
-			Subscription subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice);
-			if (subscription != null) {
-				logger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "successful", msg));	                    
-				return true;
+			bool succeed = true;
+			foreach (var eventToSubscribe in EventsToSubscribe) {
+				Subscription subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice, eventToSubscribe);
+				if (subscription != null) {
+					MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "successful", msg));	                    
+					continue;
+				}
+				if (CheckSubscriptionStatus (statusCode)) {
+					MyLogger.Information (this.LocalClassName, "Event Subscription: Event already subscribed.");	
+					continue;
+				}           
+				succeed = false;         
 			}
-
-			if (CheckSubscriptionStatus (statusCode)) {
-				logger.Information (this.LocalClassName, "Event Subscription: Event already subscribed.");	                    
-				return true;
-			}
-
-			return false;
+			return succeed;
 		}
 
-        protected virtual void OnMojioEventReceived(Event eve)
-        {
-			MyNotificationsMgr.Add(new MyNotification(eve));
-			if (MainApp.GetCurrentActivity () is NotificationsActivity)
-				MyNotificationsMgr.ClearNumberOfNewNotifications ();
-			else
-				MyNotificationsMgr.IncrementNumberOfNewNotifications();
-			if (MainApp.GetCurrentActivity() is NotificationsActivity) 
-			{
+		protected virtual void OnMojioEventReceived (Event eve)
+		{
+			switch (eve.EventType) {
+			case EventType.Tow:
+				TowManager.Add (eve);
+				if (ActivityVisible)
+					NotifyViaToast ("Your Car Is Being Towed!");
+				else
+					NotifyViaLocalNotification ("MOJIO: Your Car Is Being Towed!");
+				break;
+			default:
+				if (ActivityVisible)
+					NotifyViaToast ();
+				else
+					NotifyViaLocalNotification ();
+				break;
+			}
+			
+			if (MainApp.GetCurrentActivity () is NotificationsActivity) {
 				((NotificationsActivity)MainApp.GetCurrentActivity ()).Update ();
 			}
 
-			if (ActivityVisible) {
-				logger.Information (this.Class.SimpleName, "App Visibility: Visible.");
-				SendNotificationToast ();
-			} 
-			else 
-			{
-				logger.Information (this.Class.SimpleName, "App Visibility: Not Visible.");
-
-				SendSystemNotification (this, eve);
-			}
 		}
-
-		protected void SendNotificationToast(string msg="")
-		{
-			if (msg == "")
-				msg = "New Notification Arrived!";
-			logger.Information (this.Class.SimpleName, "Creating a toast for the new notification...");
-			var temp = Toast.MakeText(MainApp.GetCurrentActivity(), msg, ToastLength.Long);
-			temp.SetGravity(GravityFlags.CenterVertical, 0, 0);
-			temp.Show();
-		}
-
-        protected void SendSystemNotification(Context context, Event eve)
-        {
-			logger.Information ("NOTIFICATION", "Local Notification: Preparing...");
-			var isNotificationEnabled = GetNotificationTogglePref ();
-			logger.Information ("NOTIFICATION", string.Format("Enable Preference: {0}", isNotificationEnabled));
-
-			if (!isNotificationEnabled)
-				return;
-            
-			var notificationMsg = string.Format ("New {0} Mojio Event Received!", eve.EventType.ToString ());
-			var notification = new Notification(Resource.Drawable.Icon, notificationMsg);
-            var pendingIntent = PendingIntent.GetActivity(context, 0, new Intent(context, context.GetType()), 0);
-            notification.SetLatestEventInfo(context, "New Mojio event", eve.EventType.ToString(), pendingIntent);
-            notification.Flags = NotificationFlags.AutoCancel;
-
-			ConfigureNotificationSound (notification);
-			ConfigureNotificationVibration (notification);
-
-			var nMgr = (NotificationManager) context.GetSystemService(NotificationService);
-            nMgr.Notify(0, notification);
-			logger.Information ("NOTIFICATION", "Local Notification: Completed.");
-        }
-
-		protected void ConfigureNotificationSound(Notification notif)
-		{
-			var isSoundEnabled = GetNotificationSoundPref ();
-			logger.Information ("NOTIFICATION", string.Format("Sound Preference: {0}", isSoundEnabled));
-
-			if (isSoundEnabled)
-				notif.Defaults |= NotificationDefaults.Sound;
-			else
-				notif.Sound = null;
-		}
-
-		protected void ConfigureNotificationVibration(Notification notif)
-		{
-			var isVibrationEnabled = GetNotificationVibrationPref ();
-			logger.Information ("NOTIFICATION", string.Format("Vibration Preference: {0}", isVibrationEnabled));
-
-			if (isVibrationEnabled)
-				notif.Defaults |= NotificationDefaults.Vibrate;
-			else
-				notif.Vibrate = null;
-		}
-    }
+	}
 }

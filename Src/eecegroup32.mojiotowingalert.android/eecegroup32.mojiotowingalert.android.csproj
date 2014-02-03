@@ -55,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\LoginActivity.cs" />
     <Compile Include="Activities\MainMenuActivity.cs" />
     <Compile Include="Activities\MapsActivity.cs" />
@@ -66,12 +65,9 @@
     <Compile Include="MainApp.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Services\EventService.cs" />
-    <Compile Include="MyNotification.cs" />
-    <Compile Include="MyNotificationManager.cs" />
     <Compile Include="Activities\EventBaseActivity.cs" />
-    <Compile Include="Interfaces\ILogger.cs" />
-    <Compile Include="Services\MyLogger.cs" />
-    <Compile Include="Activities\DetailsActivity.cs" />
+    <Compile Include="Activities\TowDetailsActivity.cs" />
+    <Compile Include="Activities\SplashActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -99,7 +95,6 @@
   <ItemGroup>
     <Folder Include="Activities\" />
     <Folder Include="Services\" />
-    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservices">
@@ -115,6 +110,10 @@
     <ProjectReference Include="..\Lib\PushSharp\PushSharp.Client\PushSharp.Client.MonoForAndroid.Gcm\PushSharp.Client.MonoForAndroid.Gcm.csproj">
       <Project>{1466D096-69FA-4B75-BBB6-533FFAF5D4EB}</Project>
       <Name>PushSharp.Client.MonoForAndroid.Gcm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eecegroup32.mojiotowingalert.core\eecegroup32.mojiotowingalert.core.csproj">
+      <Project>{EB9C26DF-7F01-45D3-9C1A-4B22D61A0263}</Project>
+      <Name>eecegroup32.mojiotowingalert.core</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

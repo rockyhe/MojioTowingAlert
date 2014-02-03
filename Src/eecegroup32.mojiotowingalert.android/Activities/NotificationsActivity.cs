@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-
 using Mojio.Events;
+using eecegroup32.mojiotowingalert.core;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -22,80 +23,90 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 
-			base.OnCreate(bundle);
-			SetContentView(Resource.Layout.Notifications);
+			base.OnCreate (bundle);
+			SetContentView (Resource.Layout.Notifications);
 			InitializeComponents ();
-
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+			Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe)).ContinueWith (e => {
+				RunOnUiThread (() => {
+					Update ();
+				});
+			});
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
-		protected override void OnStart()
+		protected override void OnStart ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
+			base.OnStart ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
 		}
 
-		protected override void OnStop()
+		protected override void OnStop ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnStop();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
+			base.OnStop ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
 		}
 
-		protected override void OnDestroy()
+		protected override void OnDestroy ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			base.OnDestroy();		
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
+			base.OnDestroy ();		
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
-		protected override void OnResume()
+		protected override void OnResume ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
-			base.OnResume();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
+			base.OnResume ();
 			MainApp.SetCurrentActivity (this);
-			ShowNotificationList();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+			
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
-		protected override void OnPause()
+		protected override void OnRestart ()
 		{
-			logger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause();
-			logger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+			base.OnRestart ();
+			Update ();
+		}
+
+		protected override void OnPause ()
+		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
+			base.OnPause ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
 		private void InitializeComponents ()
 		{
 			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationIDLayout);
-			dateList = this.FindViewById<LinearLayout>(Resource.Id.dateLayout);
+			dateList = this.FindViewById<LinearLayout> (Resource.Id.dateLayout);
 		}
 
-		private void OnEventItemClicked(MyNotification notif)
+		private void OnEventItemClicked (TowEvent towEvent)
 		{
-			MainApp.SelectedNotification = notif;
-			logger.Information (this.LocalClassName, string.Format ("Notificiation Clicked: {0}", notif.NotificationID));
-			StartActivity(new Intent(this, typeof(DetailsActivity)));
+			MyLogger.Information (this.LocalClassName, string.Format ("Notificiation Clicked: {0}", towEvent.Id));
+			var towDetailsActivity = new Intent (this, typeof(TowDetailsActivity));
+			towDetailsActivity.PutExtra ("selectedEventId", towEvent.Id.ToString ());
+			StartActivity (towDetailsActivity);  
 		}
-
 		//TODO Instead of separate textview for id and date, combine them
-		private void AddNotificationsToScreen ()
+		private void RefreshNotificationList ()
 		{
 			TextView eventID, eventDate;
-
-			foreach (MyNotification notif in MyNotificationsMgr.GetAll ()) {
+			ClearNotificationList ();
+			foreach (TowEvent eve in TowManager.GetAll ()) {
 				eventID = new TextView (this);
-				eventID.Text = (notif.NotificationID);
+				eventID.Text = (eve.Id.ToString ());
 				eventID.Clickable = true;
-				eventID.Click += (sender, e) => OnEventItemClicked (notif);
+				eventID.Click += (sender, e) => OnEventItemClicked (eve);
 				notificationList.AddView (eventID);
 				eventDate = new TextView (this);
-				eventDate.Text = notif.MojioEvent.Time.ToString ("f");
+				eventDate.Text = eve.Time.ToString ("f");
 				eventDate.Clickable = true;
-				eventDate.Click += (sender, e) => OnEventItemClicked (notif);
+				eventDate.Click += (sender, e) => OnEventItemClicked (eve);
 				dateList.AddView (eventDate);
 			}
 		}
@@ -105,18 +116,11 @@ namespace eecegroup32.mojiotowingalert.android
 			notificationList.RemoveAllViews ();
 			dateList.RemoveAllViews ();
 		}
-
-		private void ShowNotificationList()
-		{
-			ClearNotificationList ();
-			AddNotificationsToScreen ();
-		}
-
 		//TODO update just the new event
-		public void Update()
-		{
-			logger.Information (this.LocalClassName, "Notification List updated.");
-			ShowNotificationList ();
+		public void Update ()
+		{//reset newnotificaiton number
+			MyLogger.Information (this.LocalClassName, "Notification List updated.");
+			RefreshNotificationList ();
 		}
 	}
 }
