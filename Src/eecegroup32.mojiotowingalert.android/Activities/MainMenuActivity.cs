@@ -117,8 +117,6 @@ namespace eecegroup32.mojiotowingalert.android
 				} else {
 					var msg = string.Format ("{0} ({1})", Resources.GetString (Resource.String.notifications), numberOfNewEvents);
 					notifcationButton.Text = msg;
-					TowManager.ClearNewEventNumber ();
-					MyLogger.Information (this.LocalClassName, string.Format ("Number of new notifications set to 0"));
 				}
 			}
 		}

@@ -67,7 +67,6 @@
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Activities\EventBaseActivity.cs" />
     <Compile Include="Activities\TowDetailsActivity.cs" />
-    <Compile Include="Activities\SplashActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

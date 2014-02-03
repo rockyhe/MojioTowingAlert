@@ -235,6 +235,7 @@ namespace eecegroup32.mojiotowingalert.android
 			switch (eve.EventType) {
 			case EventType.Tow:
 				TowManager.Add (eve);
+				TowManager.IncrementNewEventNumber ();
 				if (ActivityVisible)
 					NotifyViaToast ("Your Car Is Being Towed!");
 				else
@@ -250,6 +251,7 @@ namespace eecegroup32.mojiotowingalert.android
 			
 			if (MainApp.GetCurrentActivity () is NotificationsActivity) {
 				((NotificationsActivity)MainApp.GetCurrentActivity ()).Update ();
+				TowManager.ClearNewEventNumber ();
 			}
 
 		}
