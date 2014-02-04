@@ -77,7 +77,8 @@ namespace eecegroup32.mojiotowingalert.android
 				}
 			}
 		}
-
+		//[GROUP 32] Load all events available for this app but allow the user to choose what
+		//event types to see in the notification list (like a tabview?)
 		private void InitializeVariables ()
 		{
 			if (EventsToSubscribe == null)

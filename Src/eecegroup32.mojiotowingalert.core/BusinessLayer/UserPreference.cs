@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Mojio;
 using Mojio.Events;
+using Newtonsoft.Json;
 
 namespace eecegroup32.mojiotowingalert.core
 {
@@ -26,16 +27,21 @@ namespace eecegroup32.mojiotowingalert.core
 		/// Used for SQLite to make it easy to store _devicesForTowEvent.
 		/// </summary>
 		/// <value>a string of device ids deliminated with ";"</value>
-		public string DevicesForTowEventString { 
-			get { return string.Join (";", _devicesForTowEvent); } 
-			set { _devicesForTowEvent = new HashSet<string> (value.Split (new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries)); }
+		public string SubscriptionsJson { 
+			get { return JsonConvert.SerializeObject (_subscriptions); } 
+			set {
+				MyLogger.Information ("User Preference", "deserializing.........");
+				_subscriptions = JsonConvert.DeserializeObject<List<List<Device>>> (value);
+			}
 		}
 
-		private HashSet<string> _devicesForTowEvent;
+		private List<Device> _devicesForTowEvent;
+		private List<List<Device>> _subscriptions;
 
 		public UserPreference ()
-		{
-			_devicesForTowEvent = new HashSet<string> ();
+		{			
+			_subscriptions = new List<List<Device>> ();
+			_subscriptions.Add (_devicesForTowEvent = new List<Device> ());
 			UserId = "Default";
 			NotificationChecked = true;
 			SoundChecked = true;
@@ -53,23 +59,25 @@ namespace eecegroup32.mojiotowingalert.core
 			return userName.GetHashCode ();
 		}
 
-		public void RemoveFromSubscriptionList (EventType eventType, string deviceId)
+		public void RemoveFromSubscriptionList (EventType eventType, Device device)
 		{
 			switch (eventType) {
 			case EventType.Tow:
-				if (_devicesForTowEvent.Contains (deviceId))
-					_devicesForTowEvent.Remove (deviceId);
+				if (_devicesForTowEvent.Contains (device))
+					_devicesForTowEvent.Remove (device);
 				break;
 			default:
 				break;
 			}
 		}
 
-		public void AddToSubscriptionList (EventType eventType, string deviceId)
+		public void AddToSubscriptionList (EventType eventType, Device device)
 		{
 			switch (eventType) {
 			case EventType.Tow:
-				_devicesForTowEvent.Add (deviceId);
+				if (_devicesForTowEvent.Contains (device))
+					_devicesForTowEvent.Remove (device);
+				_devicesForTowEvent.Add (device);
 				break;
 			default:
 				break;
@@ -81,7 +89,9 @@ namespace eecegroup32.mojiotowingalert.core
 			switch (eventType) {
 			case EventType.Tow:
 				foreach (var dev in devices) {
-					_devicesForTowEvent.Add (dev.Id);
+					if (_devicesForTowEvent.Contains (dev))
+						_devicesForTowEvent.Remove (dev);
+					_devicesForTowEvent.Add (dev);
 				}
 				break;
 			default:
@@ -89,7 +99,7 @@ namespace eecegroup32.mojiotowingalert.core
 			}
 		}
 
-		public IEnumerable<string> GetAllSubscribedDevices (EventType eventType)
+		public IEnumerable<Device> GetAllSubscribedDevices (EventType eventType)
 		{
 			switch (eventType) {
 			case EventType.Tow:
@@ -99,11 +109,11 @@ namespace eecegroup32.mojiotowingalert.core
 			}
 		}
 
-		public bool GetSubscriptionStatus (EventType eventType, string deviceId)
+		public bool GetSubscriptionStatus (EventType eventType, Device device)
 		{
 			switch (eventType) {
 			case EventType.Tow:
-				return _devicesForTowEvent.Contains (deviceId);
+				return _devicesForTowEvent.Contains (device);
 			default:
 				return false;
 			}

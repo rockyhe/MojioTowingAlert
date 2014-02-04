@@ -30,6 +30,8 @@ namespace eecegroup32.mojiotowingalert.android
 			InitializeEventHandlers ();
 			Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe)).ContinueWith (e => {
 				RunOnUiThread (() => {
+					//TODO [GROUP 32] LoadLastEvents loads everything. Update should update only the latest events
+					//that haven't been retrieved. Retrieving on a new thread and update on ui thread.
 					Update ();
 				});
 			});
@@ -115,7 +117,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 			foreach (TowEvent eve in TowManager.GetAll ()) {
 				eventView = MainApp.GetCurrentActivity ().LayoutInflater.Inflate (Resource.Layout.NotificationView, null);
-				eventView.FindViewById<TextView>(Resource.Id.Text1).Text = eve.Time.ToString ("f");
+				eventView.FindViewById<TextView> (Resource.Id.Text1).Text = eve.Time.ToString ("f");
 				eventView.FindViewById<TextView> (Resource.Id.Text2).Text = "Event ID: " + eve.Id.ToString ();
 				eventView.Clickable = true;
 				eventView.Click += (sender, e) => OnEventItemClicked (eve);

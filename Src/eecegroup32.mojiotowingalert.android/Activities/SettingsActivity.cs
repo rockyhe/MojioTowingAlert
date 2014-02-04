@@ -16,7 +16,7 @@ using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-	public delegate void ChangedEventHandler (string deviceId, bool isChecked);
+	public delegate void ChangedEventHandler (Device device, bool isChecked);
 	[Activity (Label = "SettingsActivity")]			
 	public class SettingsActivity : BaseActivity
 	{
@@ -112,14 +112,14 @@ namespace eecegroup32.mojiotowingalert.android
 			toast.Show ();
 		}
 
-		private void OnDeviceSubscriptionToggleClicked (string id, bool isChecked)
+		private void OnDeviceSubscriptionToggleClicked (Device dev, bool isChecked)
 		{
-			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", id, isChecked));
+			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", dev, isChecked));
 			if (isChecked)
-				CurrentUserPreference.AddToSubscriptionList (EventType.Tow, id);
+				CurrentUserPreference.AddToSubscriptionList (EventType.Tow, dev);
 			else
-				CurrentUserPreference.RemoveFromSubscriptionList (EventType.Tow, id);
-			OnSubscriptionChanged (id, isChecked);
+				CurrentUserPreference.RemoveFromSubscriptionList (EventType.Tow, dev);
+			OnSubscriptionChanged (dev, isChecked);
 			SaveUserPreferences ();
 		}
 
@@ -171,9 +171,9 @@ namespace eecegroup32.mojiotowingalert.android
 				button.Id = i;				                
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
-					OnDeviceSubscriptionToggleClicked (moj.Id, button.Checked);
+					OnDeviceSubscriptionToggleClicked (moj, (o as ToggleButton).Checked);
 				};
-				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.Tow, moj.Id);
+				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.Tow, moj);
 				dongleListLayout.AddView (item);
 				dongleButtonLayout.AddView (button);
 				i++;

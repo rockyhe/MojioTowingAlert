@@ -20,6 +20,8 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected static PushEventReceiver Receiver{ get; set; }
 
+		protected static IList<Subscription> Subscriptions { get; set; }
+
 		public class PushEventReceiver : EventReceiver
 		{
 			protected override void OnEvent (Context context, Event ev)
@@ -117,6 +119,9 @@ namespace eecegroup32.mojiotowingalert.android
 
 			if (IntFilter == null)
 				IntFilter = new IntentFilter (EventReceiver.IntentAction);
+				
+			if (Subscriptions == null)
+				Subscriptions = new List<Subscription> ();
 		}
 
 		private Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice, EventType eventToSubscribe)
@@ -179,22 +184,22 @@ namespace eecegroup32.mojiotowingalert.android
 				if (IsNullOrEmpty (subscribedDevices))
 					continue;
 				foreach (var userDevice in UserDevices) {					
-					if (subscribedDevices.Contains (userDevice.Id))
-						RegisterEvenForNotice (userDevice.Id, true);
+					if (subscribedDevices.Contains (userDevice))
+						RegisterEvenForNotice (userDevice, true);
 					else
-						RegisterEvenForNotice (userDevice.Id, false);					
+						RegisterEvenForNotice (userDevice, false);					
 				}            				
 			}
 		}
 
-		protected void RegisterEvenForNotice (string deviceId, bool toSubscribe)
+		protected void RegisterEvenForNotice (Device dev, bool toSubscribe)
 		{
 			if (string.IsNullOrEmpty (RegistrationId))
 				RegistrationId = PushClient.GetRegistrationId (this.ApplicationContext);
 			var trials = 3; 
-			var device = UserDevices.First (x => x.Id == deviceId);
+			var device = UserDevices.First (x => x.Id == dev.Id);
 			if (device == null) {
-				MyLogger.Error (this.LocalClassName, string.Format ("Device {0} not found. Subscription canceled.", deviceId));
+				MyLogger.Error (this.LocalClassName, string.Format ("Device {0} not found. Subscription canceled.", dev.Id));
 				return;
 			}
 			do {
@@ -207,7 +212,7 @@ namespace eecegroup32.mojiotowingalert.android
 				}
 				trials--;
 			} while (trials > 0);
-			MyLogger.Error (this.LocalClassName, string.Format ("{0} Subscription/Unsubscription failed.", deviceId));
+			MyLogger.Error (this.LocalClassName, string.Format ("{0} Subscription/Unsubscription failed.", dev));
 		}
 
 		protected bool SubscribeForEvent (Device mojioDevice, string registrationId)
