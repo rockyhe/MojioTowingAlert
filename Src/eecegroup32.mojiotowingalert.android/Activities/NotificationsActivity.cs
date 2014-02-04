@@ -109,36 +109,23 @@ namespace eecegroup32.mojiotowingalert.android
 		//TODO [GROUP32] Instead of separate textview for id and date, combine them
 		private void RefreshNotificationList ()
 		{
-			TextView eventID, eventDate;
 			View eventView;
 			ClearNotificationList ();
 			TowManager.ClearNewEventNumber ();
 
 			foreach (TowEvent eve in TowManager.GetAll ()) {
-				eventID = new TextView (this);
-				eventView = new View (this);
 				eventView = MainApp.GetCurrentActivity ().LayoutInflater.Inflate (Resource.Layout.NotificationView, null);
 				eventView.FindViewById<TextView>(Resource.Id.Text1).Text = eve.Time.ToString ("f");
 				eventView.FindViewById<TextView> (Resource.Id.Text2).Text = "Event ID: " + eve.Id.ToString ();
 				eventView.Clickable = true;
 				eventView.Click += (sender, e) => OnEventItemClicked (eve);
-				eventID.Text = ("Event Time: " + eve.Time.ToString ("f") + System.Environment.NewLine + "Event ID: " + eve.Id.ToString () + System.Environment.NewLine + "");
-				eventID.Clickable = true;
-				eventID.Click += (sender, e) => OnEventItemClicked (eve);
-				//notificationList.AddView (eventID);
 				notificationList.AddView (eventView);
-				eventDate = new TextView (this);
-				eventDate.Text = eve.Time.ToString ("f");
-				eventDate.Clickable = true;
-				eventDate.Click += (sender, e) => OnEventItemClicked (eve);
-				//dateList.AddView (eventDate);
 			}
 		}
 
 		private void ClearNotificationList ()
 		{
 			notificationList.RemoveAllViews ();
-			//dateList.RemoveAllViews ();
 		}
 		//TODO [GROUP32] update just the new event
 		public void Update ()
