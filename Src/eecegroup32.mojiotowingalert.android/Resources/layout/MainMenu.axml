@@ -24,7 +24,7 @@
             p1:textAlignment="center"
             p1:gravity="center" />
         <Button
-            p1:text="@string/notifications"
+            p1:text="@string/pasttowingevents"
             p1:layout_width="match_parent"
             p1:layout_height="35dp"
             p1:background="@drawable/android_button"

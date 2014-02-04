@@ -14,21 +14,12 @@
         p1:layout_height="41.4dp"
         p1:id="@+id/linearLayout2">
         <TextView
-            p1:text="@string/notificationID"
+            p1:text="@string/pastEvents"
             p1:textAppearance="?android:attr/textAppearanceMedium"
             p1:layout_width="181.1dp"
             p1:layout_height="match_parent"
             p1:id="@+id/textView1"
             p1:layout_gravity="center"
-            p1:textAlignment="center"
-            p1:gravity="center" />
-        <TextView
-            p1:text="@string/dateTime"
-            p1:textAppearance="?android:attr/textAppearanceMedium"
-            p1:layout_width="65.2dp"
-            p1:layout_height="match_parent"
-            p1:id="@+id/textView2"
-            p1:layout_gravity="fill"
             p1:textAlignment="center"
             p1:gravity="center" />
         <Button
@@ -44,20 +35,19 @@
         p1:layout_width="match_parent"
         p1:layout_height="match_parent"
         p1:id="@+id/linearLayout3">
-        <LinearLayout
-            p1:orientation="vertical"
+        <ScrollView
             p1:minWidth="25px"
             p1:minHeight="25px"
-            p1:layout_width="206.9dp"
+            p1:layout_width="match_parent"
             p1:layout_height="match_parent"
-            p1:id="@+id/notificationIDLayout"
-            p1:layout_marginTop="0.0dp" />
-        <LinearLayout
-            p1:orientation="vertical"
-            p1:minWidth="25px"
-            p1:minHeight="25px"
-            p1:layout_width="111.6dp"
-            p1:layout_height="match_parent"
-            p1:id="@+id/dateLayout" />
+            p1:id="@+id/scrollView1">
+            <LinearLayout
+                p1:orientation="vertical"
+                p1:minWidth="25px"
+                p1:minHeight="25px"
+                p1:layout_width="match_parent"
+                p1:layout_height="match_parent"
+                p1:id="@+id/notificationList" />
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>

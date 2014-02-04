@@ -7,6 +7,7 @@
 	<string name="login">Log In</string>
 	<string name="missingUsernameOrPassword">Please enter a username and password</string>
 	<string name="wrongCredentials">Wrong username/password combination</string>
+	<string name="pasttowingevents">Past Towing Events</string>
 	<string name="notifications">Notifications</string>
 	<string name="maps">Maps</string>
 	<string name="settings">Settings</string>
@@ -27,4 +28,5 @@
 	<string name="eventDongleID">Dongle ID</string>
 	<string name="eventLocation">Location</string>
 	<string name="towEventNotice">Your Car Is Being Towed</string>
+	<string name="pastEvents">Past Events</string>
 </resources>
