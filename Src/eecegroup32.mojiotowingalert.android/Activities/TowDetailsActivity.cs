@@ -115,7 +115,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private LatLng GetEventLocation (TowEvent e)
 		{
 			if (selectedEvent.Location == null)
-				return new LatLng (49.2389f, 123.1201f); //Vancouver LatLng
+				return new LatLng (49.2389f, -123.1201f); //Vancouver LatLng
 			else
 				return new LatLng (e.Location.Lat, e.Location.Lng);
 		}
