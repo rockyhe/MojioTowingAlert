@@ -85,10 +85,10 @@
     <AndroidResource Include="Resources\layout\SplashScreen.axml" />
     <AndroidResource Include="Resources\drawable\MojioAppLogo.png" />
     <AndroidResource Include="Resources\values\API-Keys.xml" />
-    <AndroidResource Include="Resources\layout\NotificationDetail.axml" />
     <AndroidResource Include="Resources\drawable\android_button.xml" />
     <AndroidResource Include="Resources\drawable\android_pressed.9.png" />
     <AndroidResource Include="Resources\drawable\android_normal.9.png" />
+    <AndroidResource Include="Resources\layout\TowNotificationDetail.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

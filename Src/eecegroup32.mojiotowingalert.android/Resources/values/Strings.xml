@@ -26,4 +26,5 @@
 	<string name="eventTime">Time</string>
 	<string name="eventDongleID">Dongle ID</string>
 	<string name="eventLocation">Location</string>
+	<string name="towEventNotice">Your Car Is Being Towed</string>
 </resources>

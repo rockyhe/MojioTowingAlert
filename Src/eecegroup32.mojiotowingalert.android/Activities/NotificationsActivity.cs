@@ -1,17 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Mojio.Events;
-using eecegroup32.mojiotowingalert.core;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Android.OS;
+using Android.App;
+using Android.Views;
+using Android.Widget;
+using Android.Content;
+using Android.Runtime;
+using Mojio.Events;
+using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -20,14 +20,15 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		private LinearLayout notificationList;
 		private LinearLayout dateList;
+		private Button refreshButton;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Notifications);
 			InitializeComponents ();
+			InitializeEventHandlers ();
 			Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe)).ContinueWith (e => {
 				RunOnUiThread (() => {
 					Update ();
@@ -68,8 +69,10 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected override void OnRestart ()
 		{
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnRestart");
 			base.OnRestart ();
 			Update ();
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnRestart");
 		}
 
 		protected override void OnPause ()
@@ -79,10 +82,22 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
+		private void InitializeEventHandlers ()
+		{
+			refreshButton.Click += OnRefreshClicked;
+		}
+
+		private void OnRefreshClicked (object sender, EventArgs e)
+		{
+			RefreshNotificationList ();
+			NotifyViaToast ("Notification List Refreshed.");
+		}
+
 		private void InitializeComponents ()
 		{
 			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationIDLayout);
 			dateList = this.FindViewById<LinearLayout> (Resource.Id.dateLayout);
+			refreshButton = this.FindViewById<Button> (Resource.Id.refreshNotification);
 		}
 
 		private void OnEventItemClicked (TowEvent towEvent)
@@ -92,11 +107,12 @@ namespace eecegroup32.mojiotowingalert.android
 			towDetailsActivity.PutExtra ("selectedEventId", towEvent.Id.ToString ());
 			StartActivity (towDetailsActivity);  
 		}
-		//TODO Instead of separate textview for id and date, combine them
+		//TODO [GROUP32] Instead of separate textview for id and date, combine them
 		private void RefreshNotificationList ()
 		{
 			TextView eventID, eventDate;
 			ClearNotificationList ();
+			TowManager.ClearNewEventNumber ();
 			foreach (TowEvent eve in TowManager.GetAll ()) {
 				eventID = new TextView (this);
 				eventID.Text = (eve.Id.ToString ());
@@ -116,11 +132,11 @@ namespace eecegroup32.mojiotowingalert.android
 			notificationList.RemoveAllViews ();
 			dateList.RemoveAllViews ();
 		}
-		//TODO update just the new event
+		//TODO [GROUP32] update just the new event
 		public void Update ()
-		{//reset newnotificaiton number
+		{
 			MyLogger.Information (this.LocalClassName, "Notification List updated.");
-			RefreshNotificationList ();
+			RefreshNotificationList ();			
 		}
 	}
 }

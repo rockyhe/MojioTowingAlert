@@ -13,7 +13,7 @@ using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-	[Activity (Label = "LoginActivity", MainLauncher = true)]
+	[Activity (Label = "LoginActivity", MainLauncher = true, NoHistory = true)]
 	public class LoginActivity : BaseActivity
 	{
 		private Button loginButton;
@@ -23,12 +23,10 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Login);
 			InitializeVariables ();
 			InitializeEventHandlers ();
-
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
@@ -98,7 +96,7 @@ namespace eecegroup32.mojiotowingalert.android
 					} else {
 						loginButton.Activated = true;
 						MyLogger.Information (this.LocalClassName, "Login Attempt: Fail"); 
-						ShowErrorMessage (Resource.String.wrongCredentials);
+						NotifyViaToast (Resources.GetString (Resource.String.wrongCredentials));
 					}
 				});
 			});
@@ -106,12 +104,10 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void OnLoginClicked (object sender, EventArgs e)
 		{
-			if (IsCredentialEmpty ()) {
-				ShowErrorMessage (Resource.String.missingUsernameOrPassword);
-				return;
-			}
-
-			SubmitAsyncLoginRequest ();
+			if (IsCredentialEmpty ())
+				NotifyViaToast (Resources.GetString (Resource.String.missingUsernameOrPassword));
+			else
+				SubmitAsyncLoginRequest ();
 		}
 
 		private void GotoMainMenu ()
@@ -119,13 +115,6 @@ namespace eecegroup32.mojiotowingalert.android
 			var mainMenu = new Intent (this, typeof(MainMenuActivity));
 			mainMenu.AddFlags (ActivityFlags.ClearTask);
 			StartActivity (mainMenu);
-		}
-
-		private void ShowErrorMessage (int errorId)
-		{
-			var temp = Toast.MakeText (this, errorId, ToastLength.Long);
-			temp.SetGravity (GravityFlags.CenterVertical, 0, 0);
-			temp.Show ();
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Android.OS;
 using Android.Net;
 using Android.App;
@@ -12,7 +13,6 @@ using Mojio.Events;
 using Mojio.Client;
 using PushSharp.Client;
 using eecegroup32.mojiotowingalert.core;
-using System.Threading.Tasks;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -59,9 +59,10 @@ namespace eecegroup32.mojiotowingalert.android
 				NotificationManagers = new List<AbstractNotificationManager> ();
 				NotificationManagers.Add (TowManager);
 			}
+			MyLogger.Information (this.LocalClassName, "Notification Managers Created");
 		}
 
-		protected void LoadLastEvents (IEnumerable<EventType> eventsToLoad, int count = 5)
+		protected void LoadLastEvents (IEnumerable<EventType> eventsToLoad, int count = 10)
 		{
 			foreach (var eveType in eventsToLoad) {
 				MyLogger.Information (this.LocalClassName, string.Format ("Querying last {0} events from the server.", count));
@@ -70,11 +71,9 @@ namespace eecegroup32.mojiotowingalert.android
 				            select e;
 				query.Take (count);
 			
-				// No requests have been sent to our server until this point.
-				//  Now make API call and fetch entries and iterate over them
-				foreach (var eve in query) {
-					TowManager.Add (eve);
-					MyLogger.Information (this.LocalClassName, string.Format ("{0} is retrieved from the Mojio sever", eve.Id));
+				foreach (var e in query) {
+					TowManager.Add (e);
+					MyLogger.Information (this.LocalClassName, string.Format ("{0} is retrieved from the Mojio sever", e.Id));
 				}
 			}
 		}
@@ -146,7 +145,7 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (Device moj in res.Data) {
 				UserDevices.Add (moj);
 			}
-			MyLogger.Information (this.LocalClassName, "Mojio Devices: Retrieving...Completed");
+			MyLogger.Information (this.LocalClassName, "Mojio Devices: Retrieved");
 		}
 
 		protected void DisplayNetworkAlert ()
@@ -160,7 +159,7 @@ namespace eecegroup32.mojiotowingalert.android
 			alert.Show ();
 		}
 
-		protected void RegisterForGcmMsgs ()
+		private void RegisterForGcmMsgs ()
 		{
 			MyLogger.Information (this.LocalClassName, "GCM Registration: Registering...");
 			try {
@@ -219,17 +218,16 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected void NotifyViaToast (string msg = "New Event Arrived!")
 		{
-			MyLogger.Information (this.Class.SimpleName, "Creating a toast for the new notification...");
-			var temp = Toast.MakeText (MainApp.GetCurrentActivity (), msg, ToastLength.Long);
-			temp.SetGravity (GravityFlags.CenterVertical, 0, 0);
-			temp.Show ();
+			var toast = Toast.MakeText (MainApp.GetCurrentActivity (), msg, ToastLength.Long);
+			toast.SetGravity (GravityFlags.CenterVertical, 0, 0);
+			toast.Show ();
+			MyLogger.Information (this.LocalClassName, "Toast Notification: Sent.");
 		}
 
 		protected void NotifyViaLocalNotification (string msg = "New Event Arrived!")
 		{
-			MyLogger.Information ("NOTIFICATION", "Local Notification: Preparing...");
 			var isNotificationEnabled = GetNotificationTogglePref ();
-			MyLogger.Information ("NOTIFICATION", string.Format ("Enable Preference: {0}", isNotificationEnabled));
+			MyLogger.Information (this.LocalClassName, string.Format ("Notification Toggle Preference: {0}", isNotificationEnabled ? "On" : "Off"));
 
 			if (!isNotificationEnabled)
 				return;
@@ -244,13 +242,13 @@ namespace eecegroup32.mojiotowingalert.android
 
 			var nMgr = (NotificationManager)this.GetSystemService (NotificationService);
 			nMgr.Notify (0, notification);
-			MyLogger.Information ("NOTIFICATION", "Local Notification: Completed.");
+			MyLogger.Information (this.LocalClassName, "Local Notification: Sent.");
 		}
 
 		protected void ConfigureNotificationSound (Notification notif)
 		{
 			var isSoundEnabled = GetNotificationSoundPref ();
-			MyLogger.Information ("NOTIFICATION", string.Format ("Sound Preference: {0}", isSoundEnabled));
+			MyLogger.Information ("NOTIFICATION", string.Format ("Sound Preference: {0}", isSoundEnabled ? "On" : "Off"));
 
 			if (isSoundEnabled)
 				notif.Defaults |= NotificationDefaults.Sound;
@@ -261,7 +259,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected void ConfigureNotificationVibration (Notification notif)
 		{
 			var isVibrationEnabled = GetNotificationVibrationPref ();
-			MyLogger.Information ("NOTIFICATION", string.Format ("Vibration Preference: {0}", isVibrationEnabled));
+			MyLogger.Information ("NOTIFICATION", string.Format ("Vibration Preference: {0}", isVibrationEnabled ? "On" : "Off"));
 
 			if (isVibrationEnabled)
 				notif.Defaults |= NotificationDefaults.Vibrate;

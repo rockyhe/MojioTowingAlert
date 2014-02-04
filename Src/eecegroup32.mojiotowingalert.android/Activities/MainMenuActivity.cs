@@ -26,13 +26,11 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.MainMenu);
 			InitializeVariables ();
 			InitializeEventHandlers ();
 			InitializeWelcomeScreen ();
-
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 

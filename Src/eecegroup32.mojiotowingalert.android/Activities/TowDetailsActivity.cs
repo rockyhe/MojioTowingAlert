@@ -22,20 +22,17 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
-			base.OnCreate (bundle);
-			
+			base.OnCreate (bundle);			
 			string selectedEventId = Intent.GetStringExtra ("selectedEventId");
 			if (string.IsNullOrEmpty (selectedEventId)) {
 				MyLogger.Error (this.LocalClassName, "Selected Event ID not passed. Activity closed.");
 				Finish ();
 			}
 			selectedEvent = (TowEvent)TowManager.First (x => x.Id.ToString () == (selectedEventId));			
-			SetContentView (Resource.Layout.NotificationDetail);
+			SetContentView (Resource.Layout.TowNotificationDetail);
 			InitializeVariables ();
 			SetMojioEventInfo ();
 			SetupMaps ();
-
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
@@ -91,21 +88,22 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Information (this.LocalClassName, string.Format ("Event Detail Time Set: {0}", selectedEvent.Time.ToLongTimeString ()));
 			eventDongleIDText.Text = selectedEvent.MojioId;
 			MyLogger.Information (this.LocalClassName, string.Format ("Event Detail DongleID Set: {0}", selectedEvent.MojioId));
-			eventLocationText.Text = string.Format ("Lat,Lng - {0:0.00}, {1:0.00}", selectedEvent.Location.Lat, selectedEvent.Location.Lng);
+			if (selectedEvent.Location == null)
+				eventLocationText.Text = string.Format ("Lat,Lng - Not Available");
+			else
+				eventLocationText.Text = string.Format ("Lat,Lng - {0:0.00}, {1:0.00}", selectedEvent.Location.Lat, selectedEvent.Location.Lng);
 			MyLogger.Information (this.LocalClassName, eventLocationText.Text);
 		}
 
 		private void SetupMaps ()
-		{
+		{			
 			try {
 				MapsInitializer.Initialize (this);
 			} catch (Exception e) {
 				MyLogger.Error (this.LocalClassName, string.Format ("Exception while initializing the map: {0}", e.Message));
 			}
-
 			MapFragment mapFrag = (MapFragment)FragmentManager.FindFragmentById (Resource.Id.eventMapFragment);
 			GoogleMap map = mapFrag.Map;
-
 			if (map != null) {
 				map.UiSettings.ZoomControlsEnabled = true;
 				map.AddMarker (GetMarkerOption (selectedEvent));
@@ -116,7 +114,10 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private LatLng GetEventLocation (TowEvent e)
 		{
-			return new LatLng (e.Location.Lat, e.Location.Lng);
+			if (selectedEvent.Location == null)
+				return new LatLng (49.2389f, 123.1201f); //Vancouver LatLng
+			else
+				return new LatLng (e.Location.Lat, e.Location.Lng);
 		}
 
 		private LatLngBounds GetLocationBoundary (TowEvent e)
@@ -129,7 +130,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MarkerOptions marker = new MarkerOptions ();
 			marker.SetPosition (GetEventLocation (e));
-			marker.SetTitle (e.MojioId);
+			marker.SetTitle (e.Location == null ? "Location Not Available!" : string.Format ("{0}: {1}, {2}", e.MojioId, e.Location.Lat, e.Location.Lng));
 			return marker;
 		}
 	}

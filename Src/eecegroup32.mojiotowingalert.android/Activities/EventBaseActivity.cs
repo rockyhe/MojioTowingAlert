@@ -24,17 +24,18 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			protected override void OnEvent (Context context, Event ev)
 			{
-				MyLogger.Information (this.Class.SimpleName, string.Format ("Event Received: Context-{0} EventType-{1}", context.GetType ().ToString (), ev.EventType.ToString ()));
+				MyLogger.Information (this.Class.SimpleName, string.Format ("Event Received: Mojio Id ({0}) Type ({1}) ", ev.MojioId, ev.EventType.ToString ()));
 
 				if (context is EventBaseActivity)
 					(context as EventBaseActivity).OnMojioEventReceived (ev);
+				else
+					MyLogger.Error (this.Class.SimpleName, string.Format ("Received Event Didn't Invoke OnMojioEventReceived ({0})", ev.ToString ()));
 			}
 		}
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
 			base.OnCreate (bundle);
 			InitializeVariables ();
 			LoadUserPreference ();
@@ -44,7 +45,12 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
-		protected void RegisterSubscriptionEventListener ()
+		/// <summary>
+		/// Registers the subscription event listener.
+		/// OnSubscriptionChanged is invoked when the 
+		/// subscription preference for a dongle is changed.
+		/// </summary>
+		private void RegisterSubscriptionEventListener ()
 		{
 			SettingsActivity.OnSubscriptionChanged += RegisterEvenForNotice;
 		}
@@ -81,8 +87,9 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
 			try {
 				UnregisterReceiver (Receiver);
+				MyLogger.Information (this.LocalClassName, string.Format ("GCM Unregistered."));
 			} catch (Exception ex) {
-				MyLogger.Error (this.LocalClassName, string.Format ("Tried to unregister when not registered. Exception: {0}", ex.Message));
+				MyLogger.Error (this.LocalClassName, string.Format ("Tried to unregister GCM when not registered. Exception: {0}", ex.Message));
 			}
 			base.OnDestroy ();
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
@@ -112,7 +119,7 @@ namespace eecegroup32.mojiotowingalert.android
 				IntFilter = new IntentFilter (EventReceiver.IntentAction);
 		}
 
-		protected Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice, EventType eventToSubscribe)
+		private Subscription SubscribeForEvent (string registrationId, out HttpStatusCode httpStatusCode, out string msg, Device mojioDevice, EventType eventToSubscribe)
 		{
 			return Client.SubscribeGcm (registrationId, new Subscription () {
 				Event = eventToSubscribe,
@@ -121,11 +128,11 @@ namespace eecegroup32.mojiotowingalert.android
 			}, out httpStatusCode, out msg);
 		}
 
-		protected bool CheckSubscriptionStatus (HttpStatusCode httpStatusCode)
+		private bool IsAlreadySubscribed (HttpStatusCode httpStatusCode)
 		{
 			return httpStatusCode == HttpStatusCode.NotModified;
 		}
-
+		//TODO [GROUP32] Implement Unsubscription
 		protected bool UnsubscribeForEvent (Device device)
 		{
 			//Client.Unsubscribe((()))
@@ -133,12 +140,12 @@ namespace eecegroup32.mojiotowingalert.android
 			return true;
 		}
 
-		protected bool IsNullOrEmpty (IEnumerable<Object> collection)
+		public static bool IsNullOrEmpty (IEnumerable<Object> collection)
 		{
 			return collection == null || collection.Count () == 0;
 		}
 
-		protected bool IsNullOrEmpty (IEnumerable<EventType> collection)
+		public static bool IsNullOrEmpty (IEnumerable<EventType> collection)
 		{
 			return collection == null || collection.Count () == 0;
 		}
@@ -169,7 +176,7 @@ namespace eecegroup32.mojiotowingalert.android
 			
 			foreach (var eventToSubscribe in EventsToSubscribe) {
 				var subscribedDevices = CurrentUserPreference.GetAllSubscribedDevices (eventToSubscribe);
-				if (subscribedDevices == null || subscribedDevices.Count () == 0)
+				if (IsNullOrEmpty (subscribedDevices))
 					continue;
 				foreach (var userDevice in UserDevices) {					
 					if (subscribedDevices.Contains (userDevice.Id))
@@ -178,13 +185,6 @@ namespace eecegroup32.mojiotowingalert.android
 						RegisterEvenForNotice (userDevice.Id, false);					
 				}            				
 			}
-		}
-
-		protected virtual void ShowToastAtCenter (string msg)
-		{
-			Toast toast = Toast.MakeText (this, msg, ToastLength.Short);
-			toast.SetGravity (GravityFlags.CenterVertical, 0, 0);
-			toast.Show ();
 		}
 
 		protected void RegisterEvenForNotice (string deviceId, bool toSubscribe)
@@ -218,34 +218,43 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (var eventToSubscribe in EventsToSubscribe) {
 				Subscription subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice, eventToSubscribe);
 				if (subscription != null) {
-					MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "successful", msg));	                    
+					MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "Successful", msg));	                    
 					continue;
 				}
-				if (CheckSubscriptionStatus (statusCode)) {
-					MyLogger.Information (this.LocalClassName, "Event Subscription: Event already subscribed.");	
+				if (IsAlreadySubscribed (statusCode)) {
+					MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} Event already subscribed.", eventToSubscribe.ToString ()));	
 					continue;
 				}           
 				succeed = false;         
+				MyLogger.Error (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "Fail", msg));	                    
 			}
 			return succeed;
 		}
 
+		/// <summary>
+		/// This is all the action starts once a mojio event is received.
+		/// </summary>
+		/// <param name="eve">Mojio Event</param>
 		protected virtual void OnMojioEventReceived (Event eve)
 		{
 			switch (eve.EventType) {
 			case EventType.Tow:
+				LoadMojioDevices ();
+				var location = UserDevices.First (x => x.Id == eve.MojioId).LastLocation;				
+				(eve as TowEvent).Location = location;
+				MyLogger.Error (this.LocalClassName, string.Format ("Location ({0}) added to the event just received.", location.ToString ()));	
 				TowManager.Add (eve);
 				TowManager.IncrementNewEventNumber ();
 				if (ActivityVisible)
-					NotifyViaToast ("Your Car Is Being Towed!");
+					NotifyViaToast (Resources.GetString (Resource.String.towEventNotice));
 				else
-					NotifyViaLocalNotification ("MOJIO: Your Car Is Being Towed!");
+					NotifyViaLocalNotification (Resources.GetString (Resource.String.towEventNotice));
 				break;
 			default:
-				if (ActivityVisible)
-					NotifyViaToast ();
-				else
-					NotifyViaLocalNotification ();
+//				if (ActivityVisible)
+//					NotifyViaToast ();
+//				else
+//					NotifyViaLocalNotification ();
 				break;
 			}
 			

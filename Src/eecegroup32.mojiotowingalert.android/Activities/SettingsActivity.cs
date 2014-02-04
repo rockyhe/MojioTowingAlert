@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Linq;
 using System.Text;
-using System.Net;
-using Android.App;
-using Android.Content;
+using System.Collections.Generic;
 using Android.OS;
-using Android.Runtime;
+using Android.App;
 using Android.Views;
 using Android.Widget;
+using Android.Runtime;
+using Android.Content;
 using PushSharp.Client;
 using Mojio;
 using Mojio.Events;
@@ -147,7 +147,7 @@ namespace eecegroup32.mojiotowingalert.android
 			InitializeComponents ();
 			InitializeEventHandlers ();
 		}
-		//TODO: Bad Impelmentation
+		//TODO: [GROUP32] Cleanup Impelmentation
 		private void LoadDongleList ()
 		{
 			MyLogger.Information (this.LocalClassName, "Dongle List: loading..."); 

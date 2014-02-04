@@ -1,18 +1,20 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Android.App;
-using Android.Content;
+using System.Collections.Generic;
 using Android.OS;
-using Android.Runtime;
+using Android.App;
 using Android.Views;
 using Android.Widget;
+using Android.Runtime;
+using Android.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
-using Mojio.Events;
 using Mojio;
+using Mojio.Events;
 using eecegroup32.mojiotowingalert.core;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -22,15 +24,16 @@ namespace eecegroup32.mojiotowingalert.android
 		private List<LatLng> mojioLocations;
 		private List<MarkerOptions> dongleMarkers;
 		private LatLngBounds locationBoundary;
+		private GoogleMap map;
+		private bool stopUpdate;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Maps);
 			SetupMaps ();
-
+			
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
@@ -60,6 +63,8 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume ();
 			MainApp.SetCurrentActivity (this);
+			stopUpdate = false;
+			StartAutoUpdate ();
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
@@ -67,6 +72,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
 			base.OnPause ();
+			stopUpdate = true;
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
@@ -79,7 +85,7 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 
 			MapFragment mapFrag = (MapFragment)FragmentManager.FindFragmentById (Resource.Id.map);
-			GoogleMap map = mapFrag.Map;
+			map = mapFrag.Map;
 
 			if (map != null) {
 				GrabLocations ();
@@ -97,6 +103,33 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 		}
 
+		public void StartAutoUpdate ()
+		{
+			Task.Factory.StartNew (() => {
+				while (stopUpdate == false) {
+					LoadMojioDevices ();
+					if (HasNumberOfDevicesChanged ()) {
+						GrabLocations ();
+						SetupBoundary ();
+					}					
+					SetupMarkers ();
+					RunOnUiThread (() => {
+						map.Clear ();
+						foreach (MarkerOptions marker in dongleMarkers) {
+							map.AddMarker (marker);
+							MyLogger.Information (this.LocalClassName, string.Format ("Mojio Location: Updated")); 
+						}
+					});
+					Thread.Sleep (2000);
+				}
+			});
+		}
+
+		private bool HasNumberOfDevicesChanged ()
+		{
+			return mojioLocations.Count == UserDevices.Count;
+		}
+
 		private void GrabLocations ()
 		{
 			Device mojioDevice;
@@ -110,25 +143,18 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void SetupBoundary ()
 		{
-			switch (mojioLocations.Count) {
-			case 1:
-				locationBoundary = new LatLngBounds (mojioLocations [0], mojioLocations [0]);
-				break;
-			case 2:
-				locationBoundary = new LatLngBounds (mojioLocations [0], mojioLocations [0]).Including (mojioLocations [1]);
-				break;
-			case 3:
-				locationBoundary = new LatLngBounds (mojioLocations [0], mojioLocations [0]).Including (mojioLocations [1]).Including (mojioLocations [2]);
-				break;
-			case 4:
-				locationBoundary = new LatLngBounds (mojioLocations [0], mojioLocations [0]).Including (mojioLocations [1]).Including (mojioLocations [2]).Including (mojioLocations [3]);
-				break;
-			}
+			locationBoundary = new LatLngBounds (mojioLocations [0], mojioLocations [0]);
+			for (int i = 1; i < mojioLocations.Count; i++) {
+				locationBoundary.Including (mojioLocations [i]);
+			}			
 		}
 
 		private void SetupMarkers ()
 		{
-			dongleMarkers = new List<MarkerOptions> ();
+			if (dongleMarkers == null)
+				dongleMarkers = new List<MarkerOptions> ();
+			else
+				dongleMarkers.Clear ();
 			for (int i = 0; i < mojioLocations.Count; i++) {
 				MarkerOptions marker = new MarkerOptions ();
 				marker.SetPosition (mojioLocations [i]);
