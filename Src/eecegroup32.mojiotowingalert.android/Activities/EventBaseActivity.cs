@@ -11,6 +11,7 @@ using Mojio;
 using Mojio.Events;
 using PushSharp.Client;
 using eecegroup32.mojiotowingalert.core;
+using System.Threading.Tasks;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -43,7 +44,8 @@ namespace eecegroup32.mojiotowingalert.android
 			LoadUserPreference ();
 			LoadMojioDevices (); 
 			RegisterReceiver (Receiver, IntFilter);
-			RegisterSubscriptionEventListener ();
+			RegisterSubscriptionEventListener ();	
+			RegisterEventsNotice ();		
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
@@ -54,7 +56,7 @@ namespace eecegroup32.mojiotowingalert.android
 		/// </summary>
 		private void RegisterSubscriptionEventListener ()
 		{
-			SettingsActivity.OnSubscriptionChanged += RegisterEvenForNotice;
+			SettingsActivity.OnSubscriptionChanged += RegisterEventForNotice;
 		}
 
 		private void LoadUserPreference ()
@@ -65,7 +67,7 @@ namespace eecegroup32.mojiotowingalert.android
 				CurrentUserPreference = r;
 				MyLogger.Information (this.LocalClassName, string.Format ("User Preference Retrieved for {0}.", Client.CurrentUser.UserName));
 			} else {
-				CurrentUserPreference = new UserPreference () { UserId = Client.CurrentUser.UserName };
+				CurrentUserPreference = new UserPreference () { UserId = Client.CurrentUser.UserName };				
 				MyLogger.Information (this.LocalClassName, string.Format ("Default User Preference Created for {0}.", Client.CurrentUser.UserName));
 			}
 		}
@@ -101,7 +103,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume ();
-			RegisterEventsNotice ();
+			//RegisterEventsNotice ();			
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
@@ -132,34 +134,86 @@ namespace eecegroup32.mojiotowingalert.android
 				EntityType = SubscriptionType.Mojio,
 			}, out httpStatusCode, out msg);
 		}
+		//TODO: [GROUP 32] Just deleting subscriptions that aren't supposed to exist. Maybe check if subscriptions exist too?
+		//Deleting subscriptions that are subscribed for events that we don't use for this app too.
+		//Also very messy for now. Need major improvement.
+		private void unsubscribeInvalidSubscription ()
+		{
+			MyLogger.Information (this.LocalClassName, "Checking if there are subscriptions that shouldn't exist...");
+			var subs = from s in Client.Queryable<Subscription> ()
+			           where s.ChannelType.Equals (ChannelType.Android) && s.ChannelTarget.Equals (RegistrationId)
+			           select s;
+			           
+			if (IsNullOrEmpty (subs)) {
+				MyLogger.Information (this.LocalClassName, "No subscription found.");
+				return;
+			}
+			
+			foreach (var sub in subs) {
+				if (!EventsToSubscribe.Contains (sub.Event)) {
+					Client.Delete (sub);
+					MyLogger.Information (this.LocalClassName, string.Format ("Device {0} found subscribed to Event {1}. Deleted cuz our app doesn't support it.", sub.EntityId, sub.Event.ToString ()));
+				}
+			}
+			MyLogger.Information (this.LocalClassName, string.Format ("{0} subscriptions found.", subs.Count ()));
+			foreach (var sub in subs) {
+				MyLogger.Information (this.LocalClassName, string.Format ("Subscription found: Device Id {0} | Owner Id {1} | Eventtype {2}", sub.EntityId, sub.OwnerId.ToString (), sub.Event.ToString ()));
+			}
+			foreach (var eventType in EventsToSubscribe) {
+				var devices = CurrentUserPreference.GetAllSubscribedDevices (eventType);
+				if (IsNullOrEmpty (devices)) {
+					MyLogger.Information (this.LocalClassName, string.Format ("No Device Found for Eventtype {0}.", eventType.ToString ()));
+					foreach (var sub in subs) {
+						if (sub.OwnerId == Client.CurrentUser.Id && sub.Event == eventType) {
+							Client.Delete (sub);
+							MyLogger.Information (this.LocalClassName, string.Format ("Device {0} unsubscribed to Event {1} cuz the user has not set it.", sub.EntityId, sub.Event.ToString ()));
+						}
+					}
+					continue;
+				}
+				foreach (var sub in subs) {
+					if (sub.OwnerId == Client.CurrentUser.Id && devices.FirstOrDefault (x => x.Id == sub.EntityId) == null) {
+						Client.Delete (sub);
+						MyLogger.Information (this.LocalClassName, string.Format ("Device {0} found subscribed to Event {1} when it's not supposed to. Deleted.", sub.EntityId, sub.Event.ToString ()));
+					}
+				}
+			}
+			MyLogger.Information (this.LocalClassName, "Checking if there are subscriptions that shouldn't exist...Done");
+		}
 
 		private bool IsAlreadySubscribed (HttpStatusCode httpStatusCode)
 		{
 			return httpStatusCode == HttpStatusCode.NotModified;
 		}
-		//TODO [GROUP32] Implement Unsubscription
-		protected bool UnsubscribeForEvent (Device device)
+
+		protected bool UnsubscribeForEvent (Device device, EventType eventType)
 		{
-			//Client.Unsubscribe((()))
-			MyLogger.Information (this.LocalClassName, string.Format ("Subscription (TO BE Implemented): {0} unsubscribed for event type {1}", device.Id, "Event"));
-			return true;
+			Subscription subscription = Subscriptions.First (x => x.EntityId == device.Id);
+			bool succeed = Client.Delete (subscription);
+			MyLogger.Information (this.LocalClassName, string.Format ("Unsubscription: {0} for event type {1} - {2}", device.Id, eventType, succeed ? "Successful" : "Failed"));
+			return succeed;
 		}
 
 		public static bool IsNullOrEmpty (IEnumerable<Object> collection)
 		{
-			return collection == null || collection.Count () == 0;
+			return collection == null || (collection != null && collection.Count () == 0);
 		}
 
 		public static bool IsNullOrEmpty (IEnumerable<EventType> collection)
 		{
-			return collection == null || collection.Count () == 0;
+			return collection == null || (collection != null && collection.Count () == 0);
 		}
 
 		/// <summary>
 		/// Registers all the events notices for all the devices IAW the current user preference.
 		/// </summary>
-		protected void RegisterEventsNotice ()
+		protected async void RegisterEventsNotice ()
 		{
+			if (string.IsNullOrEmpty (RegistrationId))
+				RegistrationId = PushClient.GetRegistrationId (this.ApplicationContext);
+				
+			await Task.Factory.StartNew (() => unsubscribeInvalidSubscription ());
+			
 			if (IsNullOrEmpty (UserDevices)) {
 				MyLogger.Error (this.LocalClassName, string.Format ("Event Notice Registration: Incomplete. UserDevice null or 0."));
 				return;
@@ -169,9 +223,6 @@ namespace eecegroup32.mojiotowingalert.android
 				MyLogger.Error (this.LocalClassName, string.Format ("Event Notice Registration: Incomplete. Events to Subscribe null or 0."));
 				return;
 			}
-
-			if (string.IsNullOrEmpty (RegistrationId))
-				RegistrationId = PushClient.GetRegistrationId (this.ApplicationContext);
 				
 			MyLogger.Information (this.LocalClassName, string.Format ("Event Notice Registration: ID {0} Retrieved.", RegistrationId));
 			if (String.IsNullOrWhiteSpace (RegistrationId)) {
@@ -185,14 +236,15 @@ namespace eecegroup32.mojiotowingalert.android
 					continue;
 				foreach (var userDevice in UserDevices) {					
 					if (subscribedDevices.Contains (userDevice))
-						RegisterEvenForNotice (userDevice, true);
+						RegisterEventForNotice (userDevice, eventToSubscribe, true);
 					else
-						RegisterEvenForNotice (userDevice, false);					
+						RegisterEventForNotice (userDevice, eventToSubscribe, false);					
 				}            				
 			}
 		}
-
-		protected void RegisterEvenForNotice (Device dev, bool toSubscribe)
+		//TODO [GROUP 32] I know this is bad implementation. For now, given a device, it checks the user preference to see
+		//which events need to be subscribed for the device. Should improve the implementation.
+		protected void RegisterEventForNotice (Device dev, EventType eventType, bool toSubscribe)
 		{
 			if (string.IsNullOrEmpty (RegistrationId))
 				RegistrationId = PushClient.GetRegistrationId (this.ApplicationContext);
@@ -204,10 +256,10 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 			do {
 				if (!toSubscribe) {
-					if (UnsubscribeForEvent (device))
+					if (UnsubscribeForEvent (device, eventType))
 						return;	
 				} else {
-					if (SubscribeForEvent (device, RegistrationId))
+					if (SubscribeForEvent (device, eventType))
 						return;
 				}
 				trials--;
@@ -215,24 +267,23 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Error (this.LocalClassName, string.Format ("{0} Subscription/Unsubscription failed.", dev));
 		}
 
-		protected bool SubscribeForEvent (Device mojioDevice, string registrationId)
+		protected bool SubscribeForEvent (Device mojioDevice, EventType eventToSubscribe)
 		{
 			HttpStatusCode statusCode;
 			string msg;
 			bool succeed = true;
-			foreach (var eventToSubscribe in EventsToSubscribe) {
-				Subscription subscription = SubscribeForEvent (registrationId, out statusCode, out msg, mojioDevice, eventToSubscribe);
-				if (subscription != null) {
-					MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "Successful", msg));	                    
-					continue;
-				}
-				if (IsAlreadySubscribed (statusCode)) {
-					MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} Event already subscribed.", eventToSubscribe.ToString ()));	
-					continue;
-				}           
+			Subscription subscription = SubscribeForEvent (RegistrationId, out statusCode, out msg, mojioDevice, eventToSubscribe);
+			Subscriptions.Add (subscription);
+			if (subscription != null)
+				MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "Successful", msg));	                    
+			if (IsAlreadySubscribed (statusCode))
+				MyLogger.Information (this.LocalClassName, string.Format ("Event Subscription: {0} Event already subscribed.", eventToSubscribe.ToString ()));	
+			if (subscription == null && !IsAlreadySubscribed (statusCode)) {
 				succeed = false;         
-				MyLogger.Error (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "Fail", msg));	                    
+				MyLogger.Error (this.LocalClassName, string.Format ("Event Subscription: {0} - {1}.", "Fail", msg));
 			}
+				                    
+			
 			return succeed;
 		}
 

@@ -10,6 +10,8 @@ using Android.Views;
 using Android.Widget;
 using Mojio.Client;
 using eecegroup32.mojiotowingalert.core;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace eecegroup32.mojiotowingalert.android
 {

@@ -16,7 +16,7 @@ using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-	public delegate void ChangedEventHandler (Device device, bool isChecked);
+	public delegate void ChangedEventHandler (Device device, EventType eventType, bool isChecked);
 	[Activity (Label = "SettingsActivity")]			
 	public class SettingsActivity : BaseActivity
 	{
@@ -112,14 +112,14 @@ namespace eecegroup32.mojiotowingalert.android
 			toast.Show ();
 		}
 
-		private void OnDeviceSubscriptionToggleClicked (Device dev, bool isChecked)
+		private void OnDeviceSubscriptionToggleClicked (Device dev, EventType eventType, bool isChecked)
 		{
-			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} Set to {1}", dev, isChecked));
+			MyLogger.Information (this.LocalClassName, string.Format ("User Preference: {0} for {1} Set to {2}", eventType, dev, isChecked));
 			if (isChecked)
 				CurrentUserPreference.AddToSubscriptionList (EventType.Tow, dev);
 			else
 				CurrentUserPreference.RemoveFromSubscriptionList (EventType.Tow, dev);
-			OnSubscriptionChanged (dev, isChecked);
+			OnSubscriptionChanged (dev, eventType, isChecked);
 			SaveUserPreferences ();
 		}
 
@@ -171,7 +171,9 @@ namespace eecegroup32.mojiotowingalert.android
 				button.Id = i;				                
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
-					OnDeviceSubscriptionToggleClicked (moj, (o as ToggleButton).Checked);
+					//TODO: [GROUP 32] When we add more event types for our app change this line so that
+					// depending on the button clicked, corresponding event type is sent to the handler
+					OnDeviceSubscriptionToggleClicked (moj, EventType.Tow, (o as ToggleButton).Checked);
 				};
 				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.Tow, moj);
 				dongleListLayout.AddView (item);

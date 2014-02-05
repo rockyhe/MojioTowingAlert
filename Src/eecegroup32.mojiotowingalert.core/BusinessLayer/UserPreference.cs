@@ -29,10 +29,7 @@ namespace eecegroup32.mojiotowingalert.core
 		/// <value>a string of device ids deliminated with ";"</value>
 		public string SubscriptionsJson { 
 			get { return JsonConvert.SerializeObject (_subscriptions); } 
-			set {
-				MyLogger.Information ("User Preference", "deserializing.........");
-				_subscriptions = JsonConvert.DeserializeObject<List<List<Device>>> (value);
-			}
+			set { _subscriptions = JsonConvert.DeserializeObject<List<List<Device>>> (value); }
 		}
 
 		private List<Device> _devicesForTowEvent;

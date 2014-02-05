@@ -47,14 +47,12 @@ namespace eecegroup32.mojiotowingalert.android
 
 		public static Activity GetCurrentActivity ()
 		{
-			MyLogger.Information ("MainApp", string.Format ("Current Activity: {0} returned", _CurrentActivity.LocalClassName));
 			return _CurrentActivity;
 		}
 
 		public static void SetCurrentActivity (Activity activity)
 		{
 			_CurrentActivity = activity;
-			MyLogger.Information ("MainApp", string.Format ("Current Activity: Set To {0}", activity.LocalClassName));
 		}
 	}
 }
