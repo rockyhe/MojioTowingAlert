@@ -90,6 +90,8 @@
     <AndroidResource Include="Resources\layout\TowNotificationDetail.axml" />
     <AndroidResource Include="Resources\layout\NotificationView.axml" />
     <AndroidResource Include="Resources\drawable\towicon.png" />
+    <AndroidResource Include="Resources\drawable\applicationIcon.png" />
+    <AndroidResource Include="Resources\drawable\Black.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

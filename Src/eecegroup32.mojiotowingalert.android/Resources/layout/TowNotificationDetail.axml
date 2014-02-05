@@ -16,7 +16,7 @@
         <TextView
             p1:text="@string/eventDate"
             p1:textAppearance="?android:attr/textAppearanceSmall"
-            p1:layout_width="64dp"
+            p1:layout_width="75dp"
             p1:layout_height="match_parent"
             p1:id="@+id/eventDateTitle" />
         <TextView
@@ -36,7 +36,7 @@
         <TextView
             p1:text="@string/eventTime"
             p1:textAppearance="?android:attr/textAppearanceSmall"
-            p1:layout_width="64dp"
+            p1:layout_width="75dp"
             p1:layout_height="match_parent"
             p1:id="@+id/eventTimeTitle" />
         <TextView
@@ -56,7 +56,7 @@
         <TextView
             p1:text="@string/eventDongleID"
             p1:textAppearance="?android:attr/textAppearanceSmall"
-            p1:layout_width="64dp"
+            p1:layout_width="75dp"
             p1:layout_height="match_parent"
             p1:id="@+id/eventDongleIDTitle" />
         <TextView
@@ -76,7 +76,7 @@
         <TextView
             p1:text="@string/eventLocation"
             p1:textAppearance="?android:attr/textAppearanceSmall"
-            p1:layout_width="64dp"
+            p1:layout_width="75dp"
             p1:layout_height="match_parent"
             p1:id="@+id/eventLocationTitle" />
         <TextView

@@ -31,6 +31,8 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 			base.OnCreate (bundle);
+			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
+			this.ActionBar.SetTitle (Resource.String.map);
 			SetContentView (Resource.Layout.Maps);
 			SetupMaps ();
 			

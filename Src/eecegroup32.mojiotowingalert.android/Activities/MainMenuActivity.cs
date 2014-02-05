@@ -73,6 +73,8 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeVariables ()
 		{
+			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
+			this.ActionBar.SetTitle (Resource.String.mainMenu);
 			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
 			notifcationButton = FindViewById<Button> (Resource.Id.notificationsButton);
 			mapsButton = FindViewById<Button> (Resource.Id.mapsButton);
