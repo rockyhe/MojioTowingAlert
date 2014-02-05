@@ -13,7 +13,7 @@ using eecegroup32.mojiotowingalert.core;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-	[Activity (Label = "LoginActivity", MainLauncher = true, NoHistory = true)]
+	[Activity (Label = "Mojio Towing Alert App", MainLauncher = true, NoHistory = true)]
 	public class LoginActivity : BaseActivity
 	{
 		private Button loginButton;
@@ -68,6 +68,8 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeVariables ()
 		{
+			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
+			this.ActionBar.SetTitle (Resource.String.application);
 			loginButton = FindViewById<Button> (Resource.Id.logInButton);
 			username = FindViewById<EditText> (Resource.Id.usernameEntry);
 			password = FindViewById<EditText> (Resource.Id.passwordEntry);

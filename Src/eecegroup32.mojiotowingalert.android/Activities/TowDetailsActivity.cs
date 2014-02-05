@@ -74,6 +74,8 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeVariables ()
 		{
+			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
+			this.ActionBar.SetTitle (Resource.String.towEventDetails);
 			eventDateText = FindViewById<TextView> (Resource.Id.eventDateText);
 			eventTimeText = FindViewById<TextView> (Resource.Id.eventTimeText);
 			eventDongleIDText = FindViewById<TextView> (Resource.Id.eventDongleIDText);

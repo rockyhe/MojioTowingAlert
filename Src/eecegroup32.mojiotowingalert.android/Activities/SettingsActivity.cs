@@ -125,6 +125,8 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeComponents ()
 		{
+			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
+			this.ActionBar.SetTitle (Resource.String.settings);
 			notificationToggle = FindViewById<ToggleButton> (Resource.Id.NotificationToggleButton);
 			notificationToggle.Checked = GetNotificationTogglePref ();
 			soundCheckBox = FindViewById<CheckBox> (Resource.Id.SoundCheckBox);

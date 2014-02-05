@@ -94,8 +94,9 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeComponents ()
 		{
+			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
+			this.ActionBar.SetTitle (Resource.String.notifications);
 			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationList);
-			//dateList = this.FindViewById<LinearLayout> (Resource.Id.linearLayout5);
 			refreshButton = this.FindViewById<Button> (Resource.Id.refreshNotification);
 		}
 
