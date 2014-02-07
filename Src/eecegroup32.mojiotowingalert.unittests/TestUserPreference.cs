@@ -10,16 +10,15 @@ using NUnit.Framework;
 namespace eecegroup32.mojiotowingalert.unittests
 {
 	[TestFixture]
-	public class TestAbstractNotificationManager
+	public class TestUserPreference
 	{
-		private AbstractNotificationManager notificationManager;
+		private UserPreference userPreference;
 
 
 		[SetUp]
 		public void Setup ()
 		{
-			notificationManager = new TowNotificationManager ();
-
+			userPreference = new UserPreference ();
 		}
 
 		[TearDown]
@@ -28,18 +27,19 @@ namespace eecegroup32.mojiotowingalert.unittests
 		}
 
 		[Test]
-		public void TestClearNotificaitons ()
+		public void TestGetAndSetUserID ()
 		{
-			notificationManager.Clear ();
-			Assert.AreEqual (0, notificationManager.GetNewEventNumber());
+			string userID = "123";
+			userPreference.UserId = userID;
+			Assert.AreEqual (userID, userPreference.UserId);
 		}
 
 		[Test]
-		public void TestIncrementNotifications ()
+		public void TestGetAndSetNotificationChecked ()
 		{
-			notificationManager.Clear ();
-			notificationManager.IncrementNewEventNumber ();
-			Assert.AreEqual (1,notificationManager.GetNewEventNumber());
+			bool check = false;
+			userPreference.NotificationChecked = check;
+			Assert.AreEqual (check , userPreference.NotificationChecked);
 		}
 
 		[Test]
@@ -58,8 +58,12 @@ namespace eecegroup32.mojiotowingalert.unittests
 			System.Guid id = new System.Guid ();
 			mojioEvent.OwnerId = id;
 			notificationManager.Add (mojioEvent);
-			Assert.AreEqual (mojioEvent, notificationManager.Find(id.ToString()));
+			Assert.AreEqual (notificationManager.Find(id.ToString()), mojioEvent);
 		}
+	}
+}
+
+
 	}
 }
 
