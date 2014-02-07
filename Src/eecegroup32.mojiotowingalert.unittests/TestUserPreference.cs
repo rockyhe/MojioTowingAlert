@@ -43,25 +43,21 @@ namespace eecegroup32.mojiotowingalert.unittests
 		}
 
 		[Test]
-		public void TestAddEvent ()
+		public void TestGetAndSetSoundChecked ()
 		{
-			notificationManager.Clear ();
-			Event mojioEvent = new Event ();
-			Assert.True(notificationManager.Add(mojioEvent));
+			bool check = false;
+			userPreference.SoundChecked = check;
+			Assert.AreEqual (check , userPreference.SoundChecked);
 		}
 
 		[Test]
-		public void TestFindEvent ()
+		public void TestGetAndSetVibrationChecked ()
 		{
-			notificationManager.Clear ();
-			Event mojioEvent = new Event ();
-			System.Guid id = new System.Guid ();
-			mojioEvent.OwnerId = id;
-			notificationManager.Add (mojioEvent);
-			Assert.AreEqual (notificationManager.Find(id.ToString()), mojioEvent);
+			bool check = false;
+			userPreference.VibrationChecked = check;
+			Assert.AreEqual (check , userPreference.VibrationChecked);
 		}
-	}
-}
+
 
 
 	}
