@@ -29,7 +29,13 @@ namespace eecegroup32.mojiotowingalert.core
 		/// <value>a string of device ids deliminated with ";"</value>
 		public string SubscriptionsJson { 
 			get { return JsonConvert.SerializeObject (_subscriptions); } 
-			set { _subscriptions = JsonConvert.DeserializeObject<List<List<Device>>> (value); }
+			set {
+				_subscriptions = JsonConvert.DeserializeObject<List<List<Device>>> (value);
+				//TODO [Group 32] Need to improve this cuz for now I have to remember the order 
+				//I added all the list of devices to _subscriptions in order to reassign them
+				if (_subscriptions [0] != null)
+					_devicesForTowEvent = _subscriptions [0];
+			}
 		}
 
 		private List<Device> _devicesForTowEvent;
@@ -86,9 +92,7 @@ namespace eecegroup32.mojiotowingalert.core
 			switch (eventType) {
 			case EventType.Tow:
 				foreach (var dev in devices) {
-					if (_devicesForTowEvent.Contains (dev))
-						_devicesForTowEvent.Remove (dev);
-					_devicesForTowEvent.Add (dev);
+					AddToSubscriptionList (eventType, dev);
 				}
 				break;
 			default:

@@ -145,8 +145,9 @@ namespace eecegroup32.mojiotowingalert.android
 			UserDevices.Clear ();
 			foreach (Device moj in res.Data) {
 				UserDevices.Add (moj);
+				MyLogger.Information (this.LocalClassName, string.Format ("Mojio Devices: {0} Retrieved", moj.Id));
 			}
-			MyLogger.Information (this.LocalClassName, "Mojio Devices: Retrieved");
+			MyLogger.Information (this.LocalClassName, "Mojio Devices: Done Retrieving");
 		}
 
 		protected void DisplayNetworkAlert ()

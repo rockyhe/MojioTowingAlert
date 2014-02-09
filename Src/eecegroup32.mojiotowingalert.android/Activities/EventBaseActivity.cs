@@ -41,12 +41,24 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 			base.OnCreate (bundle);
 			InitializeVariables ();
-			LoadUserPreference ();
 			LoadMojioDevices (); 
+			CreateDefaultPreference ();
+			LoadUserPreference ();						
 			RegisterReceiver (Receiver, IntFilter);
 			RegisterSubscriptionEventListener ();	
 			RegisterEventsNotice ();		
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
+		}
+		//TODO: [GROUP 32] just creating a default preference so that
+		//all devices are subscribed for all events by default.
+		//Remove in proto 3
+		private void CreateDefaultPreference ()
+		{
+			var pref = new UserPreference () {
+				UserId = Client.CurrentUser.UserName		
+			};
+			pref.AddAllToSubscriptionList (EventType.Tow, UserDevices);
+			MyDataManager.SaveUserPreference (pref);
 		}
 
 		/// <summary>
@@ -231,9 +243,11 @@ namespace eecegroup32.mojiotowingalert.android
 			}
 			
 			foreach (var eventToSubscribe in EventsToSubscribe) {
-				var subscribedDevices = CurrentUserPreference.GetAllSubscribedDevices (eventToSubscribe);
-				if (IsNullOrEmpty (subscribedDevices))
+				var subscribedDevices = CurrentUserPreference.GetAllSubscribedDevices (eventToSubscribe);				
+				if (IsNullOrEmpty (subscribedDevices)) {
+					MyLogger.Information (this.LocalClassName, string.Format ("No device found for {0}", eventToSubscribe));
 					continue;
+				}
 				foreach (var userDevice in UserDevices) {					
 					if (subscribedDevices.Contains (userDevice))
 						RegisterEventForNotice (userDevice, eventToSubscribe, true);
