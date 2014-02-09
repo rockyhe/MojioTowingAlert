@@ -119,6 +119,7 @@ namespace eecegroup32.mojiotowingalert.android
 			var mainMenu = new Intent (this, typeof(MainMenuActivity));
 			mainMenu.AddFlags (ActivityFlags.ClearTask);
 			StartActivity (mainMenu);
+			Finish();
 		}
 	}
 }
