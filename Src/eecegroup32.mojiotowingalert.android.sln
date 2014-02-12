@@ -39,6 +39,6 @@ Global
 		{EB9C26DF-7F01-45D3-9C1A-4B22D61A0263}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = eecegroup32.mojiotowingalert.unittests\eecegroup32.mojiotowingalert.unittests.csproj
+		StartupItem = eecegroup32.mojiotowingalert.android\eecegroup32.mojiotowingalert.android.csproj
 	EndGlobalSection
 EndGlobal
