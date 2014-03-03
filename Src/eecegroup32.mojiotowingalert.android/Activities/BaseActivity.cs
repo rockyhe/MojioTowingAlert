@@ -1,16 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Android.OS;
-using Android.Net;
 using Android.App;
-using Android.Widget;
-using Android.Views;
 using Android.Content;
+using Android.Net;
+using Android.OS;
+using Android.Views;
+using Android.Widget;
 using Mojio;
-using Mojio.Events;
 using Mojio.Client;
+using Mojio.Events;
 using PushSharp.Client;
 using eecegroup32.mojiotowingalert.core;
 

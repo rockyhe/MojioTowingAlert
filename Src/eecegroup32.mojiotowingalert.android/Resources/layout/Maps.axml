@@ -13,6 +13,11 @@
         p1:layout_height="wrap_content"
         p1:id="@+id/currentDongleText"
         p1:gravity="center" />
+    <Button
+        p1:text="Filter"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/mapFilterButton" />
     <fragment
         p1:id="@+id/map"
         p1:layout_width="match_parent"

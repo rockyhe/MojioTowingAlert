@@ -92,6 +92,7 @@
     <AndroidResource Include="Resources\drawable\towicon.png" />
     <AndroidResource Include="Resources\drawable\applicationIcon.png" />
     <AndroidResource Include="Resources\drawable\Black.png" />
+    <AndroidResource Include="Resources\layout\SelectDongles.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

@@ -46,14 +46,14 @@ namespace eecegroup32.mojiotowingalert.core
 			return result;
 		}
 
-		public virtual IEnumerable<IEvent> GetAll ()
+		public virtual IEnumerable<Event> GetAll ()
 		{
 			var result = this.OrderByDescending (e => e.Time);
 			MyLogger.Information (this.GetType ().Name, string.Format ("{0} Returned", result != null ? result.Count ().ToString () : " Null"));
 			return result;
 		}
 
-		public virtual IEnumerable<IEvent> Get (int count)
+		public virtual IEnumerable<Event> Get (int count)
 		{
 			var result = this.OrderByDescending (e => e.Time).Take (count);
 			MyLogger.Information (this.GetType ().Name, string.Format ("{0} Returned", result != null ? result.Count ().ToString () : " Null"));
