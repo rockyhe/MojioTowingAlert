@@ -24,11 +24,11 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		private GoogleMap map;
 		private bool stopUpdate;
-		Button filterButton;
+		private Button filterButton;
 		private HashSet<Device> devicesToShow;
-		HashSet<Marker> deviceMarkers;
-		HashSet<Marker> eventMarkers;
-		HashSet<TowEvent> towEventsOnMap;
+		private HashSet<Marker> deviceMarkers;
+		private HashSet<Marker> eventMarkers;
+		private HashSet<TowEvent> towEventsOnMap;
 		private Object padlock = new Object ();
 		private ManualResetEvent manualResetEvent;
 		private ManualResetEvent manualResetEventForUpdate;
@@ -140,6 +140,7 @@ namespace eecegroup32.mojiotowingalert.android
 			map = mapFrag.Map;
 			map.UiSettings.ZoomControlsEnabled = true;
 			map.MapType = GoogleMap.MapTypeNormal;
+			map.InfoWindowClick += OnEventMarkerClicked;
 		}
 
 		private void AddMarkers ()
@@ -235,7 +236,7 @@ namespace eecegroup32.mojiotowingalert.android
 				foreach (var loc in locations)
 					locationBoundary.Including (loc);
 			
-			map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (locationBoundary.Center, 0));
+			map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (locationBoundary.Center, 10));
 		}
 
 		protected override void OnResume ()
@@ -297,6 +298,17 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			base.OnPause ();
 			stopUpdate = true;
+		}
+
+		private void OnEventMarkerClicked (object sender, GoogleMap.InfoWindowClickEventArgs e)
+		{
+			var marker = e.P0;
+			var towEvent = GetTowEvents ().FirstOrDefault (x => marker.Snippet.Contains (x.Time.ToString ()));
+			if (towEvent == null)
+				NotifyViaToast ("Event Info Not Available!");
+			var towDetailsActivity = new Intent (this, typeof(TowDetailsActivity));
+			towDetailsActivity.PutExtra ("selectedEventId", towEvent.Id.ToString ());
+			StartActivity (towDetailsActivity);  
 		}
 	}
 }

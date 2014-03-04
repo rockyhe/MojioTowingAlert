@@ -32,40 +32,12 @@ namespace eecegroup32.mojiotowingalert.android
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
-		protected override void OnStart ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
-		}
-
-		protected override void OnStop ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnStop ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
-		}
-
-		protected override void OnDestroy ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			base.OnDestroy ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
-		}
-
 		protected override void OnResume ()
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
 			base.OnResume ();
 			MainApp.SetCurrentActivity (this);
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
-		}
-
-		protected override void OnPause ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause ();
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
 		}
 
 		private void InitializeVariables ()
@@ -119,7 +91,7 @@ namespace eecegroup32.mojiotowingalert.android
 			var mainMenu = new Intent (this, typeof(MainMenuActivity));
 			mainMenu.AddFlags (ActivityFlags.ClearTask);
 			StartActivity (mainMenu);
-			Finish();
+			Finish ();
 		}
 	}
 }
