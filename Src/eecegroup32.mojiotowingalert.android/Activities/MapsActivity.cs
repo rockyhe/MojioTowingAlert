@@ -31,6 +31,8 @@ namespace eecegroup32.mojiotowingalert.android
 		HashSet<TowEvent> towEventsOnMap;
 		private Object padlock = new Object ();
 		private ManualResetEvent manualResetEvent;
+		private ManualResetEvent manualResetEventForUpdate;
+		private ManualResetEvent manualResetEventForUpdate2;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -91,13 +93,21 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void OnDeviceSelected (object sender, EventArgs e)
 		{
-			var selectedButton = (ToggleButton)sender;
-			var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
-			selectedButton.Text = string.Format ("Name:{0} \nId:{1}", selectedDevice.Name, selectedDevice.IdToString);
-			if (selectedButton.Checked)
-				devicesToShow.Add (selectedDevice);
-			else
-				devicesToShow.Remove (selectedDevice);
+			Task.Factory.StartNew (() => {
+				manualResetEventForUpdate2.Reset ();
+				manualResetEventForUpdate.WaitOne ();
+				var selectedButton = (ToggleButton)sender;
+				var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
+				selectedButton.Text = string.Format ("Name:{0} \nId:{1}", selectedDevice.Name, selectedDevice.IdToString);
+				if (selectedButton.Checked)
+					devicesToShow.Add (selectedDevice);
+				else
+					devicesToShow.Remove (selectedDevice);
+			
+				AddDeviceMarkers ();
+				AddEventMarkers ();		
+				manualResetEventForUpdate2.Set ();
+			});
 		}
 
 		private void InitializeVariables ()
@@ -109,6 +119,8 @@ namespace eecegroup32.mojiotowingalert.android
 			eventMarkers = new HashSet<Marker> ();
 			towEventsOnMap = new HashSet<TowEvent> ();
 			manualResetEvent = new ManualResetEvent (false);
+			manualResetEventForUpdate = new ManualResetEvent (false);
+			manualResetEventForUpdate2 = new ManualResetEvent (true);
 		}
 
 		private void DrawMap ()
@@ -140,10 +152,13 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void AddDeviceMarkers ()
 		{
+			foreach (var marker in deviceMarkers)
+				RemoveMarker (marker);
 			deviceMarkers.Clear ();
 			for (int i = 0; i < UserDevices.Count; i++) {
 				var dev = UserDevices [i];
-				deviceMarkers.Add (AddDeviceMarkerToMap (dev));								
+				if (devicesToShow.FirstOrDefault (x => x.Id.Equals (dev.Id)) != null)
+					deviceMarkers.Add (AddDeviceMarkerToMap (dev));								
 			}
 			
 		}
@@ -153,6 +168,7 @@ namespace eecegroup32.mojiotowingalert.android
 			var loc = new LatLng (dev.LastLocation.Lat, dev.LastLocation.Lng);				
 			MarkerOptions marker = new MarkerOptions ();
 			marker.SetPosition (loc);
+			marker.SetSnippet (dev.Id);
 			marker.SetTitle (dev.Name);
 			MyLogger.Information (this.LocalClassName, string.Format ("Device Marker Added: {0} at {1}", dev.Name, loc.ToString ()));
 			return AddMarkerToMap (marker);
@@ -160,14 +176,16 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void AddEventMarkers ()
 		{
+			foreach (var marker in eventMarkers)
+				RemoveMarker (marker);
 			eventMarkers.Clear ();
 			var towEvents = GetTowEvents ();
 			foreach (var towEvent in towEvents) {
 				var id = towEvent.MojioId;
-				if (devicesToShow.FirstOrDefault (x => x.Id.Equals (id)) == null)
-					continue;				
-				towEventsOnMap.Add (towEvent);
-				eventMarkers.Add (AddTowEventMarkerToMap (towEvent));				
+				if (devicesToShow.FirstOrDefault (x => x.Id.Equals (id)) != null) {
+					towEventsOnMap.Add (towEvent);
+					eventMarkers.Add (AddTowEventMarkerToMap (towEvent));
+				}	
 			}
 			
 		}
@@ -232,9 +250,12 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			Task.Factory.StartNew (() => {
 				while (stopUpdate == false) {
+					manualResetEventForUpdate2.WaitOne ();
+					manualResetEventForUpdate.Reset ();
 					UpdateDeviceMarkers ();
 					UpdateEventMarkers ();					
-					Thread.Sleep (2000);
+					manualResetEventForUpdate.Set ();
+					Thread.Sleep (2000);					
 				}
 			});
 		}
@@ -254,18 +275,18 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void RemoveMarker (Marker marker)
 		{
-			lock (padlock) {
-				RunOnUiThread (() => {
-					marker.Remove ();
-				});
-			}
+			if (marker == null)
+				return;
+			RunOnUiThread (() => {
+				marker.Remove ();
+			});
 		}
 
 		private void UpdateEventMarkers ()
 		{
 			var towEvents = GetTowEvents ();
-			foreach (var currentEvent in towEvents) {
-				if (!towEventsOnMap.Contains (currentEvent)) {			
+			foreach (var currentEvent in towEvents) {				
+				if (towEventsOnMap.FirstOrDefault (x => x.Id == currentEvent.Id) == null) {
 					towEventsOnMap.Add (currentEvent);
 					AddTowEventMarkerToMap (currentEvent);
 				}				
