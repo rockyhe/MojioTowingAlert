@@ -67,6 +67,7 @@
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Activities\EventBaseActivity.cs" />
     <Compile Include="Activities\TowDetailsActivity.cs" />
+    <Compile Include="FlyOutContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -92,6 +93,12 @@
     <AndroidResource Include="Resources\drawable\towicon.png" />
     <AndroidResource Include="Resources\drawable\applicationIcon.png" />
     <AndroidResource Include="Resources\drawable\Black.png" />
+    <AndroidResource Include="Resources\drawable\action_menu.png" />
+    <AndroidResource Include="Resources\drawable\icon1.png" />
+    <AndroidResource Include="Resources\drawable\iconelse.png" />
+    <AndroidResource Include="Resources\drawable\OGLdpf.log" />
+    <AndroidResource Include="Resources\layout\MenuLayout.axml" />
+    <AndroidResource Include="Resources\layout\MainMenuFlyout.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

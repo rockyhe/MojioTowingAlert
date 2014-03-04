@@ -2,6 +2,7 @@
 <ScrollView xmlns:p1="http://schemas.android.com/apk/res/android"
     p1:layout_width="fill_parent"
     p1:layout_height="fill_parent"
+    p1:id="@+id/FlyOutContent"
     p1:fillViewport="true">
     <LinearLayout
         p1:orientation="vertical"
@@ -10,6 +11,7 @@
         p1:layout_width="match_parent"
         p1:layout_height="match_parent"
         p1:id="@+id/linearLayout1"
+        p1:background="#000000"
         p1:scrollbars="vertical">
         <ImageView
             p1:src="@drawable/MojioAppLogo"
