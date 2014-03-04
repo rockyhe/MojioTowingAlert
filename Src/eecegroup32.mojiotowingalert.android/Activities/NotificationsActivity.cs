@@ -27,53 +27,17 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Notifications);
 			InitializeComponents ();
-			InitializeEventHandlers ();
+			InitializeEventHandlers ();			
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
-		}
-
-		protected override void OnStart ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart ();
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
-		}
-
-		protected override void OnStop ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnStop ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
-		}
-
-		protected override void OnDestroy ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			base.OnDestroy ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
 		}
 
 		protected override void OnResume ()
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
-			base.OnResume ();
-			MainApp.SetCurrentActivity (this);
-			
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
-		}
-
-		protected override void OnRestart ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnRestart");
-			base.OnRestart ();
+			base.OnResume ();			
+			MainApp.SetCurrentActivity (this);			
 			Update ();
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnRestart");
-		}
-
-		protected override void OnPause ()
-		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause ();
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
 
 		private void InitializeEventHandlers ()
@@ -81,8 +45,9 @@ namespace eecegroup32.mojiotowingalert.android
 			refreshButton.Click += OnRefreshClicked;
 		}
 
-		private void OnRefreshClicked (object sender, EventArgs e)
+		private async void OnRefreshClicked (object sender, EventArgs e)
 		{
+			await Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe));
 			RefreshNotificationList ();
 			NotifyViaToast ("Notification List Refreshed.");
 		}
