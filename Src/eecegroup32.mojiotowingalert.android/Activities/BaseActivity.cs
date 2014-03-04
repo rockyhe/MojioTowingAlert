@@ -234,9 +234,9 @@ namespace eecegroup32.mojiotowingalert.android
 			if (!isNotificationEnabled)
 				return;
             
-			var notification = new Notification (Resource.Drawable.Icon, msg);
+			var notification = new Notification (Resource.Drawable.applicationIcon, msg);
 			var pendingIntent = PendingIntent.GetActivity (this, 0, new Intent (this, this.GetType ()), 0);
-			notification.SetLatestEventInfo (this, "New Mojio Event", msg, pendingIntent);
+			notification.SetLatestEventInfo (this, "New Towing Event", msg, pendingIntent);
 			notification.Flags = NotificationFlags.AutoCancel;
 
 			ConfigureNotificationSound (notification);

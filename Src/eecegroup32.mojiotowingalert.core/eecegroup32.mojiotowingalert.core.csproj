@@ -49,7 +49,7 @@
       <HintPath>..\Components\sqlite-net-1.0.1\lib\android\SQLite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Lib\Mojio.Client\Src\Components\json.net-4.5.11\lib\android\Newtonsoft.Json.dll</HintPath>
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

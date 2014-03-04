@@ -22,13 +22,14 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button mapsButton;
 		private Button settingsButton;
 		private Button logOutButton;
+		private FlyOutContainer flyoutMenu;
 		private TextView welcome;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 			base.OnCreate (bundle);
-			SetContentView (Resource.Layout.MainMenu);
+			SetContentView (Resource.Layout.MainMenuFlyout);
 			InitializeVariables ();
 			InitializeEventHandlers ();
 			InitializeWelcomeScreen ();
@@ -51,6 +52,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
 			this.ActionBar.SetTitle (Resource.String.mainMenu);
+			flyoutMenu = FindViewById<FlyOutContainer> (Resource.Id.FlyOutContainer);
 			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
 			notifcationButton = FindViewById<Button> (Resource.Id.notificationsButton);
 			mapsButton = FindViewById<Button> (Resource.Id.mapsButton);
