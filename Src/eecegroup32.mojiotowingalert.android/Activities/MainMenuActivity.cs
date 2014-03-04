@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Mojio.Events;
 using eecegroup32.mojiotowingalert.core;
+using System.Threading.Tasks;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -31,6 +32,7 @@ namespace eecegroup32.mojiotowingalert.android
 			InitializeVariables ();
 			InitializeEventHandlers ();
 			InitializeWelcomeScreen ();
+			Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe));
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 

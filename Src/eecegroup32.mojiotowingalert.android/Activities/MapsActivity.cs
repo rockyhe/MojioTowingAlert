@@ -15,244 +15,267 @@ using Mojio.Events;
 using eecegroup32.mojiotowingalert.core;
 using System.Threading.Tasks;
 using System.Threading;
+using Android.Graphics;
 
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "MapsActivity")]			
 	public class MapsActivity : BaseActivity
 	{
-		private List<LatLng> locations;
-		private List<MarkerOptions> markers;
-		private LatLngBounds locationBoundary;
 		private GoogleMap map;
 		private bool stopUpdate;
-		private Task task;
 		Button filterButton;
-		private List<Device> devicesToShow;
+		private HashSet<Device> devicesToShow;
+		HashSet<Marker> deviceMarkers;
+		HashSet<Marker> eventMarkers;
+		HashSet<TowEvent> towEventsOnMap;
+		private Object padlock = new Object ();
+		private ManualResetEvent manualResetEvent;
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
-			base.OnCreate (bundle);
-			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
-			this.ActionBar.SetTitle (Resource.String.map);
+			base.OnCreate (bundle);			
 			SetContentView (Resource.Layout.Maps);			
+			InitializeWidgets ();
+			InitializeVariables ();
+			DrawMap ();
+		}
+
+		private void InitializeWidgets ()
+		{
+			ActionBar.SetTitle (Resource.String.map);
 			filterButton = FindViewById<Button> (Resource.Id.mapFilterButton);
 			filterButton.Click += new EventHandler (OnFilterButtonClicked);			
-			task = Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe));
-			devicesToShow = new List<Device> ();
-			devicesToShow.AddRange (UserDevices);
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
 		private void OnFilterButtonClicked (object sender, EventArgs e)
 		{
-			Dialog dialog = new Dialog (this);
-			dialog.SetTitle ("Select Dongles");
-
-			dialog.Window.SetLayout (LinearLayout.LayoutParams.WrapContent, LinearLayout.LayoutParams.WrapContent);
-			dialog.SetContentView (Resource.Layout.SelectDongles);
-			dialog.Window.SetTitleColor (global::Android.Graphics.Color.LightYellow);
-
-			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);
-			if (layout == null || Client == null)
-				return;
-
-			// Query API for all of users mojio devices
-			var res = Client.UserMojios (Client.CurrentUser.Id);
-			foreach (Device moj in UserDevices) {
-				ToggleButton button = new ToggleButton (this);
-				if (devicesToShow.Contains (moj))
-					button.Checked = true;
-				else
-					button.Checked = false;
-				button.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
-				button.Tag = moj.Id;
-				button.Click += (o, args) => {
-					var b = (ToggleButton)o;
-					var dev = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)b.Tag));
-					b.Text = string.Format ("Name:{0} \nId:{1}", dev.Name, dev.IdToString);
-					if (b.Checked) {						
-						if (!devicesToShow.Contains (dev))
-							devicesToShow.Add (dev);
-					} else
-						devicesToShow.Remove (dev);
-				};
-				layout.AddView (button);
-			}
+			Dialog dialog = CreateFilterDialog ();
+			AddDevicesToFilterDialog (dialog);			
 			dialog.Show ();
 		}
 
-		protected override void OnStart ()
+		private Dialog CreateFilterDialog ()
 		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStart");
-			base.OnStart ();
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStart");
+			Dialog dialog = new Dialog (this);
+			dialog.SetTitle ("Select Dongles To Show");
+			dialog.Window.SetLayout (LinearLayout.LayoutParams.WrapContent, LinearLayout.LayoutParams.WrapContent);
+			dialog.SetContentView (Resource.Layout.SelectDongles);
+			dialog.Window.SetTitleColor (Color.LightYellow);
+			return dialog;
 		}
 
-		protected override void OnStop ()
+		private void AddDevicesToFilterDialog (Dialog dialog)
 		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnStop");
-			base.OnStop ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnStop");
+			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
+			foreach (Device dev in UserDevices) {
+				ToggleButton listItem = CreateDeviceSelectionItem (dev);
+				layout.AddView (listItem);
+			}
 		}
 
-		protected override void OnDestroy ()
+		private ToggleButton CreateDeviceSelectionItem (Device moj)
 		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnDestroy");
-			base.OnDestroy ();		
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnDestroy");
+			ToggleButton button = new ToggleButton (this);
+			
+			if (devicesToShow.Contains (moj))
+				button.Checked = true;
+			else
+				button.Checked = false;
+			
+			button.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
+			button.Tag = moj.Id;
+			button.Click += OnDeviceSelected;
+			return button;
 		}
 
-		protected override void OnResume ()
+		private void OnDeviceSelected (object sender, EventArgs e)
 		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnResume");
-			base.OnResume ();
-			MainApp.SetCurrentActivity (this);
-			SetupMaps ();
-			stopUpdate = false;
-			StartAutoUpdate ();
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
+			var selectedButton = (ToggleButton)sender;
+			var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
+			selectedButton.Text = string.Format ("Name:{0} \nId:{1}", selectedDevice.Name, selectedDevice.IdToString);
+			if (selectedButton.Checked)
+				devicesToShow.Add (selectedDevice);
+			else
+				devicesToShow.Remove (selectedDevice);
 		}
 
-		protected override void OnPause ()
+		private void InitializeVariables ()
 		{
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnPause");
-			base.OnPause ();
-			stopUpdate = true;
-			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnPause");
+			devicesToShow = new HashSet<Device> ();
+			foreach (var dev in UserDevices)
+				devicesToShow.Add (dev);
+			deviceMarkers = new HashSet<Marker> ();
+			eventMarkers = new HashSet<Marker> ();
+			towEventsOnMap = new HashSet<TowEvent> ();
+			manualResetEvent = new ManualResetEvent (false);
 		}
 
-		private void SetupMaps ()
+		private void DrawMap ()
+		{
+			InitializeGoogleMap ();			
+			AddMarkers ();
+		}
+
+		void InitializeGoogleMap ()
 		{
 			try {
 				MapsInitializer.Initialize (this);
 			} catch (Exception e) {
 				MyLogger.Error (this.LocalClassName, string.Format ("Exception while initializing the map: {0}", e.Message));
 			}
-
 			MapFragment mapFrag = (MapFragment)FragmentManager.FindFragmentById (Resource.Id.map);
 			map = mapFrag.Map;
+			map.UiSettings.ZoomControlsEnabled = true;
+			map.MapType = GoogleMap.MapTypeNormal;
+		}
 
-			if (map != null) {
-				PopulateMap ();			
+		private void AddMarkers ()
+		{			
+			AddDeviceMarkers ();
+			AddEventMarkers ();		
+			var deviceLocations = deviceMarkers.Select (x => x.Position);
+			ZoomMapTo (deviceLocations);
+		}
+
+		private void AddDeviceMarkers ()
+		{
+			deviceMarkers.Clear ();
+			for (int i = 0; i < UserDevices.Count; i++) {
+				var dev = UserDevices [i];
+				deviceMarkers.Add (AddDeviceMarkerToMap (dev));								
+			}
+			
+		}
+
+		private Marker AddDeviceMarkerToMap (Device dev)
+		{
+			var loc = new LatLng (dev.LastLocation.Lat, dev.LastLocation.Lng);				
+			MarkerOptions marker = new MarkerOptions ();
+			marker.SetPosition (loc);
+			marker.SetTitle (dev.Name);
+			MyLogger.Information (this.LocalClassName, string.Format ("Device Marker Added: {0} at {1}", dev.Name, loc.ToString ()));
+			return AddMarkerToMap (marker);
+		}
+
+		private void AddEventMarkers ()
+		{
+			eventMarkers.Clear ();
+			var towEvents = GetTowEvents ();
+			foreach (var towEvent in towEvents) {
+				var id = towEvent.MojioId;
+				if (devicesToShow.FirstOrDefault (x => x.Id.Equals (id)) == null)
+					continue;				
+				towEventsOnMap.Add (towEvent);
+				eventMarkers.Add (AddTowEventMarkerToMap (towEvent));				
+			}
+			
+		}
+
+		private IEnumerable<TowEvent> GetTowEvents ()
+		{
+			return TowManager.GetAll ().Where (x => x.EventType == EventType.Tow).Cast <TowEvent> ();
+		}
+
+		private Marker AddTowEventMarkerToMap (TowEvent towEvent)
+		{
+			if (towEvent.Location != null) {
+				var loc = new LatLng (towEvent.Location.Lat, towEvent.Location.Lng);
+				MarkerOptions marker = new MarkerOptions ();
+				marker.SetPosition (loc);
+				marker.SetTitle (string.Format ("Device: {0}", towEvent.MojioId));
+				marker.SetSnippet (string.Format ("Date: {0}", towEvent.Time));
+				MyLogger.Information (this.LocalClassName, string.Format ("Event Marker Added: {0} at {1}", towEvent.MojioId, loc.ToString ()));
+				return AddMarkerToMap (marker);
+			}
+			
+			return null;
+		}
+
+		private Marker AddMarkerToMap (MarkerOptions markerOption)
+		{
+			lock (padlock) {
+				manualResetEvent.Reset ();
+				Marker marker = null;
+				RunOnUiThread (() => {
+					marker = map.AddMarker (markerOption);
+					manualResetEvent.Set ();
+				});
+				manualResetEvent.WaitOne ();
+				return marker;
 			}
 		}
 
-		private void PopulateMap ()
+		private void ZoomMapTo (IEnumerable<LatLng> locations)
 		{
-			Device mojioDevice;
-			if (locations == null)
-				locations = new List<LatLng> ();
-			else
-				locations.Clear ();
-			if (markers == null)
-				markers = new List<MarkerOptions> ();
-			else
-				markers.Clear ();
-			for (int i = 0; i < UserDevices.Count; i++) {
-				if (!devicesToShow.Contains (UserDevices [i]))
-					continue;
-				mojioDevice = UserDevices [i];
-				var loc = new LatLng (mojioDevice.LastLocation.Lat, mojioDevice.LastLocation.Lng);
-				locations.Add (loc);
-				if (locationBoundary == null)
-					locationBoundary = new LatLngBounds (locations [0], locations [0]);
-				locationBoundary.Including (loc);
-				MarkerOptions marker = new MarkerOptions ();
-				marker.SetPosition (loc);
-				marker.SetTitle (mojioDevice.Name);
-				markers.Add (marker);
-				MyLogger.Information (this.LocalClassName, string.Format ("Mojio Location: {0} found at Latitude {1} Longitude {2}", mojioDevice.Name, mojioDevice.LastLocation.Lat, mojioDevice.LastLocation.Lng));
-			}
-			while (!task.IsCompleted)
-				Thread.Sleep (500);
-			foreach (var e in TowManager.GetAll ().Where (x => x.EventType == EventType.Tow)) {
-				var id = e.MojioId;
-				if (devicesToShow.FirstOrDefault (x => x.Id.Equals (id)) == null)
-					continue;
-				if (((TowEvent)e).Location != null) {
-					var loc = new LatLng (((TowEvent)e).Location.Lat, ((TowEvent)e).Location.Lng);
-					locations.Add (loc);
-					MarkerOptions marker = new MarkerOptions ();
-					marker.SetPosition (loc);
-					marker.SetTitle (string.Format ("Device: {0}", e.MojioId));
-					marker.SetSnippet (string.Format ("Date: {0}", e.Time));
-					markers.Add (marker);
-				}
-			}
-			map.UiSettings.ZoomControlsEnabled = true;
-			foreach (MarkerOptions marker in markers) {
-				map.AddMarker (marker);
-			}
-			map.MapType = GoogleMap.MapTypeNormal;
+			LatLngBounds locationBoundary = null;
+			
+			if (locations != null || locations.Count () != 0)
+				locationBoundary = new LatLngBounds (locations.First (), locations.First ());
+			
+			if (locations.Count () > 1)
+				foreach (var loc in locations)
+					locationBoundary.Including (loc);
+			
 			map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (locationBoundary.Center, 0));
+		}
+
+		protected override void OnResume ()
+		{
+			base.OnResume ();
+			MainApp.SetCurrentActivity (this);			
+			stopUpdate = false;
+			StartAutoUpdate ();
 		}
 
 		public void StartAutoUpdate ()
 		{
 			Task.Factory.StartNew (() => {
 				while (stopUpdate == false) {
-					LoadMojioDevices ();
-					UpdateMarkers ();
-					RunOnUiThread (() => {
-						map.Clear ();
-						foreach (MarkerOptions marker in markers) {
-							map.AddMarker (marker);
-							MyLogger.Information (this.LocalClassName, string.Format ("Mojio Location: Updated")); 
-						}
-					});
+					UpdateDeviceMarkers ();
+					UpdateEventMarkers ();					
 					Thread.Sleep (2000);
 				}
 			});
 		}
 
-		private void UpdateMarkers ()
+		private void UpdateDeviceMarkers ()
 		{
-			locations.Clear ();
-			markers.Clear ();
-			for (int i = 0; i < UserDevices.Count; i++) {
-				if (!devicesToShow.Contains (UserDevices [i]))
-					continue;
-				var mojioDevice = UserDevices [i];
-				var loc = new LatLng (mojioDevice.LastLocation.Lat, mojioDevice.LastLocation.Lng);
-				locations.Add (loc);
-				MarkerOptions marker = new MarkerOptions ();
-				marker.SetPosition (loc);
-				marker.SetTitle (mojioDevice.Name);
-				markers.Add (marker);
-			}
-			
-			var events = TowManager.GetAll ().Where (x => x.EventType == EventType.Tow);
-			if (events == null)
-				return;
-			
-			try {
-				events = events.Where (x => ((TowEvent)x).Location != null);
-			} catch (Exception e) {				
+			var suceed = Task.Factory.StartNew (LoadMojioDevices).Wait (5000);
+			if (!suceed) {
+				MyLogger.Error (this.LocalClassName, "Mojio device not updated within the timelimit");
 				return;
 			}
 			
-			if (events == null || events.Count () == 0)
-				return;
-			
-			foreach (var e in events) {
-				var id = e.MojioId;
-				if (devicesToShow.FirstOrDefault (x => x.Id.Equals (id)) == null)
-					continue;
-				var loc = new LatLng (((TowEvent)e).Location.Lat, ((TowEvent)e).Location.Lng);
-				locations.Add (loc);
-				MarkerOptions marker = new MarkerOptions ();
-				marker.SetPosition (loc);
-				marker.SetTitle (string.Format ("Device: {0}", e.MojioId));
-				marker.SetSnippet (string.Format ("Date: {0}", e.Time));
-				markers.Add (marker);
+			foreach (var marker in deviceMarkers)
+				RemoveMarker (marker);
+			AddDeviceMarkers ();
+		}
+
+		private void RemoveMarker (Marker marker)
+		{
+			lock (padlock) {
+				RunOnUiThread (() => {
+					marker.Remove ();
+				});
 			}
 		}
 
-		private bool HasNumberOfDevicesChanged ()
+		private void UpdateEventMarkers ()
 		{
-			return locations.Count == UserDevices.Count;
+			var towEvents = GetTowEvents ();
+			foreach (var currentEvent in towEvents) {
+				if (!towEventsOnMap.Contains (currentEvent)) {			
+					towEventsOnMap.Add (currentEvent);
+					AddTowEventMarkerToMap (currentEvent);
+				}				
+			}			
+		}
+
+		protected override void OnPause ()
+		{
+			base.OnPause ();
+			stopUpdate = true;
 		}
 	}
 }

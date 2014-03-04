@@ -28,13 +28,6 @@ namespace eecegroup32.mojiotowingalert.android
 			SetContentView (Resource.Layout.Notifications);
 			InitializeComponents ();
 			InitializeEventHandlers ();
-			Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe)).ContinueWith (e => {
-				RunOnUiThread (() => {
-					//TODO [GROUP 32] LoadLastEvents loads everything. Update should update only the latest events
-					//that haven't been retrieved. Retrieving on a new thread and update on ui thread.
-					Update ();
-				});
-			});
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}
 
