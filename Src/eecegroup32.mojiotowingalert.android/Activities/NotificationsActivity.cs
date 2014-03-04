@@ -12,6 +12,8 @@ using Android.Content;
 using Android.Runtime;
 using Mojio.Events;
 using eecegroup32.mojiotowingalert.core;
+using Android.Graphics;
+using Mojio;
 
 namespace eecegroup32.mojiotowingalert.android
 {
@@ -20,12 +22,17 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		private LinearLayout notificationList;
 		private Button refreshButton;
+		private Button notificationFilterButton;
+		private HashSet<Device> devicesToShow;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Notifications);
+			devicesToShow = new HashSet<Device> ();
+			foreach (var dev in UserDevices)
+				devicesToShow.Add (dev);
 			InitializeComponents ();
 			InitializeEventHandlers ();			
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
@@ -43,6 +50,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void InitializeEventHandlers ()
 		{
 			refreshButton.Click += OnRefreshClicked;
+			notificationFilterButton.Click += OnFilterButtonClicked;
 		}
 
 		private async void OnRefreshClicked (object sender, EventArgs e)
@@ -58,6 +66,7 @@ namespace eecegroup32.mojiotowingalert.android
 			this.ActionBar.SetTitle (Resource.String.notifications);
 			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationList);
 			refreshButton = this.FindViewById<Button> (Resource.Id.refreshNotification);
+			notificationFilterButton = this.FindViewById<Button> (Resource.Id.notificationFilterButton);
 		}
 
 		private void OnEventItemClicked (TowEvent towEvent)
@@ -74,7 +83,13 @@ namespace eecegroup32.mojiotowingalert.android
 			ClearNotificationList ();
 			TowManager.ClearNewEventNumber ();
 
-			foreach (TowEvent eve in TowManager.GetAll ()) {
+			var events = TowManager.GetAll ();
+			List<Event> filteredEvents = new List<Event> ();
+			foreach (var dev in devicesToShow) {
+				var temp = events.Where (x => x.MojioId.Equals (dev.Id));
+				filteredEvents.AddRange (temp);
+			}
+			foreach (TowEvent eve in filteredEvents) {
 				eventView = MainApp.GetCurrentActivity ().LayoutInflater.Inflate (Resource.Layout.NotificationView, null);
 				eventView.FindViewById<TextView> (Resource.Id.Text1).Text = eve.Time.ToString ("f");
 				eventView.FindViewById<TextView> (Resource.Id.Text2).Text = "Event ID: " + eve.Id.ToString ();
@@ -93,6 +108,61 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MyLogger.Information (this.LocalClassName, "Notification List updated.");
 			RefreshNotificationList ();			
+		}
+
+		private void OnFilterButtonClicked (object sender, EventArgs e)
+		{
+			Dialog dialog = CreateFilterDialog ();
+			AddDevicesToFilterDialog (dialog);			
+			dialog.Show ();
+		}
+
+		private Dialog CreateFilterDialog ()
+		{
+			Dialog dialog = new Dialog (this);
+			dialog.SetTitle ("Select Dongles To Show");
+			dialog.Window.SetLayout (LinearLayout.LayoutParams.WrapContent, LinearLayout.LayoutParams.WrapContent);
+			dialog.SetContentView (Resource.Layout.SelectDongles);
+			dialog.Window.SetTitleColor (Color.LightYellow);
+			return dialog;
+		}
+
+		private void AddDevicesToFilterDialog (Dialog dialog)
+		{
+			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
+			foreach (Device dev in UserDevices) {
+				ToggleButton listItem = CreateDeviceSelectionItem (dev);
+				layout.AddView (listItem);
+			}
+		}
+
+		private ToggleButton CreateDeviceSelectionItem (Device moj)
+		{
+			ToggleButton button = new ToggleButton (this);
+			
+			if (devicesToShow.Contains (moj))
+				button.Checked = true;
+			else
+				button.Checked = false;
+			
+			button.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
+			button.Tag = moj.Id;
+			button.Click += OnDeviceSelected;
+			return button;
+		}
+
+		private void OnDeviceSelected (object sender, EventArgs e)
+		{
+			var selectedButton = (ToggleButton)sender;
+			var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
+			selectedButton.Text = string.Format ("Name:{0} \nId:{1}", selectedDevice.Name, selectedDevice.IdToString);
+			if (selectedButton.Checked)
+				devicesToShow.Add (selectedDevice);
+			else
+				devicesToShow.Remove (selectedDevice);
+			
+			
+			RefreshNotificationList ();
 		}
 	}
 }
