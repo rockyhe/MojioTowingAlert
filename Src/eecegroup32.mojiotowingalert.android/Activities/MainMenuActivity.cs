@@ -32,7 +32,13 @@ namespace eecegroup32.mojiotowingalert.android
 			InitializeVariables ();
 			InitializeEventHandlers ();
 			InitializeWelcomeScreen ();
-			Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe)).Wait (2000);
+			Task.Factory.StartNew (() => {
+				try {
+					LoadLastEvents (EventsToSubscribe);
+				} catch (Exception) {
+					NotifyViaToast ("Mojio Server Error. Failed To Load Events.");
+				}
+			}).Wait (2000);
 			
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnCreate");
 		}

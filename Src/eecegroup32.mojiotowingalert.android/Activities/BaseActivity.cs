@@ -67,15 +67,16 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (var eveType in eventsToLoad) {
 				MyLogger.Information (this.LocalClassName, string.Format ("Querying last {0} events from the server.", count));
 				var query = from e in Client.Queryable<Event> ()
-				            where e.EventType.Equals (eveType)
-				            select e;
+				             where e.EventType.Equals (eveType)
+				             select e;
 				query.Take (count);
-			
+				
 				foreach (var e in query) {
 					TowManager.Add (e);
 					MyLogger.Information (this.LocalClassName, string.Format ("{0} is retrieved from the Mojio sever", e.Id));
 				}
 			}
+			
 		}
 		//[GROUP 32] Load all events available for this app but allow the user to choose what
 		//event types to see in the notification list (like a tabview?)
@@ -220,31 +221,35 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected void NotifyViaToast (string msg = "New Event Arrived!")
 		{
-			var toast = Toast.MakeText (MainApp.GetCurrentActivity (), msg, ToastLength.Long);
-			toast.SetGravity (GravityFlags.CenterVertical, 0, 0);
-			toast.Show ();
-			MyLogger.Information (this.LocalClassName, "Toast Notification: Sent.");
+			RunOnUiThread (() => {
+				var toast = Toast.MakeText (MainApp.GetCurrentActivity (), msg, ToastLength.Long);
+				toast.SetGravity (GravityFlags.CenterVertical, 0, 0);
+				toast.Show ();
+				MyLogger.Information (this.LocalClassName, "Toast Notification: Sent.");
+			});
 		}
 
 		protected void NotifyViaLocalNotification (string msg = "New Event Arrived!")
 		{
-			var isNotificationEnabled = GetNotificationTogglePref ();
-			MyLogger.Information (this.LocalClassName, string.Format ("Notification Toggle Preference: {0}", isNotificationEnabled ? "On" : "Off"));
+			RunOnUiThread (() => {
+				var isNotificationEnabled = GetNotificationTogglePref ();
+				MyLogger.Information (this.LocalClassName, string.Format ("Notification Toggle Preference: {0}", isNotificationEnabled ? "On" : "Off"));
 
-			if (!isNotificationEnabled)
-				return;
+				if (!isNotificationEnabled)
+					return;
             
-			var notification = new Notification (Resource.Drawable.Icon, msg);
-			var pendingIntent = PendingIntent.GetActivity (this, 0, new Intent (this, this.GetType ()), 0);
-			notification.SetLatestEventInfo (this, "New Mojio Event", msg, pendingIntent);
-			notification.Flags = NotificationFlags.AutoCancel;
+				var notification = new Notification (Resource.Drawable.Icon, msg);
+				var pendingIntent = PendingIntent.GetActivity (this, 0, new Intent (this, this.GetType ()), 0);
+				notification.SetLatestEventInfo (this, "New Mojio Event", msg, pendingIntent);
+				notification.Flags = NotificationFlags.AutoCancel;
 
-			ConfigureNotificationSound (notification);
-			ConfigureNotificationVibration (notification);
+				ConfigureNotificationSound (notification);
+				ConfigureNotificationVibration (notification);
 
-			var nMgr = (NotificationManager)this.GetSystemService (NotificationService);
-			nMgr.Notify (0, notification);
-			MyLogger.Information (this.LocalClassName, "Local Notification: Sent.");
+				var nMgr = (NotificationManager)this.GetSystemService (NotificationService);
+				nMgr.Notify (0, notification);
+				MyLogger.Information (this.LocalClassName, "Local Notification: Sent.");
+			});
 		}
 
 		protected void ConfigureNotificationSound (Notification notif)

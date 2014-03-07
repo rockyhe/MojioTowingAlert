@@ -40,7 +40,12 @@ namespace eecegroup32.mojiotowingalert.android
 			SetContentView (Resource.Layout.Maps);			
 			InitializeWidgets ();
 			InitializeVariables ();
-			DrawMap ();
+			try {
+				DrawMap ();
+			} catch (Exception e) {
+				NotifyViaToast ("Mojio Server Error. Please Try Later.");
+				Finish ();
+			}
 		}
 
 		private void InitializeWidgets ()
@@ -250,13 +255,18 @@ namespace eecegroup32.mojiotowingalert.android
 		public void StartAutoUpdate ()
 		{
 			Task.Factory.StartNew (() => {
-				while (stopUpdate == false) {
-					manualResetEventForUpdate2.WaitOne ();
-					manualResetEventForUpdate.Reset ();
-					UpdateDeviceMarkers ();
-					UpdateEventMarkers ();					
-					manualResetEventForUpdate.Set ();
-					Thread.Sleep (2000);					
+				try {
+					while (stopUpdate == false) {
+						manualResetEventForUpdate2.WaitOne ();
+						manualResetEventForUpdate.Reset ();
+						UpdateDeviceMarkers ();
+						UpdateEventMarkers ();					
+						manualResetEventForUpdate.Set ();
+						Thread.Sleep (2000);					
+					}
+				} catch (Exception e) {
+					NotifyViaToast ("Mojio Server Error. Please Try Later.");
+					Finish ();
 				}
 			});
 		}
