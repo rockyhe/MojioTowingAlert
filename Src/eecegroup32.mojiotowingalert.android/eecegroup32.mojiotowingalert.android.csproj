@@ -97,7 +97,6 @@
     <AndroidResource Include="Resources\drawable\action_menu.png" />
     <AndroidResource Include="Resources\drawable\icon1.png" />
     <AndroidResource Include="Resources\drawable\iconelse.png" />
-    <AndroidResource Include="Resources\drawable\OGLdpf.log" />
     <AndroidResource Include="Resources\layout\MenuLayout.axml" />
     <AndroidResource Include="Resources\layout\MainMenuFlyout.axml" />
   </ItemGroup>

@@ -55,9 +55,21 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private async void OnRefreshClicked (object sender, EventArgs e)
 		{
-			await Task.Factory.StartNew (() => LoadLastEvents (EventsToSubscribe));
-			RefreshNotificationList ();
-			NotifyViaToast ("Notification List Refreshed.");
+			bool isRefreshed = false;
+			await Task.Factory.StartNew (() => {
+				try {
+					LoadLastEvents (EventsToSubscribe);
+					isRefreshed = true;
+				} catch (Exception) {
+					isRefreshed = false;
+					NotifyViaToast ("Mojio Server Error. Please Try Later.");
+				}
+			});
+			
+			if (isRefreshed) {
+				RefreshNotificationList ();
+				NotifyViaToast ("Notification List Refreshed.");
+			}
 		}
 
 		private void InitializeComponents ()
