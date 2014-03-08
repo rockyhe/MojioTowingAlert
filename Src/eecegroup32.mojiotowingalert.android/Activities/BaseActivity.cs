@@ -54,7 +54,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MyLogger.Information (this.LocalClassName, "Creating Notification Managers");
 			if (TowManager == null)
-				TowManager = TowNotificationManagerFactory.GetFactory ().Create (EventType.Tow);
+				TowManager = TowNotificationManagerFactory.GetFactory ().Create (EventType.TowStart);
 			if (NotificationManagers == null) {
 				NotificationManagers = new List<AbstractNotificationManager> ();
 				NotificationManagers.Add (TowManager);
@@ -64,6 +64,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected void LoadLastEvents (IEnumerable<EventType> eventsToLoad, int count = 10)
 		{
+			TowManager.Clear ();
 			foreach (var eveType in eventsToLoad) {
 				MyLogger.Information (this.LocalClassName, string.Format ("Querying last {0} events from the server.", count));
 				var query = from e in Client.Queryable<Event> ()
@@ -83,7 +84,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private void InitializeVariables ()
 		{
 			if (EventsToSubscribe == null)
-				EventsToSubscribe = new List<EventType> () { EventType.Tow };
+				EventsToSubscribe = new List<EventType> () { EventType.TowStart };
 				
 			if (UserDevices == null)
 				UserDevices = new List<Device> ();

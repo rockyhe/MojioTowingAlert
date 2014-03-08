@@ -57,7 +57,7 @@ namespace eecegroup32.mojiotowingalert.android
 			var pref = new UserPreference () {
 				UserId = Client.CurrentUser.UserName		
 			};
-			pref.AddAllToSubscriptionList (EventType.Tow, UserDevices);
+			pref.AddAllToSubscriptionList (EventType.TowStart, UserDevices);
 			MyDataManager.SaveUserPreference (pref);
 		}
 
@@ -200,7 +200,9 @@ namespace eecegroup32.mojiotowingalert.android
 
 		protected bool UnsubscribeForEvent (Device device, EventType eventType)
 		{
-			Subscription subscription = Subscriptions.First (x => x.EntityId == device.Id);
+			Subscription subscription = Subscriptions.FirstOrDefault (x => x.EntityId == device.Id);
+			if (subscription == null)
+				return true;
 			bool succeed = Client.Delete (subscription);
 			MyLogger.Information (this.LocalClassName, string.Format ("Unsubscription: {0} for event type {1} - {2}", device.Id, eventType, succeed ? "Successful" : "Failed"));
 			return succeed;
@@ -308,7 +310,7 @@ namespace eecegroup32.mojiotowingalert.android
 		protected virtual void OnMojioEventReceived (Event eve)
 		{
 			switch (eve.EventType) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				LoadMojioDevices ();
 				var location = UserDevices.First (x => x.Id == eve.MojioId).LastLocation;				
 				(eve as TowEvent).Location = location;

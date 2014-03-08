@@ -33,7 +33,7 @@ namespace eecegroup32.mojiotowingalert.core
 		public AbstractNotificationManager Create (EventType type)
 		{
 			switch (type) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				return new TowNotificationManager ();
 			default:
 				return null;

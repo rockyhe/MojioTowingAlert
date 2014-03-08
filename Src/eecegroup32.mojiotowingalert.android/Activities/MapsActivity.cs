@@ -198,7 +198,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private IEnumerable<TowEvent> GetTowEvents ()
 		{
-			return TowManager.GetAll ().Where (x => x.EventType == EventType.Tow).Cast <TowEvent> ();
+			return TowManager.GetAll ().Where (x => x.EventType == EventType.TowStart).Cast <TowEvent> ();
 		}
 
 		private Marker AddTowEventMarkerToMap (TowEvent towEvent)

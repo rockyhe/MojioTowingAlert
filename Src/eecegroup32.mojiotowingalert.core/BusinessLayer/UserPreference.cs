@@ -65,7 +65,7 @@ namespace eecegroup32.mojiotowingalert.core
 		public void RemoveFromSubscriptionList (EventType eventType, Device device)
 		{
 			switch (eventType) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				if (_devicesForTowEvent.Contains (device))
 					_devicesForTowEvent.Remove (device);
 				break;
@@ -77,7 +77,7 @@ namespace eecegroup32.mojiotowingalert.core
 		public void AddToSubscriptionList (EventType eventType, Device device)
 		{
 			switch (eventType) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				if (_devicesForTowEvent.Contains (device))
 					_devicesForTowEvent.Remove (device);
 				_devicesForTowEvent.Add (device);
@@ -90,7 +90,7 @@ namespace eecegroup32.mojiotowingalert.core
 		public void AddAllToSubscriptionList (EventType eventType, IEnumerable<Device> devices)
 		{
 			switch (eventType) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				foreach (var dev in devices) {
 					AddToSubscriptionList (eventType, dev);
 				}
@@ -103,7 +103,7 @@ namespace eecegroup32.mojiotowingalert.core
 		public IEnumerable<Device> GetAllSubscribedDevices (EventType eventType)
 		{
 			switch (eventType) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				return _devicesForTowEvent;
 			default:
 				return null;
@@ -113,7 +113,7 @@ namespace eecegroup32.mojiotowingalert.core
 		public bool GetSubscriptionStatus (EventType eventType, Device device)
 		{
 			switch (eventType) {
-			case EventType.Tow:
+			case EventType.TowStart:
 				return _devicesForTowEvent.Contains (device);
 			default:
 				return false;
