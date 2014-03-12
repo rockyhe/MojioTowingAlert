@@ -34,30 +34,61 @@
             p1:orientation="horizontal"
             p1:minWidth="25px"
             p1:minHeight="25px"
-            p1:layout_width="match_parent/4"
+            p1:layout_width="wrap_content"
             p1:layout_height="match_parent"
-            p1:id="@+id/linearLayout2" />
+            p1:id="@+id/linearLayout2"
+            p1:layout_marginLeft="50dp">
+            <ImageView
+                p1:src="@drawable/redMarker"
+                p1:layout_width="wrap_content"
+                p1:layout_height="match_parent"
+                p1:id="@+id/imageView1" />
+        </LinearLayout>
+        <RelativeLayout
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="100dp"
+            p1:layout_height="match_parent"
+            p1:id="@+id/relativeLayout3">
+            <TextView
+                p1:text="@string/carLocation"
+                p1:layout_width="wrap_content"
+                p1:layout_height="match_parent"
+                p1:layout_centerVertical="true"
+                p1:layout_centerHorizontal="true"
+                p1:textColor="#ff01bbe1"
+                p1:id="@+id/textView1" />
+        </RelativeLayout>
         <LinearLayout
             p1:orientation="horizontal"
             p1:minWidth="25px"
             p1:minHeight="25px"
-            p1:layout_width="match_parent/4"
+            p1:layout_width="wrap_content"
             p1:layout_height="match_parent"
-            p1:id="@+id/linearLayout3" />
+            p1:id="@+id/linearLayout4">
+            <ImageView
+                p1:src="@drawable/greenMarker"
+                p1:layout_width="wrap_content"
+                p1:layout_height="match_parent"
+                p1:id="@+id/imageView2" />
+        </LinearLayout>
         <LinearLayout
             p1:orientation="horizontal"
             p1:minWidth="25px"
             p1:minHeight="25px"
-            p1:layout_width="match_parent/4"
+            p1:layout_width="wrap_content"
             p1:layout_height="match_parent"
-            p1:id="@+id/linearLayout4" />
-        <LinearLayout
-            p1:orientation="horizontal"
-            p1:minWidth="25px"
-            p1:minHeight="25px"
-            p1:layout_width="match_parent/4"
-            p1:layout_height="match_parent"
-            p1:id="@+id/linearLayout5" />
+            p1:id="@+id/linearLayout5"
+            p1:layout_marginRight="51.2dp">
+            <TextView
+                p1:text="@string/pastEventLocation"
+                p1:layout_width="wrap_content"
+                p1:layout_height="match_parent"
+                p1:layout_centerVertical="true"
+                p1:layout_centerHorizontal="true"
+                p1:textColor="#ff01bbe1"
+                p1:id="@+id/textView2" />
+        </LinearLayout>
     </LinearLayout>
     <Button
         p1:text="@string/pasttowingevents"

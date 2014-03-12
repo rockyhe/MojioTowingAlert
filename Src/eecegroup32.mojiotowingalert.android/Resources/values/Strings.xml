@@ -33,4 +33,6 @@
 	<string name="eventLocation">Location: </string>
 	<string name="towEventNotice">Your Car Is Being Towed</string>
 	<string name="pastEvents">Past Events</string>
+	<string name="carLocation">Car Locations</string>
+	<string name="pastEventLocation">Past Event Locations</string>
 </resources>

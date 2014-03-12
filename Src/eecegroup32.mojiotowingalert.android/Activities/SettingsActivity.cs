@@ -159,6 +159,7 @@ namespace eecegroup32.mojiotowingalert.android
 			LoadMojioDevices ();
 			foreach (Device moj in UserDevices) {
 				item = new TextView (this);
+				item.SetTextColor(Android.Graphics.Color.Rgb(1,187,225));
 				item.Id = i;
 				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
 				MyLogger.Information (this.LocalClassName, string.Format ("Dongle List: {0} loaded.", moj.Name));

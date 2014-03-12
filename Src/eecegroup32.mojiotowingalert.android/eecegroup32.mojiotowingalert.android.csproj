@@ -99,6 +99,8 @@
     <AndroidResource Include="Resources\drawable\iconelse.png" />
     <AndroidResource Include="Resources\layout\MenuLayout.axml" />
     <AndroidResource Include="Resources\layout\MainMenuFlyout.axml" />
+    <AndroidResource Include="Resources\drawable\greenMarker.png" />
+    <AndroidResource Include="Resources\drawable\redMarker.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
