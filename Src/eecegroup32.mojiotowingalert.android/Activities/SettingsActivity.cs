@@ -22,7 +22,7 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		public static event ChangedEventHandler OnSubscriptionChanged;
 
-		private ToggleButton notificationToggle;
+		private Switch notificationToggle;
 		private CheckBox soundCheckBox;
 		private CheckBox vibrationCheckBox;
 		private LinearLayout dongleListLayout;
@@ -127,7 +127,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
 			this.ActionBar.SetTitle (Resource.String.settings);
-			notificationToggle = FindViewById<ToggleButton> (Resource.Id.NotificationToggleButton);
+			notificationToggle = FindViewById<Switch> (Resource.Id.NotificationToggleButton);
 			notificationToggle.Checked = GetNotificationTogglePref ();
 			soundCheckBox = FindViewById<CheckBox> (Resource.Id.SoundCheckBox);
 			soundCheckBox.Checked = GetNotificationSoundPref ();
@@ -154,7 +154,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MyLogger.Information (this.LocalClassName, "Dongle List: loading..."); 
 			int i = 0;
-			ToggleButton button;
+			Switch button;
 			TextView item;
 			LoadMojioDevices ();
 			foreach (Device moj in UserDevices) {
@@ -169,13 +169,13 @@ namespace eecegroup32.mojiotowingalert.android
 				if (i != 0)
 					parameters.AddRule (LayoutRules.Above, i - 1);
 				item.LayoutParameters = parameters;
-				button = new ToggleButton (this);
+				button = new Switch (this);
 				button.Id = i;				                
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
 					//TODO: [GROUP 32] When we add more event types for our app change this line so that
 					// depending on the button clicked, corresponding event type is sent to the handler
-					OnDeviceSubscriptionToggleClicked (moj, EventType.TowStart, (o as ToggleButton).Checked);
+					OnDeviceSubscriptionToggleClicked (moj, EventType.TowStart, (o as Switch).Checked);
 				};
 				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.TowStart, moj);
 				dongleListLayout.AddView (item);

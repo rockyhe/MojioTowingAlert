@@ -62,6 +62,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void SubmitAsyncLoginRequest ()
 		{
+			NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
 			loginButton.Activated = false;
 			Client.SetUserAsync (username.Text, password.Text).ContinueWith (r => {
 				MojioResponse<Mojio.Token> response = r.Result;
@@ -88,6 +89,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void GotoMainMenu ()
 		{
+		
 			var mainMenu = new Intent (this, typeof(MainMenuActivity));
 			mainMenu.AddFlags (ActivityFlags.ClearTask);
 			StartActivity (mainMenu);

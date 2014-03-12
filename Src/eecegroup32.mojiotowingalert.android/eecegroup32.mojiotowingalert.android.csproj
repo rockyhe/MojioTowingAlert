@@ -47,10 +47,10 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
     <Reference Include="GooglePlayServicesLib">
       <HintPath>..\Components\googleplayservices-13.0\lib\android\GooglePlayServicesLib.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
@@ -106,12 +106,6 @@
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
-    <XamarinComponentReference Include="googleplayservices">
-      <Version>13.0</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Lib\Mojio.Client\Src\Mojio.Client.MonoDroid\Mojio.Client.MonoDroid.csproj">
       <Project>{CEC4E7AF-9916-44D0-8D39-5FAD509DBF77}</Project>
       <Name>Mojio.Client.MonoDroid</Name>
@@ -124,5 +118,11 @@
       <Project>{EB9C26DF-7F01-45D3-9C1A-4B22D61A0263}</Project>
       <Name>eecegroup32.mojiotowingalert.core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="googleplayservices">
+      <Version>13.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
 </Project>

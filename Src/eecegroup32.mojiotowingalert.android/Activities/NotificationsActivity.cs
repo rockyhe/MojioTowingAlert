@@ -104,7 +104,7 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (TowEvent eve in filteredEvents) {
 				eventView = MainApp.GetCurrentActivity ().LayoutInflater.Inflate (Resource.Layout.NotificationView, null);
 				eventView.FindViewById<TextView> (Resource.Id.Text1).Text = eve.Time.ToString ("f");
-				eventView.FindViewById<TextView> (Resource.Id.Text2).Text = "Event ID: " + eve.Id.ToString ();
+				eventView.FindViewById<TextView> (Resource.Id.Text2).Text = "Device: " + eve.MojioId.ToString ();
 				eventView.Clickable = true;
 				eventView.Click += (sender, e) => OnEventItemClicked (eve);
 				notificationList.AddView (eventView);

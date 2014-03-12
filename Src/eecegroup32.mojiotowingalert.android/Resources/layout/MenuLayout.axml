@@ -3,7 +3,7 @@
     p1:orientation="vertical"
     p1:layout_width="300dp"
     p1:layout_height="fill_parent"
-    p1:background="#0099CC"
+    p1:background="#ff01bbe1"
     p1:id="@+id/FlyOutMenu"
     p1:padding="4dp">
     <TextView
@@ -18,7 +18,7 @@
         p1:layout_width="fill_parent"
         p1:layout_height="2dp"
         p1:id="@+id/view1"
-        p1:background="#ffc1c1c1"
+        p1:background="#ffffff"
         p1:layout_marginLeft="4dp"
         p1:layout_marginRight="16dp"
         p1:layout_marginBottom="8dp" />
@@ -36,7 +36,7 @@
             p1:layout_height="wrap_content"
             p1:id="@+id/imageView1" />
         <TextView
-            p1:text="@string/pasttowingevents"
+            p1:text="@string/notifications"
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="wrap_content"
             p1:layout_height="wrap_content"
@@ -49,7 +49,7 @@
         p1:layout_width="fill_parent"
         p1:layout_height="1dp"
         p1:id="@+id/view2"
-        p1:background="#abe4e4e4"
+        p1:background="#ffffff"
         p1:layout_gravity="center"
         p1:layout_marginLeft="8dp"
         p1:layout_marginRight="14dp" />
@@ -80,7 +80,7 @@
         p1:layout_width="fill_parent"
         p1:layout_height="2dp"
         p1:id="@+id/view3"
-        p1:background="#ffc1c1c1"
+        p1:background="#ffffff"
         p1:layout_marginLeft="4dp"
         p1:layout_marginRight="16dp"
         p1:layout_marginBottom="8dp" />
@@ -111,7 +111,7 @@
         p1:layout_width="fill_parent"
         p1:layout_height="1dp"
         p1:id="@+id/view3"
-        p1:background="#abe4e4e4"
+        p1:background="#ffffff"
         p1:layout_gravity="center"
         p1:layout_marginLeft="8dp"
         p1:layout_marginRight="14dp" />

@@ -5,7 +5,20 @@
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
+    p1:background="#ffffff"
     p1:id="@+id/linearLayout1">
+    <fragment
+        p1:id="@+id/eventMapFragment"
+        p1:layout_width="match_parent"
+        p1:layout_height="400dp"
+        class="com.google.android.gms.maps.MapFragment"
+        p1:layout_marginTop="0.0dp"
+        p1:layout_marginBottom="0.0dp" />
+    <LinearLayout
+        p1:orientation="horizontal"
+        p1:layout_width="match_parent"
+        p1:layout_height="25dp"
+        p1:id="@+id/linearLayout6" />
     <LinearLayout
         p1:orientation="horizontal"
         p1:minWidth="25px"
@@ -18,13 +31,15 @@
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="75dp"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventDateTitle" />
+            p1:id="@+id/eventDateTitle"
+            p1:textColor="#ff01bbe1" />
         <TextView
             p1:text="Small Text"
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="match_parent"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventDateText" />
+            p1:id="@+id/eventDateText"
+            p1:textColor="#ff01bbe1" />
     </LinearLayout>
     <LinearLayout
         p1:orientation="horizontal"
@@ -38,13 +53,15 @@
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="75dp"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventTimeTitle" />
+            p1:id="@+id/eventTimeTitle"
+            p1:textColor="#ff01bbe1" />
         <TextView
             p1:text="Small Text"
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="match_parent"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventTimeText" />
+            p1:id="@+id/eventTimeText"
+            p1:textColor="#ff01bbe1" />
     </LinearLayout>
     <LinearLayout
         p1:orientation="horizontal"
@@ -58,13 +75,15 @@
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="75dp"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventDongleIDTitle" />
+            p1:id="@+id/eventDongleIDTitle"
+            p1:textColor="#ff01bbe1" />
         <TextView
             p1:text="Small Text"
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="match_parent"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventDongleIDText" />
+            p1:id="@+id/eventDongleIDText"
+            p1:textColor="#ff01bbe1" />
     </LinearLayout>
     <LinearLayout
         p1:orientation="horizontal"
@@ -78,19 +97,14 @@
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="75dp"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventLocationTitle" />
+            p1:id="@+id/eventLocationTitle"
+            p1:textColor="#ff01bbe1" />
         <TextView
             p1:text="Small Text"
             p1:textAppearance="?android:attr/textAppearanceSmall"
             p1:layout_width="match_parent"
             p1:layout_height="match_parent"
-            p1:id="@+id/eventLocationText" />
+            p1:id="@+id/eventLocationText"
+            p1:textColor="#ff01bbe1" />
     </LinearLayout>
-    <fragment
-        p1:id="@+id/eventMapFragment"
-        p1:layout_width="match_parent"
-        p1:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment"
-        p1:layout_marginTop="0.0dp"
-        p1:layout_marginBottom="0.0dp" />
 </LinearLayout>

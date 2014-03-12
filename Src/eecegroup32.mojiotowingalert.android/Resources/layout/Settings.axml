@@ -5,6 +5,7 @@
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
+    p1:background="#ffffff"
     p1:id="@+id/linearLayout1">
     <LinearLayout
         p1:orientation="horizontal"
@@ -26,7 +27,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true" />
+                p1:layout_centerHorizontal="true"
+                p1:textColor="#ff01bbe1" />
         </RelativeLayout>
         <RelativeLayout
             p1:minWidth="25px"
@@ -34,7 +36,7 @@
             p1:layout_width="73.8dp"
             p1:layout_height="match_parent"
             p1:id="@+id/relativeLayout2">
-            <ToggleButton
+            <Switch
                 p1:layout_width="wrap_content"
                 p1:layout_height="29.2dp"
                 p1:id="@+id/NotificationToggleButton"
@@ -64,7 +66,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true" />
+                p1:layout_centerHorizontal="true"
+                p1:textColor="#ff01bbe1" />
         </RelativeLayout>
         <RelativeLayout
             p1:minWidth="25px"
@@ -93,7 +96,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true" />
+                p1:layout_centerHorizontal="true"
+                p1:textColor="#ff01bbe1" />
         </RelativeLayout>
         <RelativeLayout
             p1:minWidth="25px"
@@ -130,7 +134,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true" />
+                p1:layout_centerHorizontal="true"
+                p1:textColor="#ff01bbe1" />
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout

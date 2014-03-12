@@ -13,6 +13,8 @@
 	<string name="maps">Maps</string>
 	<string name="mainMenu">Main Menu</string>
 	<string name="settings">Settings</string>
+	<string name="loggingIn">Logging In Please Wait</string>
+	<string name="loginSuccessful">Log In Successful Please Wait</string>
 	<string name="logout">Log Out</string>
 	<string name="sound">Sound</string>
 	<string name="vibration">Vibration</string>

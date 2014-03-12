@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#000000"
+    android:background="#ffffff"
     android:padding="8dp">
     <ImageView
         android:id="@+id/Image"
@@ -21,16 +21,17 @@
             android:id="@+id/Text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
+            android:textColor="#ff01bbe1"
             android:textSize="20dip"
             android:paddingLeft="50dip"
+            android:text="weqwrwdfsdfsdf"
             android:textStyle="italic" />
         <TextView
             android:id="@+id/Text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14dip"
-            android:textColor="#FFFFFF"
+            android:textColor="#EF860F"
             android:paddingLeft="50dip"
             android:text="weqwrwdfsdfsdf" />
     </LinearLayout>

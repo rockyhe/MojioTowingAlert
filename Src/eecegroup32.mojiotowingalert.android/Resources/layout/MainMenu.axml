@@ -1,65 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:p1="http://schemas.android.com/apk/res/android"
-    p1:layout_width="fill_parent"
-    p1:layout_height="fill_parent"
+<LinearLayout xmlns:p1="http://schemas.android.com/apk/res/android"
+    p1:orientation="vertical"
+    p1:minWidth="25px"
+    p1:minHeight="25px"
+    p1:layout_width="match_parent"
+    p1:layout_height="match_parent"
     p1:id="@+id/FlyOutContent"
-    p1:fillViewport="true">
+    p1:background="#ffffff"
+    p1:scrollbars="vertical">
+    <TextView
+        p1:textAppearance="?android:attr/textAppearanceMedium"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/welcomeText"
+        p1:textColor="#EF860F"
+        p1:textAlignment="center"
+        p1:gravity="center" />
+    <fragment
+        p1:id="@+id/map"
+        p1:layout_width="match_parent"
+        p1:layout_height="325dp"
+        class="com.google.android.gms.maps.MapFragment"
+        p1:layout_marginTop="5.0dp"
+        p1:layout_marginBottom="0.0dp" />
     <LinearLayout
-        p1:orientation="vertical"
+        p1:orientation="horizontal"
         p1:minWidth="25px"
         p1:minHeight="25px"
         p1:layout_width="match_parent"
-        p1:layout_height="match_parent"
-        p1:id="@+id/linearLayout1"
-        p1:background="#000000"
-        p1:scrollbars="vertical">
-        <ImageView
-            p1:src="@drawable/MojioAppLogo"
-            p1:layout_width="match_parent"
-            p1:layout_height="250dp"
-            p1:id="@+id/imageView1" />
-        <TextView
-            p1:textAppearance="?android:attr/textAppearanceMedium"
-            p1:layout_width="match_parent"
-            p1:layout_height="wrap_content"
-            p1:id="@+id/welcomeText"
-            p1:textAlignment="center"
-            p1:gravity="center" />
-        <Button
-            p1:text="@string/pasttowingevents"
-            p1:layout_width="match_parent"
-            p1:layout_height="35dp"
-            p1:background="@drawable/android_button"
-            p1:id="@+id/notificationsButton"
-            p1:layout_marginBottom="10dp"
-            p1:layout_marginLeft="50dp"
-            p1:layout_marginRight="50dp" />
-        <Button
-            p1:text="@string/map"
-            p1:layout_width="match_parent"
-            p1:layout_height="35dp"
-            p1:background="@drawable/android_button"
-            p1:id="@+id/mapsButton"
-            p1:layout_marginBottom="10dp"
-            p1:layout_marginLeft="50dp"
-            p1:layout_marginRight="50dp" />
-        <Button
-            p1:text="@string/settings"
-            p1:layout_width="match_parent"
-            p1:layout_height="35dp"
-            p1:background="@drawable/android_button"
-            p1:id="@+id/settingsButton"
-            p1:layout_marginBottom="10dp"
-            p1:layout_marginLeft="50dp"
-            p1:layout_marginRight="50dp" />
-        <Button
-            p1:text="@string/logout"
-            p1:layout_width="match_parent"
-            p1:layout_height="35dp"
-            p1:background="@drawable/android_button"
-            p1:id="@+id/logOutButton"
-            p1:layout_marginBottom="88.4dp"
-            p1:layout_marginLeft="50dp"
-            p1:layout_marginRight="50dp" />
+        p1:layout_height="50dp"
+        p1:id="@+id/linearLayout1">
+        <LinearLayout
+            p1:orientation="horizontal"
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="match_parent/4"
+            p1:layout_height="match_parent"
+            p1:id="@+id/linearLayout2" />
+        <LinearLayout
+            p1:orientation="horizontal"
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="match_parent/4"
+            p1:layout_height="match_parent"
+            p1:id="@+id/linearLayout3" />
+        <LinearLayout
+            p1:orientation="horizontal"
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="match_parent/4"
+            p1:layout_height="match_parent"
+            p1:id="@+id/linearLayout4" />
+        <LinearLayout
+            p1:orientation="horizontal"
+            p1:minWidth="25px"
+            p1:minHeight="25px"
+            p1:layout_width="match_parent/4"
+            p1:layout_height="match_parent"
+            p1:id="@+id/linearLayout5" />
     </LinearLayout>
-</ScrollView>
+    <Button
+        p1:text="@string/pasttowingevents"
+        p1:layout_width="match_parent"
+        p1:layout_height="35dp"
+        p1:background="@drawable/android_button"
+        p1:id="@+id/notificationsButton"
+        p1:layout_marginBottom="10dp"
+        p1:layout_marginLeft="50dp"
+        p1:layout_marginRight="50dp" />
+    <Button
+        p1:text="@string/settings"
+        p1:layout_width="match_parent"
+        p1:layout_height="35dp"
+        p1:background="@drawable/android_button"
+        p1:id="@+id/settingsButton"
+        p1:layout_marginBottom="10dp"
+        p1:layout_marginLeft="50dp"
+        p1:layout_marginRight="50dp" />
+    <Button
+        p1:text="@string/logout"
+        p1:layout_width="match_parent"
+        p1:layout_height="35dp"
+        p1:background="@drawable/android_button"
+        p1:id="@+id/logOutButton"
+        p1:layout_marginBottom="88.4dp"
+        p1:layout_marginLeft="50dp"
+        p1:layout_marginRight="50dp" />
+</LinearLayout>
