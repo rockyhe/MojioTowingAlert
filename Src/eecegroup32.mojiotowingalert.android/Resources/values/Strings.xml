@@ -35,4 +35,6 @@
 	<string name="pastEvents">Past Events</string>
 	<string name="carLocation">Car Locations</string>
 	<string name="pastEventLocation">Past Event Locations</string>
+	<string name="updateOn">Auto Update: On</string>
+	<string name="updateOff">Auto Update: Off</string>
 </resources>

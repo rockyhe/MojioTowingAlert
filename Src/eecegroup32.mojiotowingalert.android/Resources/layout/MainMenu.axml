@@ -16,12 +16,36 @@
         p1:textColor="#EF860F"
         p1:textAlignment="center"
         p1:gravity="center" />
+    <LinearLayout
+        p1:orientation="horizontal"
+        p1:minWidth="25px"
+        p1:minHeight="25px"
+        p1:layout_width="match_parent"
+        p1:layout_height="35dp"
+        p1:id="@+id/linearLayout6">
+        <Button
+            p1:layout_width="120dp"
+            p1:layout_height="match_parent"
+            p1:background="@drawable/locate_button"
+            p1:id="@+id/locateButton" />
+        <Button
+            p1:layout_width="120dp"
+            p1:layout_height="match_parent"
+            p1:background="@drawable/refresh_button"
+            p1:id="@+id/refreshButton" />
+        <Button
+            p1:textColor="#EF860F"
+            p1:layout_width="120dp"
+            p1:layout_height="match_parent"
+            p1:background="@drawable/settings_button"
+            p1:id="@+id/settingsButton" />
+    </LinearLayout>
     <fragment
         p1:id="@+id/map"
         p1:layout_width="match_parent"
-        p1:layout_height="325dp"
+        p1:layout_height="350dp"
         class="com.google.android.gms.maps.MapFragment"
-        p1:layout_marginTop="5.0dp"
+        p1:layout_marginTop="0.0dp"
         p1:layout_marginBottom="0.0dp" />
     <LinearLayout
         p1:orientation="horizontal"
@@ -37,10 +61,10 @@
             p1:layout_width="wrap_content"
             p1:layout_height="match_parent"
             p1:id="@+id/linearLayout2"
-            p1:layout_marginLeft="50dp">
+            p1:layout_marginLeft="30dp">
             <ImageView
-                p1:src="@drawable/redMarker"
-                p1:layout_width="wrap_content"
+                p1:src="@drawable/greenMarker"
+                p1:layout_width="match_parent"
                 p1:layout_height="match_parent"
                 p1:id="@+id/imageView1" />
         </LinearLayout>
@@ -54,10 +78,11 @@
                 p1:text="@string/carLocation"
                 p1:layout_width="wrap_content"
                 p1:layout_height="match_parent"
-                p1:layout_centerVertical="true"
+                p1:textColor="#EF860F"
+                p1:id="@+id/textView1"
                 p1:layout_centerHorizontal="true"
-                p1:textColor="#ff01bbe1"
-                p1:id="@+id/textView1" />
+                p1:layout_centerVertical="true"
+                p1:layout_marginTop="30dp" />
         </RelativeLayout>
         <LinearLayout
             p1:orientation="horizontal"
@@ -67,28 +92,28 @@
             p1:layout_height="match_parent"
             p1:id="@+id/linearLayout4">
             <ImageView
-                p1:src="@drawable/greenMarker"
+                p1:src="@drawable/redMarker"
                 p1:layout_width="wrap_content"
                 p1:layout_height="match_parent"
                 p1:id="@+id/imageView2" />
         </LinearLayout>
-        <LinearLayout
-            p1:orientation="horizontal"
+        <RelativeLayout
             p1:minWidth="25px"
             p1:minHeight="25px"
-            p1:layout_width="wrap_content"
+            p1:layout_width="150dp"
             p1:layout_height="match_parent"
-            p1:id="@+id/linearLayout5"
-            p1:layout_marginRight="51.2dp">
+            p1:id="@+id/relativeLayout5"
+            p1:layout_marginRight="0.0dp">
             <TextView
                 p1:text="@string/pastEventLocation"
-                p1:layout_width="wrap_content"
+                p1:layout_width="150dp"
                 p1:layout_height="match_parent"
                 p1:layout_centerVertical="true"
                 p1:layout_centerHorizontal="true"
-                p1:textColor="#ff01bbe1"
-                p1:id="@+id/textView2" />
-        </LinearLayout>
+                p1:textColor="#EF860F"
+                p1:id="@+id/textView2"
+                p1:layout_marginTop="30dp" />
+        </RelativeLayout>
     </LinearLayout>
     <Button
         p1:text="@string/pasttowingevents"
@@ -96,15 +121,6 @@
         p1:layout_height="35dp"
         p1:background="@drawable/android_button"
         p1:id="@+id/notificationsButton"
-        p1:layout_marginBottom="10dp"
-        p1:layout_marginLeft="50dp"
-        p1:layout_marginRight="50dp" />
-    <Button
-        p1:text="@string/settings"
-        p1:layout_width="match_parent"
-        p1:layout_height="35dp"
-        p1:background="@drawable/android_button"
-        p1:id="@+id/settingsButton"
         p1:layout_marginBottom="10dp"
         p1:layout_marginLeft="50dp"
         p1:layout_marginRight="50dp" />

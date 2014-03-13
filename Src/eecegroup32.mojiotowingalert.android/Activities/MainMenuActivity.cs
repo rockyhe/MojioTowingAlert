@@ -25,7 +25,6 @@ namespace eecegroup32.mojiotowingalert.android
 	{
 		private GoogleMap map;
 		private bool stopUpdate;
-		private Button filterButton;
 		private HashSet<Device> devicesToShow;
 		private HashSet<Marker> deviceMarkers;
 		private HashSet<Marker> eventMarkers;
@@ -37,6 +36,9 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button notifcationButton;
 		private Button settingsButton;
 		private Button logOutButton;
+		private Button locateButton;
+		private Button refreshButton;
+		private Dialog locationDialog;
 		private FlyOutContainer flyoutMenu;
 		private TextView welcome;
 
@@ -52,10 +54,11 @@ namespace eecegroup32.mojiotowingalert.android
 			Task.Factory.StartNew (() => {
 				try {
 					LoadLastEvents (EventsToSubscribe);
+					AddEventMarkers();
 				} catch (Exception) {
 					NotifyViaToast ("Mojio Server Error. Failed To Load Events.");
 				}
-			}).Wait (2000);
+			}).Wait (1000);
 
 			try {
 				DrawMap ();
@@ -72,7 +75,7 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnResume ();
 			MainApp.SetCurrentActivity (this);
 			UpdateNumberOfNewEvents ();
-			stopUpdate = false;
+			stopUpdate = true;
 			StartAutoUpdate ();
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
@@ -85,8 +88,9 @@ namespace eecegroup32.mojiotowingalert.android
 			notifcationButton = FindViewById<Button> (Resource.Id.notificationsButton);
 			settingsButton = FindViewById<Button> (Resource.Id.settingsButton);
 			logOutButton = FindViewById<Button> (Resource.Id.logOutButton);
+			refreshButton = FindViewById<Button> (Resource.Id.refreshButton);
+			locateButton = FindViewById<Button> (Resource.Id.locateButton);
 			ActionBar.SetTitle (Resource.String.map);
-			filterButton = FindViewById<Button> (Resource.Id.mapFilterButton);	
 			devicesToShow = new HashSet<Device> ();
 			foreach (var dev in UserDevices)
 				devicesToShow.Add (dev);
@@ -96,6 +100,7 @@ namespace eecegroup32.mojiotowingalert.android
 			manualResetEvent = new ManualResetEvent (false);
 			manualResetEventForUpdate = new ManualResetEvent (false);
 			manualResetEventForUpdate2 = new ManualResetEvent (true);
+			stopUpdate = true;
 		}
 
 		private void InitializeActionBar ()
@@ -109,7 +114,8 @@ namespace eecegroup32.mojiotowingalert.android
 			notifcationButton.Click += new EventHandler (OnNotificationsClicked);
 			settingsButton.Click += new EventHandler (OnSettingsClicked);
 			logOutButton.Click += new EventHandler (OnLogOutClicked);
-			//filterButton.Click += new EventHandler (OnFilterClicked);	
+			refreshButton.Click += new EventHandler (OnRefreshClicked);
+			locateButton.Click += new EventHandler (OnLocateClicked);
 		}
 
 		private void InitializeWelcomeScreen ()
@@ -158,6 +164,33 @@ namespace eecegroup32.mojiotowingalert.android
 			StartActivity (new Intent (this, typeof(SettingsActivity)));
 		}
 
+		private void OnRefreshClicked (object sender, EventArgs e)
+		{
+			stopUpdate = !stopUpdate;
+			if(stopUpdate)
+				NotifyViaToast ("Map Auto Refresh: Off");
+			else
+				NotifyViaToast ("Map Auto Refresh: On");
+			StartAutoUpdate ();
+		}
+		private void OnLocateClicked (object sender, EventArgs e)
+		{
+			locationDialog = CreateDeviceDialog ();
+			AddDevicesToDialog (locationDialog);
+			AddEventToDialog (locationDialog);
+			locationDialog.Show ();
+		}
+
+		private Dialog CreateDeviceDialog ()
+		{
+			Dialog dialog = new Dialog (this);
+			dialog.SetTitle ("Select Device or Event");
+			dialog.Window.SetLayout (LinearLayout.LayoutParams.WrapContent, LinearLayout.LayoutParams.WrapContent);
+			dialog.SetContentView (Resource.Layout.SelectDongles);
+			dialog.Window.SetTitleColor (Color.White);
+			return dialog;
+		}
+
 		private void OnLogOutClicked (object sender, EventArgs e)
 		{
 			Client.ClearUser ();
@@ -171,42 +204,20 @@ namespace eecegroup32.mojiotowingalert.android
 			StartActivity (login);
 		}
 
-		private void OnFilterClicked (object sender, EventArgs e)
-		{
-			Dialog dialog = CreateFilterDialog ();
-			AddDevicesToFilterDialog (dialog);			
-			dialog.Show ();
-		}
 
-		private Dialog CreateFilterDialog ()
-		{
-			Dialog dialog = new Dialog (this);
-			dialog.SetTitle ("Select Dongles To Show");
-			dialog.Window.SetLayout (LinearLayout.LayoutParams.WrapContent, LinearLayout.LayoutParams.WrapContent);
-			dialog.SetContentView (Resource.Layout.SelectDongles);
-			dialog.Window.SetTitleColor (Color.LightYellow);
-			return dialog;
-		}
-
-		private void AddDevicesToFilterDialog (Dialog dialog)
+		private void AddDevicesToDialog (Dialog dialog)
 		{
 			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
 			foreach (Device dev in UserDevices) {
-				ToggleButton listItem = CreateDeviceSelectionItem (dev);
+				Button listItem = CreateDeviceSelectionItem (dev);
 				layout.AddView (listItem);
 			}
 		}
 
-		private ToggleButton CreateDeviceSelectionItem (Device moj)
+		private Button CreateDeviceSelectionItem (Device moj)
 		{
-			ToggleButton button = new ToggleButton (this);
-
-			if (devicesToShow.Contains (moj))
-				button.Checked = true;
-			else
-				button.Checked = false;
-
-			button.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
+			Button button = new Button (this);
+			button.Text = string.Format (moj.Name);
 			button.Tag = moj.Id;
 			button.Click += OnDeviceSelected;
 			return button;
@@ -214,21 +225,33 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void OnDeviceSelected (object sender, EventArgs e)
 		{
-			Task.Factory.StartNew (() => {
-				manualResetEventForUpdate2.Reset ();
-				manualResetEventForUpdate.WaitOne ();
-				var selectedButton = (ToggleButton)sender;
-				var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
-				selectedButton.Text = string.Format ("Name:{0} \nId:{1}", selectedDevice.Name, selectedDevice.IdToString);
-				if (selectedButton.Checked)
-					devicesToShow.Add (selectedDevice);
-				else
-					devicesToShow.Remove (selectedDevice);
+			var selectedButton = (Button)sender;
+			var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
+			Device device = (Device)selectedDevice;
+			LatLng latln = new LatLng (device.LastLocation.Lat, device.LastLocation.Lng);
+			map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (latln, 15));
+			locationDialog.Hide ();
+		}
 
-				AddDeviceMarkers ();
-				AddEventMarkers ();		
-				manualResetEventForUpdate2.Set ();
-			});
+		private void AddEventToDialog (Dialog dialog)
+		{
+			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
+			foreach (Event eve in TowManager.Get(1)) {
+				Button listItem = CreateEventItem (eve);
+				layout.AddView (listItem);
+			}
+		}
+
+		private Button CreateEventItem (Event Event)
+		{
+			Button button = new Button (this);
+			button.Text = string.Format ("Latest Tow Event");
+			button.Click += (sender, e) => {
+				LatLng latln = new LatLng (Event.Location.Lat, Event.Location.Lng);
+				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (latln, 15));
+				locationDialog.Hide ();
+			};;
+			return button;
 		}
 			
 
@@ -277,6 +300,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var loc = new LatLng (dev.LastLocation.Lat, dev.LastLocation.Lng);				
 			MarkerOptions marker = new MarkerOptions ();
+			marker.InvokeIcon( BitmapDescriptorFactory.DefaultMarker (BitmapDescriptorFactory.HueGreen));
 			marker.SetPosition (loc);
 			marker.SetSnippet (dev.Id);
 			marker.SetTitle (dev.Name);
@@ -310,7 +334,6 @@ namespace eecegroup32.mojiotowingalert.android
 			if (towEvent.Location != null) {
 				var loc = new LatLng (towEvent.Location.Lat, towEvent.Location.Lng);
 				MarkerOptions marker = new MarkerOptions ();
-				marker.InvokeIcon( BitmapDescriptorFactory.DefaultMarker (BitmapDescriptorFactory.HueGreen));
 				marker.SetPosition (loc);
 				marker.SetTitle (string.Format ("Device: {0}", towEvent.MojioId));
 				marker.SetSnippet (string.Format ("Date: {0}", towEvent.Time));
