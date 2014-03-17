@@ -20,7 +20,9 @@ using Android.Graphics;
 
 namespace eecegroup32.mojiotowingalert.android
 {
-	[Activity (Label = "MainMenuActivity")]			
+	[Activity (Label = "MainMenuActivity",
+		AlwaysRetainTaskState = true,
+		LaunchMode = Android.Content.PM.LaunchMode.SingleInstance)]			
 	public class MainMenuActivity : EventBaseActivity
 	{
 		private GoogleMap map;
@@ -54,7 +56,7 @@ namespace eecegroup32.mojiotowingalert.android
 			Task.Factory.StartNew (() => {
 				try {
 					LoadLastEvents (EventsToSubscribe);
-					AddEventMarkers();
+					AddEventMarkers ();
 				} catch (Exception) {
 					NotifyViaToast ("Mojio Server Error. Failed To Load Events.");
 				}
@@ -174,8 +176,9 @@ namespace eecegroup32.mojiotowingalert.android
 				NotifyViaToast ("Map Auto Refresh: On");
 				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button_inverted));
 			}
-				StartAutoUpdate ();
+			StartAutoUpdate ();
 		}
+
 		private void OnLocateClicked (object sender, EventArgs e)
 		{
 			locationDialog = CreateDeviceDialog ();
@@ -198,6 +201,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			Client.ClearUser ();
 			GotoLogin ();
+			Finish ();
 		}
 
 		private void GotoLogin ()
@@ -206,7 +210,6 @@ namespace eecegroup32.mojiotowingalert.android
 			login.AddFlags (ActivityFlags.ClearTop);
 			StartActivity (login);
 		}
-
 
 		private void AddDevicesToDialog (Dialog dialog)
 		{
@@ -253,10 +256,10 @@ namespace eecegroup32.mojiotowingalert.android
 				LatLng latln = new LatLng (Event.Location.Lat, Event.Location.Lng);
 				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (latln, 15));
 				locationDialog.Hide ();
-			};;
+			};
+			;
 			return button;
 		}
-			
 
 		private void DrawMap ()
 		{
@@ -303,7 +306,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var loc = new LatLng (dev.LastLocation.Lat, dev.LastLocation.Lng);				
 			MarkerOptions marker = new MarkerOptions ();
-			marker.InvokeIcon( BitmapDescriptorFactory.DefaultMarker (BitmapDescriptorFactory.HueGreen));
+			marker.InvokeIcon (BitmapDescriptorFactory.DefaultMarker (BitmapDescriptorFactory.HueGreen));
 			marker.SetPosition (loc);
 			marker.SetSnippet (dev.Id);
 			marker.SetTitle (dev.Name);
@@ -375,8 +378,6 @@ namespace eecegroup32.mojiotowingalert.android
 			map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (locationBoundary.Center, 10));
 		}
 
-
-
 		public void StartAutoUpdate ()
 		{
 			Task.Factory.StartNew (() => {
@@ -445,7 +446,6 @@ namespace eecegroup32.mojiotowingalert.android
 			towDetailsActivity.PutExtra ("selectedEventId", towEvent.Id.ToString ());
 			StartActivity (towDetailsActivity);  
 		}
-
 	}
 }
 
