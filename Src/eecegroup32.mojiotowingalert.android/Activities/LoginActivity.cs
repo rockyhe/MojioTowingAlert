@@ -21,6 +21,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button loginButton;
 		private EditText username;
 		private EditText password;
+		private ProgressDialog progressDialog;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -62,17 +63,19 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void SubmitAsyncLoginRequest ()
 		{
-			NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
+			//NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
 			loginButton.Activated = false;
+			progressDialog = ProgressDialog.Show (this, "Please wait...", "Checking account info...", true);	
 			Client.SetUserAsync (username.Text, password.Text).ContinueWith (r => {
 				MojioResponse<Mojio.Token> response = r.Result;
-				RunOnUiThread (() => {
+				RunOnUiThread (() => {					
 					if (Client.IsLoggedIn ()) {
 						MyLogger.Information (this.LocalClassName, string.Format ("Login Attempt: Pass - {0}", response.Data.ToString ())); 
 						GotoMainMenu ();
 					} else {
 						loginButton.Activated = true;
 						MyLogger.Information (this.LocalClassName, "Login Attempt: Fail"); 
+						progressDialog.Dismiss ();
 						NotifyViaToast (Resources.GetString (Resource.String.wrongCredentials));
 					}
 				});
