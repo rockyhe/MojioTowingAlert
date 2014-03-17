@@ -167,11 +167,14 @@ namespace eecegroup32.mojiotowingalert.android
 		private void OnRefreshClicked (object sender, EventArgs e)
 		{
 			stopUpdate = !stopUpdate;
-			if(stopUpdate)
+			if (stopUpdate) {
 				NotifyViaToast ("Map Auto Refresh: Off");
-			else
+				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button));
+			} else {
 				NotifyViaToast ("Map Auto Refresh: On");
-			StartAutoUpdate ();
+				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button_inverted));
+			}
+				StartAutoUpdate ();
 		}
 		private void OnLocateClicked (object sender, EventArgs e)
 		{
