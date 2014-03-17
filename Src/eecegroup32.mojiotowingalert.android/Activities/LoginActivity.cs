@@ -48,6 +48,12 @@ namespace eecegroup32.mojiotowingalert.android
 			loginButton = FindViewById<Button> (Resource.Id.logInButton);
 			username = FindViewById<EditText> (Resource.Id.usernameEntry);
 			password = FindViewById<EditText> (Resource.Id.passwordEntry);
+			username.SetBackgroundColor(Android.Graphics.Color.Orange);
+			username.SetTextColor (Android.Graphics.Color.White);
+			username.SetHintTextColor(Android.Graphics.Color.White);
+			password.SetBackgroundColor(Android.Graphics.Color.Orange);
+			password.SetTextColor (Android.Graphics.Color.White);
+			password.SetHintTextColor(Android.Graphics.Color.White);
 		}
 
 		private void InitializeEventHandlers ()

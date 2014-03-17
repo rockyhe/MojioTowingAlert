@@ -43,7 +43,7 @@
     <fragment
         p1:id="@+id/map"
         p1:layout_width="match_parent"
-        p1:layout_height="350dp"
+        p1:layout_height="320dp"
         class="com.google.android.gms.maps.MapFragment"
         p1:layout_marginTop="0.0dp"
         p1:layout_marginBottom="0.0dp" />
@@ -132,5 +132,6 @@
         p1:id="@+id/logOutButton"
         p1:layout_marginBottom="88.4dp"
         p1:layout_marginLeft="50dp"
-        p1:layout_marginRight="50dp" />
+        p1:layout_marginRight="50dp"
+        p1:layout_marginTop="15.6dp" />
 </LinearLayout>

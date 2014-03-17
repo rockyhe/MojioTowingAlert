@@ -27,13 +27,15 @@
             p1:textColor="#ff01bbe1" />
         <Button
             p1:text="Refresh"
-            p1:layout_width="wrap_content"
+            p1:layout_width="110dp"
             p1:layout_height="match_parent"
+            p1:background="@drawable/android_button"
             p1:id="@+id/refreshNotification" />
         <Button
             p1:text="Filter"
-            p1:layout_width="wrap_content"
+            p1:layout_width="110dp"
             p1:layout_height="match_parent"
+            p1:background="@drawable/android_button"
             p1:id="@+id/notificationFilterButton" />
     </LinearLayout>
     <LinearLayout
