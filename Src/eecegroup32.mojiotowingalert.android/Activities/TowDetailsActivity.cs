@@ -3,6 +3,7 @@ using System.Linq;
 using Android.OS;
 using Android.App;
 using Android.Widget;
+using Android.Locations;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using eecegroup32.mojiotowingalert.core;
@@ -91,10 +92,16 @@ namespace eecegroup32.mojiotowingalert.android
 			eventDongleIDText.Text = selectedEvent.MojioId;
 			MyLogger.Information (this.LocalClassName, string.Format ("Event Detail DongleID Set: {0}", selectedEvent.MojioId));
 			if (selectedEvent.Location == null)
-				eventLocationText.Text = string.Format ("Lat,Lng - Not Available");
-			else
-				eventLocationText.Text = string.Format ("Lat,Lng - {0:0.00}, {1:0.00}", selectedEvent.Location.Lat, selectedEvent.Location.Lng);
-			MyLogger.Information (this.LocalClassName, eventLocationText.Text);
+				eventLocationText.Text = string.Format ("Location - Not Available");
+			else {
+				String myAddress;
+				myAddress = GetAddress (selectedEvent.Location.Lat, selectedEvent.Location.Lng);
+				if (myAddress != null)
+					eventLocationText.Text = string.Format ("{0}", myAddress);
+				else
+					eventLocationText.Text = string.Format ("Lat,Lng: {0}, {1} ", selectedEvent.Location.Lat, selectedEvent.Location.Lng);
+			}
+				MyLogger.Information (this.LocalClassName, eventLocationText.Text);
 		}
 
 		private void SetupMaps ()
@@ -110,7 +117,7 @@ namespace eecegroup32.mojiotowingalert.android
 				map.UiSettings.ZoomControlsEnabled = true;
 				map.AddMarker (GetMarkerOption (selectedEvent));
 				map.MapType = GoogleMap.MapTypeNormal;
-				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (GetLocationBoundary (selectedEvent).Center, 10));
+				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (GetLocationBoundary (selectedEvent).Center, 15));
 			}
 		}
 
@@ -132,8 +139,27 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			MarkerOptions marker = new MarkerOptions ();
 			marker.SetPosition (GetEventLocation (e));
-			marker.SetTitle (e.Location == null ? "Location Not Available!" : string.Format ("{0}: {1}, {2}", e.MojioId, e.Location.Lat, e.Location.Lng));
+			marker.SetTitle (e.Location == null ? "Location Not Available!" : string.Format ("{0}", e.MojioId));
 			return marker;
+		}
+
+		private String GetAddress (float latitude, float longitude){
+			try {
+				String locationAddress = "";
+				Android.Locations.Geocoder geocoder;
+				geocoder = new Android.Locations.Geocoder(this);
+				var addresses = geocoder.GetFromLocation (latitude ,longitude, 1);
+
+				var list = addresses.ToList<Android.Locations.Address>();
+				locationAddress += list[0].GetAddressLine(0)+ "\n ";
+				locationAddress += list[0].GetAddressLine(1)+ "\n";
+				locationAddress += list[0].GetAddressLine(2);
+
+				return locationAddress;
+
+			} catch (Exception e) {
+				return null;
+			}
 		}
 	}
 }

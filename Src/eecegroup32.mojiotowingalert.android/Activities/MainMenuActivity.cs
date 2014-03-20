@@ -21,8 +21,7 @@ using Android.Graphics;
 namespace eecegroup32.mojiotowingalert.android
 {
 	[Activity (Label = "MainMenuActivity",
-		AlwaysRetainTaskState = true,
-		LaunchMode = Android.Content.PM.LaunchMode.SingleInstance)]			
+		AlwaysRetainTaskState = true)]			
 	public class MainMenuActivity : EventBaseActivity
 	{
 		private GoogleMap map;
@@ -92,7 +91,6 @@ namespace eecegroup32.mojiotowingalert.android
 			logOutButton = FindViewById<Button> (Resource.Id.logOutButton);
 			refreshButton = FindViewById<Button> (Resource.Id.refreshButton);
 			locateButton = FindViewById<Button> (Resource.Id.locateButton);
-			ActionBar.SetTitle (Resource.String.map);
 			devicesToShow = new HashSet<Device> ();
 			foreach (var dev in UserDevices)
 				devicesToShow.Add (dev);

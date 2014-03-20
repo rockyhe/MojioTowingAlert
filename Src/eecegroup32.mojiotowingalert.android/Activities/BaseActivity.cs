@@ -220,7 +220,7 @@ namespace eecegroup32.mojiotowingalert.android
 			return r == null ? true : r.SoundChecked;
 		}
 
-		protected void NotifyViaToast (string msg = "New Event Arrived!")
+		protected void NotifyViaToast (string msg = "New Towing Event!")
 		{
 			RunOnUiThread (() => {
 				var toast = Toast.MakeText (MainApp.GetCurrentActivity (), msg, ToastLength.Long);
@@ -230,7 +230,7 @@ namespace eecegroup32.mojiotowingalert.android
 			});
 		}
 
-		protected void NotifyViaLocalNotification (string msg = "New Event Arrived!")
+		protected void NotifyViaLocalNotification (string msg = "Your car is being towed!")
 		{
 			RunOnUiThread (() => {
 				var isNotificationEnabled = GetNotificationTogglePref ();
@@ -239,9 +239,9 @@ namespace eecegroup32.mojiotowingalert.android
 				if (!isNotificationEnabled)
 					return;
             
-				var notification = new Notification (Resource.Drawable.Icon, msg);
+				var notification = new Notification (Resource.Drawable.applicationIcon, msg);
 				var pendingIntent = PendingIntent.GetActivity (this, 0, new Intent (this, this.GetType ()), 0);
-				notification.SetLatestEventInfo (this, "New Mojio Event", msg, pendingIntent);
+				notification.SetLatestEventInfo (this, "New Towing Event", msg, pendingIntent);
 				notification.Flags = NotificationFlags.AutoCancel;
 
 

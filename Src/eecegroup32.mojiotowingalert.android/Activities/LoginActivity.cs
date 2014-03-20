@@ -54,6 +54,7 @@ namespace eecegroup32.mojiotowingalert.android
 			password.SetBackgroundColor (Android.Graphics.Color.Orange);
 			password.SetTextColor (Android.Graphics.Color.White);
 			password.SetHintTextColor (Android.Graphics.Color.White);
+
 		}
 
 		private void InitializeEventHandlers ()
@@ -69,20 +70,20 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void SubmitAsyncLoginRequest ()
 		{
-			//NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
+			NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
 			loginButton.Activated = false;
-			progressDialog = ProgressDialog.Show (this, "Please wait...", "Checking account info...", true);	
+			//progressDialog = ProgressDialog.Show (this, "Please wait...", "Checking account info...", true);	
 			Client.SetUserAsync (username.Text, password.Text).ContinueWith (r => {
 				MojioResponse<Mojio.Token> response = r.Result;
 				RunOnUiThread (() => {					
 					if (Client.IsLoggedIn ()) {
 						MyLogger.Information (this.LocalClassName, string.Format ("Login Attempt: Pass - {0}", response.Data.ToString ())); 
-						progressDialog.Dismiss ();
+						//progressDialog.Dismiss ();
 						GotoMainMenu ();
 					} else {
 						loginButton.Activated = true;
 						MyLogger.Information (this.LocalClassName, "Login Attempt: Fail"); 
-						progressDialog.Dismiss ();
+						//progressDialog.Dismiss ();
 						NotifyViaToast (Resources.GetString (Resource.String.wrongCredentials));
 					}
 				});

@@ -160,11 +160,12 @@ namespace eecegroup32.mojiotowingalert.android
 			foreach (Device moj in UserDevices) {
 				item = new TextView (this);
 				item.SetTextColor(Android.Graphics.Color.Rgb(1,187,225));
+				item.SetTextSize (Android.Util.ComplexUnitType.Px, 35);
 				item.Id = i;
-				item.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
+				item.Text = string.Format ("   {0} \n", moj.Name);
 				MyLogger.Information (this.LocalClassName, string.Format ("Dongle List: {0} loaded.", moj.Name));
 				RelativeLayout.LayoutParams parameters = 
-					new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.FillParent, 
+					new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.FillParent,
 						RelativeLayout.LayoutParams.WrapContent);
 				parameters.AddRule (LayoutRules.AlignParentBottom);
 				if (i != 0)

@@ -27,8 +27,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true"
-                p1:textColor="#ff01bbe1" />
+                p1:textColor="#EF860F"
+                p1:layout_marginLeft="20.0dp" />
         </RelativeLayout>
         <RelativeLayout
             p1:minWidth="25px"
@@ -66,8 +66,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true"
-                p1:textColor="#ff01bbe1" />
+                p1:textColor="#ff01bbe1"
+                p1:layout_marginLeft="19.9dp" />
         </RelativeLayout>
         <RelativeLayout
             p1:minWidth="25px"
@@ -134,8 +134,8 @@
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textView1"
                 p1:layout_centerVertical="true"
-                p1:layout_centerHorizontal="true"
-                p1:textColor="#ff01bbe1" />
+                p1:textColor="#EF860F"
+                p1:layout_marginLeft="19.9dp" />
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
