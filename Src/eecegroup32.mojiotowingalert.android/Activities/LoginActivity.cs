@@ -70,9 +70,9 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void SubmitAsyncLoginRequest ()
 		{
-			NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
+			//NotifyViaToast (Resources.GetString (Resource.String.loggingIn));
 			loginButton.Activated = false;
-			//progressDialog = ProgressDialog.Show (this, "Please wait...", "Checking account info...", true);	
+			progressDialog = ProgressDialog.Show (this, "Please wait...", "Checking account info...", true);	
 			Client.SetUserAsync (username.Text, password.Text).ContinueWith (r => {
 				MojioResponse<Mojio.Token> response = r.Result;
 				RunOnUiThread (() => {					
@@ -83,7 +83,7 @@ namespace eecegroup32.mojiotowingalert.android
 					} else {
 						loginButton.Activated = true;
 						MyLogger.Information (this.LocalClassName, "Login Attempt: Fail"); 
-						//progressDialog.Dismiss ();
+						progressDialog.Dismiss ();
 						NotifyViaToast (Resources.GetString (Resource.String.wrongCredentials));
 					}
 				});

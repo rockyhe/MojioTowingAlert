@@ -80,6 +80,13 @@ namespace eecegroup32.mojiotowingalert.android
 				var temp = events.Where (x => x.MojioId.Equals (dev.Id));
 				filteredEvents.AddRange (temp);
 			}
+			filteredEvents.Sort (delegate(Event x, Event y)
+				{
+					if (x.Time == null && y.Time == null) return 0;
+					else if (x.Time == null) return 1;
+					else if (y.Time == null) return -1;
+					else return -(x.Time.CompareTo(y.Time));
+				});;
 			foreach (TowEvent eve in filteredEvents) {
 				eventView = MainApp.GetCurrentActivity ().LayoutInflater.Inflate (Resource.Layout.NotificationView, null);
 				eventView.FindViewById<TextView> (Resource.Id.Text1).Text = eve.Time.ToString ("f");
@@ -89,6 +96,7 @@ namespace eecegroup32.mojiotowingalert.android
 				notificationList.AddView (eventView);
 			}
 		}
+			
 
 		private void ClearNotificationList ()
 		{
