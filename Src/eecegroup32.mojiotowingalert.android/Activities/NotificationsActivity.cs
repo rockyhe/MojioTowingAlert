@@ -21,7 +21,6 @@ namespace eecegroup32.mojiotowingalert.android
 	public class NotificationsActivity : BaseActivity
 	{
 		private LinearLayout notificationList;
-		private Button refreshButton;
 		private Button notificationFilterButton;
 		private HashSet<Device> devicesToShow;
 
@@ -49,35 +48,15 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeEventHandlers ()
 		{
-			refreshButton.Click += OnRefreshClicked;
 			notificationFilterButton.Click += OnFilterButtonClicked;
 		}
 
-		private async void OnRefreshClicked (object sender, EventArgs e)
-		{
-			bool isRefreshed = false;
-			await Task.Factory.StartNew (() => {
-				try {
-					LoadLastEvents (EventsToSubscribe);
-					isRefreshed = true;
-				} catch (Exception) {
-					isRefreshed = false;
-					NotifyViaToast ("Mojio Server Error. Please Try Later.");
-				}
-			});
-			
-			if (isRefreshed) {
-				RefreshNotificationList ();
-				NotifyViaToast ("Notification List Refreshed.");
-			}
-		}
 
 		private void InitializeComponents ()
 		{
 			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
 			this.ActionBar.SetTitle (Resource.String.notifications);
 			notificationList = this.FindViewById<LinearLayout> (Resource.Id.notificationList);
-			refreshButton = this.FindViewById<Button> (Resource.Id.refreshNotification);
 			notificationFilterButton = this.FindViewById<Button> (Resource.Id.notificationFilterButton);
 		}
 
@@ -151,6 +130,7 @@ namespace eecegroup32.mojiotowingalert.android
 		private ToggleButton CreateDeviceSelectionItem (Device moj)
 		{
 			ToggleButton button = new ToggleButton (this);
+			//button.SetBackgroundColor(Android.Graphics.Color.Rgb(1,187,225));
 			
 			if (devicesToShow.Contains (moj))
 				button.Checked = true;

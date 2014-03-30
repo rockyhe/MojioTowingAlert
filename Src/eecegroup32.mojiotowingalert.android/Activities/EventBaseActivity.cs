@@ -312,8 +312,8 @@ namespace eecegroup32.mojiotowingalert.android
 			switch (eve.EventType) {
 			case EventType.TowStart:
 				LoadMojioDevices ();
-				var location = UserDevices.First (x => x.Id == eve.MojioId).LastLocation;				
-				(eve as TowEvent).Location = location;
+				var location = eve.Location;				
+				(eve as TowEvent).Location = eve.Location;
 				MyLogger.Error (this.LocalClassName, string.Format ("Location ({0}) added to the event just received.", location.ToString ()));	
 				TowManager.Add (eve);
 				TowManager.IncrementNewEventNumber ();
@@ -333,6 +333,8 @@ namespace eecegroup32.mojiotowingalert.android
 			if (MainApp.GetCurrentActivity () is NotificationsActivity) {
 				((NotificationsActivity)MainApp.GetCurrentActivity ()).Update ();
 				TowManager.ClearNewEventNumber ();
+			} else if (MainApp.GetCurrentActivity () is MainMenuActivity) {
+				((MainMenuActivity)MainApp.GetCurrentActivity ()).UpdateEvents ();
 			}
 
 		}

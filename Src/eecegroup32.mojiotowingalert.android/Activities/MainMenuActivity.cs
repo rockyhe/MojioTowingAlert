@@ -40,14 +40,13 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button locateButton;
 		private Button refreshButton;
 		private Dialog locationDialog;
-		private FlyOutContainer flyoutMenu;
 		private TextView welcome;
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Entered: OnCreate");
 			base.OnCreate (bundle);
-			SetContentView (Resource.Layout.MainMenuFlyout);
+			SetContentView (Resource.Layout.MainMenu);
 			InitializeActionBar ();
 			InitializeVariables ();
 			InitializeEventHandlers ();
@@ -76,7 +75,6 @@ namespace eecegroup32.mojiotowingalert.android
 			base.OnResume ();
 			MainApp.SetCurrentActivity (this);
 			UpdateNumberOfNewEvents ();
-			stopUpdate = true;
 			StartAutoUpdate ();
 			MyLogger.Debug (this.LocalClassName, "Lifecycle Exited: OnResume");
 		}
@@ -84,7 +82,6 @@ namespace eecegroup32.mojiotowingalert.android
 		private void InitializeVariables ()
 		{
 		
-			flyoutMenu = FindViewById<FlyOutContainer> (Resource.Id.FlyOutContainer);
 			welcome = FindViewById<TextView> (Resource.Id.welcomeText);
 			notifcationButton = FindViewById<Button> (Resource.Id.notificationsButton);
 			settingsButton = FindViewById<Button> (Resource.Id.settingsButton);
@@ -111,6 +108,7 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void InitializeEventHandlers ()
 		{
+
 			notifcationButton.Click += new EventHandler (OnNotificationsClicked);
 			settingsButton.Click += new EventHandler (OnSettingsClicked);
 			logOutButton.Click += new EventHandler (OnLogOutClicked);
@@ -153,12 +151,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			StartActivity (new Intent (this, typeof(NotificationsActivity)));
 		}
-
-		private void OnMapsClicked (object sender, EventArgs e)
-		{
-			StartActivity (new Intent (this, typeof(MapsActivity)));
-		}
-
+			
 		private void OnSettingsClicked (object sender, EventArgs e)
 		{
 			StartActivity (new Intent (this, typeof(SettingsActivity)));
@@ -221,6 +214,8 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button CreateDeviceSelectionItem (Device moj)
 		{
 			Button button = new Button (this);
+			//button.SetPaddingRelative(5, 5, 5, 5);
+			//button.SetBackgroundColor(Color.Rgb(1,187,225));
 			button.Text = string.Format (moj.Name);
 			button.Tag = moj.Id;
 			button.Click += OnDeviceSelected;
@@ -249,6 +244,8 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button CreateEventItem (Event Event)
 		{
 			Button button = new Button (this);
+			//button.SetPadding(5, 5, 5, 5);
+			//button.SetBackgroundColor(Color.Rgb(1,187,225));
 			button.Text = string.Format ("Latest Tow Event");
 			button.Click += (sender, e) => {
 				LatLng latln = new LatLng (Event.Location.Lat, Event.Location.Lng);
@@ -298,6 +295,15 @@ namespace eecegroup32.mojiotowingalert.android
 					deviceMarkers.Add (AddDeviceMarkerToMap (dev));								
 			}
 
+		}
+
+		public void UpdateEvents()
+		{
+			AddEventMarkers ();
+			foreach (Event eve in TowManager.Get(1)) {
+				LatLng latln = new LatLng (eve.Location.Lat, eve.Location.Lng);
+				map.MoveCamera (CameraUpdateFactory.NewLatLngZoom (latln, 15));
+			}
 		}
 
 		private Marker AddDeviceMarkerToMap (Device dev)
@@ -402,7 +408,6 @@ namespace eecegroup32.mojiotowingalert.android
 				MyLogger.Error (this.LocalClassName, "Mojio device not updated within the timelimit");
 				return;
 			}
-
 			foreach (var marker in deviceMarkers)
 				RemoveMarker (marker);
 			AddDeviceMarkers ();
@@ -431,7 +436,6 @@ namespace eecegroup32.mojiotowingalert.android
 		protected override void OnPause ()
 		{
 			base.OnPause ();
-			stopUpdate = true;
 		}
 
 		private void OnEventMarkerClicked (object sender, GoogleMap.InfoWindowClickEventArgs e)

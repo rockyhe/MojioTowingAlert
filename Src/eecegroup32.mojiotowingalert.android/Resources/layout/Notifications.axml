@@ -26,17 +26,15 @@
             p1:layout_marginRight="0.0dp"
             p1:textColor="#ff01bbe1" />
         <Button
-            p1:text="Refresh"
-            p1:layout_width="110dp"
-            p1:layout_height="match_parent"
-            p1:background="@drawable/android_button"
-            p1:id="@+id/refreshNotification" />
-        <Button
             p1:text="Filter"
             p1:layout_width="110dp"
             p1:layout_height="match_parent"
             p1:background="@drawable/android_button"
-            p1:id="@+id/notificationFilterButton" />
+            p1:id="@+id/notificationFilterButton"
+            p1:layout_marginLeft="90.3dp"
+            p1:layout_marginRight="14.8dp"
+            p1:layout_marginTop="6.1dp"
+            p1:layout_marginBottom="6.1dp" />
     </LinearLayout>
     <LinearLayout
         p1:orientation="horizontal"

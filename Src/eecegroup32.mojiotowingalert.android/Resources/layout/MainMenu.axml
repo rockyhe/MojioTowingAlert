@@ -24,18 +24,21 @@
         p1:layout_height="35dp"
         p1:id="@+id/linearLayout6">
         <Button
-            p1:layout_width="120dp"
+            p1:layout_width="fill_parent"
+            p1:layout_weight="1"
             p1:layout_height="match_parent"
             p1:background="@drawable/locate_button"
             p1:id="@+id/locateButton" />
         <Button
-            p1:layout_width="120dp"
+            p1:layout_width="fill_parent"
+            p1:layout_weight="1"
             p1:layout_height="match_parent"
             p1:background="@drawable/refresh_button"
             p1:id="@+id/refreshButton" />
         <Button
             p1:textColor="#EF860F"
-            p1:layout_width="120dp"
+            p1:layout_width="fill_parent"
+            p1:layout_weight="1"
             p1:layout_height="match_parent"
             p1:background="@drawable/settings_button"
             p1:id="@+id/settingsButton" />
@@ -43,7 +46,8 @@
     <fragment
         p1:id="@+id/map"
         p1:layout_width="match_parent"
-        p1:layout_height="320dp"
+        p1:layout_height="fill_parent"
+        p1:layout_weight="2"
         class="com.google.android.gms.maps.MapFragment"
         p1:layout_marginTop="0.0dp"
         p1:layout_marginBottom="0.0dp" />
@@ -118,20 +122,21 @@
     <Button
         p1:text="@string/pasttowingevents"
         p1:layout_width="match_parent"
-        p1:layout_height="35dp"
+        p1:layout_height="fill_parent"
+        p1:layout_weight="4.75"
         p1:background="@drawable/android_button"
         p1:id="@+id/notificationsButton"
-        p1:layout_marginBottom="10dp"
+        p1:layout_marginBottom="20dp"
         p1:layout_marginLeft="50dp"
         p1:layout_marginRight="50dp" />
     <Button
         p1:text="@string/logout"
         p1:layout_width="match_parent"
-        p1:layout_height="35dp"
+        p1:layout_height="fill_parent"
+        p1:layout_weight="4.75"
         p1:background="@drawable/android_button"
         p1:id="@+id/logOutButton"
-        p1:layout_marginBottom="88.4dp"
         p1:layout_marginLeft="50dp"
         p1:layout_marginRight="50dp"
-        p1:layout_marginTop="15.6dp" />
+        p1:layout_marginBottom="20dp" />
 </LinearLayout>

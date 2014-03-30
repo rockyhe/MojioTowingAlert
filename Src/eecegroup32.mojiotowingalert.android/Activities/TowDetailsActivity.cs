@@ -151,9 +151,8 @@ namespace eecegroup32.mojiotowingalert.android
 				var addresses = geocoder.GetFromLocation (latitude ,longitude, 1);
 
 				var list = addresses.ToList<Android.Locations.Address>();
-				locationAddress += list[0].GetAddressLine(0)+ "\n ";
+				locationAddress += list[0].GetAddressLine(0)+ "\n";
 				locationAddress += list[0].GetAddressLine(1)+ "\n";
-				locationAddress += list[0].GetAddressLine(2);
 
 				return locationAddress;
 
