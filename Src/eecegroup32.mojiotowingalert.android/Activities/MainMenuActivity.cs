@@ -159,15 +159,18 @@ namespace eecegroup32.mojiotowingalert.android
 
 		private void OnRefreshClicked (object sender, EventArgs e)
 		{
-			stopUpdate = !stopUpdate;
-			if (stopUpdate) {
-				NotifyViaToast ("Map Auto Refresh: Off");
-				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button));
-			} else {
-				NotifyViaToast ("Map Auto Refresh: On");
-				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button_inverted));
-			}
-			StartAutoUpdate ();
+			UpdateDeviceMarkers ();
+			UpdateEventMarkers ();
+			NotifyViaToast ("Map Updated");
+//			stopUpdate = !stopUpdate;
+//			if (stopUpdate) {
+//				NotifyViaToast ("Map Auto Refresh: Off");
+//				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button));
+//			} else {
+//				NotifyViaToast ("Map Auto Refresh: On");
+//				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button_inverted));
+//			}
+//			StartAutoUpdate ();
 		}
 
 		private void OnLocateClicked (object sender, EventArgs e)
@@ -207,7 +210,13 @@ namespace eecegroup32.mojiotowingalert.android
 			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
 			foreach (Device dev in UserDevices) {
 				Button listItem = CreateDeviceSelectionItem (dev);
-				layout.AddView (listItem);
+				//layout.SetPadding (5, 10, 5, 10);
+
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
+				layoutParams.SetMargins (5, 5, 5, 5);
+				layoutParams.Height = 100;
+				layout.AddView (listItem,layoutParams);
 			}
 		}
 
@@ -216,6 +225,8 @@ namespace eecegroup32.mojiotowingalert.android
 			Button button = new Button (this);
 			//button.SetPaddingRelative(5, 5, 5, 5);
 			//button.SetBackgroundColor(Color.Rgb(1,187,225));
+			button.SetBackgroundDrawable(Resources.GetDrawable(Resource.Drawable.android_button));
+			button.SetMaxHeight (25);
 			button.Text = string.Format (moj.Name);
 			button.Tag = moj.Id;
 			button.Click += OnDeviceSelected;
@@ -237,13 +248,18 @@ namespace eecegroup32.mojiotowingalert.android
 			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
 			foreach (Event eve in TowManager.Get(1)) {
 				Button listItem = CreateEventItem (eve);
-				layout.AddView (listItem);
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
+				layoutParams.SetMargins (5, 5, 5, 5);
+				layoutParams.Height = 100;
+				layout.AddView (listItem, layoutParams);
 			}
 		}
 
 		private Button CreateEventItem (Event Event)
 		{
 			Button button = new Button (this);
+			button.SetBackgroundDrawable(Resources.GetDrawable(Resource.Drawable.android_button));
 			//button.SetPadding(5, 5, 5, 5);
 			//button.SetBackgroundColor(Color.Rgb(1,187,225));
 			button.Text = string.Format ("Latest Tow Event");
@@ -384,21 +400,21 @@ namespace eecegroup32.mojiotowingalert.android
 
 		public void StartAutoUpdate ()
 		{
-			Task.Factory.StartNew (() => {
-				try {
-					while (stopUpdate == false) {
-						manualResetEventForUpdate2.WaitOne ();
-						manualResetEventForUpdate.Reset ();
-						UpdateDeviceMarkers ();
-						UpdateEventMarkers ();					
-						manualResetEventForUpdate.Set ();
-						Thread.Sleep (2000);					
-					}
-				} catch (Exception e) {
-					NotifyViaToast ("Mojio Server Error. Please Try Later.");
-					Finish ();
-				}
-			});
+//			Task.Factory.StartNew (() => {
+//				try {
+//					while (stopUpdate == false) {
+//						manualResetEventForUpdate2.WaitOne ();
+//						manualResetEventForUpdate.Reset ();
+//						UpdateDeviceMarkers ();
+//						UpdateEventMarkers ();					
+//						manualResetEventForUpdate.Set ();
+//						Thread.Sleep (2000);					
+//					}
+//				} catch (Exception e) {
+//					NotifyViaToast ("Mojio Server Error. Please Try Later.");
+//					Finish ();
+//				}
+//			});
 		}
 
 		private void UpdateDeviceMarkers ()

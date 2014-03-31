@@ -131,7 +131,13 @@ namespace eecegroup32.mojiotowingalert.android
 			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
 			foreach (Device dev in UserDevices) {
 				ToggleButton listItem = CreateDeviceSelectionItem (dev);
-				layout.AddView (listItem);
+
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
+				layoutParams.SetMargins (5, 5, 5, 5);
+				layoutParams.Height = 100;
+
+				layout.AddView (listItem, layoutParams);
 			}
 		}
 
@@ -144,8 +150,9 @@ namespace eecegroup32.mojiotowingalert.android
 				button.Checked = true;
 			else
 				button.Checked = false;
-			
-			button.Text = string.Format ("Name:{0} \nId:{1}", moj.Name, moj.IdToString);
+
+			button.SetBackgroundResource (Resource.Drawable.android_blue_button);
+			button.Text = string.Format ("{0}", moj.Name);
 			button.Tag = moj.Id;
 			button.Click += OnDeviceSelected;
 			return button;
@@ -155,7 +162,7 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			var selectedButton = (ToggleButton)sender;
 			var selectedDevice = UserDevices.FirstOrDefault (x => x.Id.Equals ((string)selectedButton.Tag));
-			selectedButton.Text = string.Format ("Name:{0} \nId:{1}", selectedDevice.Name, selectedDevice.IdToString);
+			selectedButton.Text = string.Format ("{0}", selectedDevice.Name);
 			if (selectedButton.Checked)
 				devicesToShow.Add (selectedDevice);
 			else

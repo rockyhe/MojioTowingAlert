@@ -169,6 +169,7 @@ namespace eecegroup32.mojiotowingalert.android
 					new RelativeLayout.LayoutParams (RelativeLayout.LayoutParams.FillParent,
 						RelativeLayout.LayoutParams.WrapContent);
 				parameters.AddRule (LayoutRules.AlignParentBottom);
+				parameters.AddRule (LayoutRules.CenterVertical);
 				if (i != 0)
 					parameters.AddRule (LayoutRules.Above, i - 1);
 				item.LayoutParameters = parameters;
@@ -182,8 +183,12 @@ namespace eecegroup32.mojiotowingalert.android
 					OnDeviceSubscriptionToggleClicked (moj, EventType.TowStart, (o as ToggleButton).Checked);
 				};
 				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.TowStart, moj);
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
+				layoutParams.SetMargins (5, 0, 5, 15);
+				layoutParams.Height = 65;
 				dongleListLayout.AddView (item);
-				dongleButtonLayout.AddView (button);
+				dongleButtonLayout.AddView (button, layoutParams);
 				i++;
 			}
 			MyLogger.Information (this.LocalClassName, string.Format ("{0} dongle(s) loaded.", i));

@@ -111,6 +111,7 @@
     <AndroidResource Include="Resources\drawable\settings_pressed.png" />
     <AndroidResource Include="Resources\drawable\refresh_button_inverted.xml" />
     <AndroidResource Include="Resources\drawable\blue.9.png" />
+    <AndroidResource Include="Resources\drawable\android_blue_button.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
