@@ -128,7 +128,7 @@ namespace eecegroup32.mojiotowingalert.android
 			this.ActionBar.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.Black));
 			this.ActionBar.SetTitle (Resource.String.settings);
 			notificationToggle = FindViewById<ToggleButton> (Resource.Id.NotificationToggleButton);
-			notificationToggle.SetBackgroundColor(Android.Graphics.Color.Rgb(1,187,225));
+			notificationToggle.SetBackgroundColor (Android.Graphics.Color.Rgb (1, 187, 225));
 			notificationToggle.Checked = GetNotificationTogglePref ();
 			soundCheckBox = FindViewById<CheckBox> (Resource.Id.SoundCheckBox);
 			soundCheckBox.Checked = GetNotificationSoundPref ();
@@ -160,7 +160,7 @@ namespace eecegroup32.mojiotowingalert.android
 			LoadMojioDevices ();
 			foreach (Device moj in UserDevices) {
 				item = new TextView (this);
-				item.SetTextColor(Android.Graphics.Color.Rgb(1,187,225));
+				item.SetTextColor (Android.Graphics.Color.Rgb (1, 187, 225));
 				item.SetTextSize (Android.Util.ComplexUnitType.Px, 35);
 				item.Id = i;
 				item.Text = string.Format ("   {0} \n", moj.Name);
@@ -174,7 +174,7 @@ namespace eecegroup32.mojiotowingalert.android
 					parameters.AddRule (LayoutRules.Above, i - 1);
 				item.LayoutParameters = parameters;
 				button = new ToggleButton (this);
-				button.SetBackgroundColor(Android.Graphics.Color.Rgb(1,187,225));
+				button.SetBackgroundColor (Android.Graphics.Color.Rgb (1, 187, 225));
 				button.Id = i;
 				button.LayoutParameters = parameters;
 				button.Click += (o, args) => {
@@ -183,8 +183,8 @@ namespace eecegroup32.mojiotowingalert.android
 					OnDeviceSubscriptionToggleClicked (moj, EventType.TowStart, (o as ToggleButton).Checked);
 				};
 				button.Checked = CurrentUserPreference.GetSubscriptionStatus (EventType.TowStart, moj);
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams (
+					                                         LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
 				layoutParams.SetMargins (5, 0, 5, 15);
 				layoutParams.Height = 65;
 				dongleListLayout.AddView (item);

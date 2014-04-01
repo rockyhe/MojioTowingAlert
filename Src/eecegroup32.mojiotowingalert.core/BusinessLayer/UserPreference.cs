@@ -66,8 +66,8 @@ namespace eecegroup32.mojiotowingalert.core
 		{
 			switch (eventType) {
 			case EventType.TowStart:
-				if (_devicesForTowEvent.Contains (device))
-					_devicesForTowEvent.Remove (device);
+				if (_devicesForTowEvent.Find (x => x.Id == device.Id && x.Name == device.Name) != null)
+					_devicesForTowEvent.RemoveAll (x => x.Id == device.Id && x.Name == device.Name);
 				break;
 			default:
 				break;
@@ -78,8 +78,8 @@ namespace eecegroup32.mojiotowingalert.core
 		{
 			switch (eventType) {
 			case EventType.TowStart:
-				if (_devicesForTowEvent.Contains (device))
-					_devicesForTowEvent.Remove (device);
+				if (_devicesForTowEvent.Find (x => x.Id == device.Id && x.Name == device.Name) != null)
+					_devicesForTowEvent.RemoveAll (x => x.Id == device.Id && x.Name == device.Name);
 				_devicesForTowEvent.Add (device);
 				break;
 			default:
@@ -114,7 +114,7 @@ namespace eecegroup32.mojiotowingalert.core
 		{
 			switch (eventType) {
 			case EventType.TowStart:
-				return _devicesForTowEvent.Contains (device);
+				return _devicesForTowEvent.Find (x => x.Id == device.Id && x.Name == device.Name) != null;
 			default:
 				return false;
 			}
