@@ -162,15 +162,6 @@ namespace eecegroup32.mojiotowingalert.android
 			UpdateDeviceMarkers ();
 			UpdateEventMarkers ();
 			NotifyViaToast ("Map Updated");
-//			stopUpdate = !stopUpdate;
-//			if (stopUpdate) {
-//				NotifyViaToast ("Map Auto Refresh: Off");
-//				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button));
-//			} else {
-//				NotifyViaToast ("Map Auto Refresh: On");
-//				refreshButton.SetBackgroundDrawable (Resources.GetDrawable (Resource.Drawable.refresh_button_inverted));
-//			}
-//			StartAutoUpdate ();
 		}
 
 		private void OnLocateClicked (object sender, EventArgs e)
@@ -210,8 +201,6 @@ namespace eecegroup32.mojiotowingalert.android
 			var layout = dialog.FindViewById<LinearLayout> (Resource.Id.SelectDeviceLayout);		
 			foreach (Device dev in UserDevices) {
 				Button listItem = CreateDeviceSelectionItem (dev);
-				//layout.SetPadding (5, 10, 5, 10);
-
 				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 					LinearLayout.LayoutParams.FillParent, LinearLayout.LayoutParams.WrapContent);
 				layoutParams.SetMargins (5, 5, 5, 5);
@@ -223,8 +212,6 @@ namespace eecegroup32.mojiotowingalert.android
 		private Button CreateDeviceSelectionItem (Device moj)
 		{
 			Button button = new Button (this);
-			//button.SetPaddingRelative(5, 5, 5, 5);
-			//button.SetBackgroundColor(Color.Rgb(1,187,225));
 			button.SetBackgroundDrawable(Resources.GetDrawable(Resource.Drawable.android_button));
 			button.SetMaxHeight (25);
 			button.Text = string.Format (moj.Name);
@@ -260,8 +247,6 @@ namespace eecegroup32.mojiotowingalert.android
 		{
 			Button button = new Button (this);
 			button.SetBackgroundDrawable(Resources.GetDrawable(Resource.Drawable.android_button));
-			//button.SetPadding(5, 5, 5, 5);
-			//button.SetBackgroundColor(Color.Rgb(1,187,225));
 			button.Text = string.Format ("Latest Tow Event");
 			button.Click += (sender, e) => {
 				LatLng latln = new LatLng (Event.Location.Lat, Event.Location.Lng);
@@ -328,10 +313,33 @@ namespace eecegroup32.mojiotowingalert.android
 			MarkerOptions marker = new MarkerOptions ();
 			marker.InvokeIcon (BitmapDescriptorFactory.DefaultMarker (BitmapDescriptorFactory.HueGreen));
 			marker.SetPosition (loc);
-			marker.SetSnippet (dev.Id);
+			String location;
+			location = GetAddress (loc.Latitude, loc.Longitude);
+			if (location == null)
+				location = loc.Latitude.ToString() + ", " + loc.Longitude.ToString();
+			marker.SetSnippet (location);
 			marker.SetTitle (dev.Name);
+
 			MyLogger.Information (this.LocalClassName, string.Format ("Device Marker Added: {0} at {1}", dev.Name, loc.ToString ()));
 			return AddMarkerToMap (marker);
+		}
+
+		private String GetAddress (double latitude, double longitude){
+			try {
+				String locationAddress = "";
+				Android.Locations.Geocoder geocoder;
+				geocoder = new Android.Locations.Geocoder(this);
+				var addresses = geocoder.GetFromLocation (latitude ,longitude, 1);
+
+				var list = addresses.ToList<Android.Locations.Address>();
+				locationAddress += list[0].GetAddressLine(0)+ "\n";
+				locationAddress += list[0].GetAddressLine(1)+ "\n";
+
+				return locationAddress;
+
+			} catch (Exception e) {
+				return null;
+			}
 		}
 
 		private void AddEventMarkers ()
@@ -459,10 +467,16 @@ namespace eecegroup32.mojiotowingalert.android
 			var marker = e.P0;
 			var towEvent = GetTowEvents ().FirstOrDefault (x => marker.Snippet.Contains (x.Time.ToString ()));
 			if (towEvent == null)
-				NotifyViaToast ("Event Info Not Available!");
+				NotifyViaToast ("Info Not Available!");
 			var towDetailsActivity = new Intent (this, typeof(TowDetailsActivity));
-			towDetailsActivity.PutExtra ("selectedEventId", towEvent.Id.ToString ());
-			StartActivity (towDetailsActivity);  
+			try{
+			if (towEvent.Id != null) {
+				towDetailsActivity.PutExtra ("selectedEventId", towEvent.Id.ToString ());
+				StartActivity (towDetailsActivity);
+			}
+			}
+			catch (NullReferenceException) {
+			}
 		}
 	}
 }

@@ -144,8 +144,6 @@ namespace eecegroup32.mojiotowingalert.android
 		private ToggleButton CreateDeviceSelectionItem (Device moj)
 		{
 			ToggleButton button = new ToggleButton (this);
-			//button.SetBackgroundColor(Android.Graphics.Color.Rgb(1,187,225));
-			
 			if (devicesToShow.Contains (moj))
 				button.Checked = true;
 			else
